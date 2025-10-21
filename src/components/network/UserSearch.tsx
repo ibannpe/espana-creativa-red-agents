@@ -87,7 +87,7 @@ export function UserSearch({ onUserSelect }: UserSearchProps) {
     }, 500)
 
     return () => clearTimeout(delayedSearch)
-  }, [query, filters.role, filters.location, JSON.stringify(filters.skills), logger])
+  }, [query, filters.role, filters.location, JSON.stringify(filters.skills)])
 
   const addSkillFilter = () => {
     if (skillInput.trim() && !filters.skills.includes(skillInput.trim())) {
