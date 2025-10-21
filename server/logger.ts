@@ -124,7 +124,17 @@ class ServerLogger {
 
   // Middleware para capturar logs del frontend
   clientLog(logEntry: any): void {
-    this.writeToFile(logEntry.level, `CLIENT-${logEntry.component || 'Unknown'}`, logEntry.message, {
+    // Validación defensiva para evitar errores
+    if (!logEntry || typeof logEntry !== 'object') {
+      console.warn('Invalid log entry received:', logEntry);
+      return;
+    }
+
+    const level = logEntry.level || 'info';
+    const component = logEntry.component || 'Unknown';
+    const message = logEntry.message || 'No message';
+
+    this.writeToFile(level, `CLIENT-${component}`, message, {
       session: logEntry.session,
       data: logEntry.data,
       timestamp: logEntry.timestamp
