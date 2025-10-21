@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat .env)",
+      "Bash(while read file)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(head -5 \"$file\")",
+      "Bash(done)",
+      "Bash(curl -s http://localhost:3001/health)",
+      "Bash(curl -s http://localhost:8080)",
+      "Bash(curl -X POST http://localhost:8080/api/auth/signup -H \"Content-Type: application/json\" -d '{\"\"\"\"email\"\"\"\":\"\"\"\"test@example.com\"\"\"\",\"\"\"\"password\"\"\"\":\"\"\"\"TestPassword123\"\"\"\",\"\"\"\"name\"\"\"\":\"\"\"\"Test User\"\"\"\"}' -v)",
+      "Bash(curl -X POST http://localhost:3001/api/auth/signup )",
+      "Bash(node migrations/execute-migrations.mjs:*)",
+      "Bash(cat:*)",
+      "Bash(open \"https://app.supabase.com/project/jbkzymvswvnkrxriyzdx/sql/new\")",
+      "Bash(pbcopy:*)",
+      "Read(//private/tmp/**)",
+      "Bash(sed:*)",
+      "Bash(curl:*)",
+      "Bash(npx vitest:*)",
+      "Bash(tree:*)",
+      "Bash(awk:*)",
+      "Bash(rm:*)",
+      "Read(//Users/iperezmi/Library/**)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "context7",
+    "sequentialthinking",
+    "playwright",
+    "shadcn",
+    "shadcn-components"
+  ]
+}

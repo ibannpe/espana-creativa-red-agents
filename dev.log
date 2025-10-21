@@ -1,0 +1,1159 @@
+=== España Creativa Red - Development Log ===
+Started: 2025-10-21T11:11:27.193Z
+
+[2025-10-21T11:11:27.195Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T11:12:13.440Z] [HTTP_REQUEST] [INFO] GET /health
+Data: {
+  "method": "GET",
+  "path": "/health",
+  "statusCode": 200,
+  "duration": "2ms"
+}
+[2025-10-21T11:24:13.010Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T11:28:03.315Z] [HTTP_REQUEST] [INFO] GET /me
+Data: {
+  "method": "GET",
+  "path": "/me",
+  "statusCode": 401,
+  "duration": "1ms"
+}
+[2025-10-21T11:28:08.264Z] [CLIENT-CONSOLE] [WARN] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:28:03.292Z"
+}
+[2025-10-21T11:28:08.264Z] [CLIENT-CONSOLE] [WARN] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:28:03.298Z"
+}
+[2025-10-21T11:28:08.264Z] [LOG_ENDPOINT] [DEBUG] Processed 2 client logs
+Data: {
+  "sessionId": "1761046083237-drb4cy43y"
+}
+[2025-10-21T11:28:08.265Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "2ms"
+}
+[2025-10-21T11:28:28.151Z] [HTTP_REQUEST] [INFO] POST /signup
+Data: {
+  "method": "POST",
+  "path": "/signup",
+  "statusCode": 400,
+  "duration": "2136ms"
+}
+[2025-10-21T11:29:05.631Z] [HTTP_REQUEST] [INFO] POST /signup
+Data: {
+  "method": "POST",
+  "path": "/signup",
+  "statusCode": 400,
+  "duration": "852ms"
+}
+[2025-10-21T11:29:26.393Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T11:29:26.393Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T11:29:34.187Z] [HTTP_REQUEST] [INFO] POST /signup
+Data: {
+  "method": "POST",
+  "path": "/signup",
+  "statusCode": 400,
+  "duration": "689ms"
+}
+[2025-10-21T11:29:49.692Z] [HTTP_REQUEST] [INFO] POST /signup
+Data: {
+  "method": "POST",
+  "path": "/signup",
+  "statusCode": 400,
+  "duration": "734ms"
+}
+[2025-10-21T11:30:36.527Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T11:30:36.527Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T11:30:44.312Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T11:30:44.312Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T11:31:16.204Z] [HTTP_REQUEST] [INFO] POST /signup
+Data: {
+  "method": "POST",
+  "path": "/signup",
+  "statusCode": 400,
+  "duration": "1100ms"
+}
+[2025-10-21T11:31:32.854Z] [HTTP_REQUEST] [INFO] POST /signup
+Data: {
+  "method": "POST",
+  "path": "/signup",
+  "statusCode": 400,
+  "duration": "643ms"
+}
+[2025-10-21T11:31:48.595Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T11:31:48.595Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T11:32:01.638Z] [HTTP_REQUEST] [INFO] POST /signup
+Data: {
+  "method": "POST",
+  "path": "/signup",
+  "statusCode": 400,
+  "duration": "1070ms"
+}
+[2025-10-21T11:32:16.259Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T11:32:16.259Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T11:32:32.669Z] [HTTP_REQUEST] [INFO] POST /signup
+Data: {
+  "method": "POST",
+  "path": "/signup",
+  "statusCode": 201,
+  "duration": "735ms"
+}
+[2025-10-21T11:32:58.815Z] [HTTP_REQUEST] [INFO] POST /signup
+Data: {
+  "method": "POST",
+  "path": "/signup",
+  "statusCode": 201,
+  "duration": "595ms"
+}
+[2025-10-21T11:32:59.015Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:58.837Z"
+}
+[2025-10-21T11:32:59.016Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:58.837Z"
+}
+[2025-10-21T11:32:59.016Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:58.838Z"
+}
+[2025-10-21T11:32:59.016Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:58.838Z"
+}
+[2025-10-21T11:32:59.017Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:58.838Z"
+}
+[2025-10-21T11:32:59.017Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:58.838Z"
+}
+[2025-10-21T11:32:59.017Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:58.838Z"
+}
+[2025-10-21T11:32:59.017Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:58.838Z"
+}
+[2025-10-21T11:32:59.017Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:59.006Z"
+}
+[2025-10-21T11:32:59.018Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:59.008Z"
+}
+[2025-10-21T11:32:59.018Z] [LOG_ENDPOINT] [DEBUG] Processed 10 client logs
+Data: {
+  "sessionId": "1761046083237-drb4cy43y"
+}
+[2025-10-21T11:32:59.019Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "4ms"
+}
+[2025-10-21T11:33:03.247Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:59.009Z"
+}
+[2025-10-21T11:33:03.248Z] [CLIENT-CONSOLE] [INFO] 🚪 No hay usuario autenticado
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:59.009Z"
+}
+[2025-10-21T11:33:03.249Z] [CLIENT-CONSOLE] [INFO] 🔔 Auth cambió: INITIAL_SESSION {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:59.010Z"
+}
+[2025-10-21T11:33:03.249Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:59.011Z"
+}
+[2025-10-21T11:33:03.249Z] [CLIENT-CONSOLE] [INFO] 🚪 No hay usuario autenticado
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:59.011Z"
+}
+[2025-10-21T11:33:03.250Z] [CLIENT-CONSOLE] [INFO] 🔔 Auth cambió: INITIAL_SESSION {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:32:59.013Z"
+}
+[2025-10-21T11:33:03.250Z] [LOG_ENDPOINT] [DEBUG] Processed 6 client logs
+Data: {
+  "sessionId": "1761046083237-drb4cy43y"
+}
+[2025-10-21T11:33:03.251Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "5ms"
+}
+[2025-10-21T11:33:13.243Z] [CLIENT-CONSOLE] [INFO] 🔔 Auth cambió: SIGNED_OUT {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:33:13.215Z"
+}
+[2025-10-21T11:33:13.244Z] [CLIENT-CONSOLE] [INFO] 🚪 Logout - limpiando estado
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:33:13.215Z"
+}
+[2025-10-21T11:33:13.244Z] [CLIENT-CONSOLE] [INFO] 🔔 Auth cambió: SIGNED_OUT {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:33:13.215Z"
+}
+[2025-10-21T11:33:13.244Z] [CLIENT-CONSOLE] [INFO] 🚪 Logout - limpiando estado
+Data: {
+  "session": "1761046083237-drb4cy43y",
+  "timestamp": "2025-10-21T11:33:13.215Z"
+}
+[2025-10-21T11:33:13.244Z] [LOG_ENDPOINT] [DEBUG] Processed 4 client logs
+Data: {
+  "sessionId": "1761046083237-drb4cy43y"
+}
+[2025-10-21T11:33:13.245Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "2ms"
+}
+[2025-10-21T11:33:25.441Z] [HTTP_REQUEST] [INFO] GET /me
+Data: {
+  "method": "GET",
+  "path": "/me",
+  "statusCode": 200,
+  "duration": "262ms"
+}
+[2025-10-21T11:33:25.457Z] [CLIENT-CONSOLE] [WARN] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.174Z"
+}
+[2025-10-21T11:33:25.457Z] [CLIENT-CONSOLE] [WARN] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.174Z"
+}
+[2025-10-21T11:33:25.458Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.453Z"
+}
+[2025-10-21T11:33:25.458Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.453Z"
+}
+[2025-10-21T11:33:25.459Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.453Z"
+}
+[2025-10-21T11:33:25.459Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.453Z"
+}
+[2025-10-21T11:33:25.459Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.453Z"
+}
+[2025-10-21T11:33:25.459Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.453Z"
+}
+[2025-10-21T11:33:25.459Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.453Z"
+}
+[2025-10-21T11:33:25.459Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.453Z"
+}
+[2025-10-21T11:33:25.460Z] [LOG_ENDPOINT] [DEBUG] Processed 10 client logs
+Data: {
+  "sessionId": "1761046405171-pd118vyhc"
+}
+[2025-10-21T11:33:25.460Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "3ms"
+}
+[2025-10-21T11:33:30.178Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.581Z"
+}
+[2025-10-21T11:33:30.179Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.583Z"
+}
+[2025-10-21T11:33:30.179Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.583Z"
+}
+[2025-10-21T11:33:30.179Z] [CLIENT-CONSOLE] [INFO] 🚪 No hay usuario autenticado
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.583Z"
+}
+[2025-10-21T11:33:30.180Z] [CLIENT-CONSOLE] [INFO] 🔔 Auth cambió: INITIAL_SESSION {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.584Z"
+}
+[2025-10-21T11:33:30.180Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.584Z"
+}
+[2025-10-21T11:33:30.180Z] [CLIENT-CONSOLE] [INFO] 🚪 No hay usuario autenticado
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.584Z"
+}
+[2025-10-21T11:33:30.180Z] [CLIENT-CONSOLE] [INFO] 🔔 Auth cambió: INITIAL_SESSION {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046405171-pd118vyhc",
+  "timestamp": "2025-10-21T11:33:25.585Z"
+}
+[2025-10-21T11:33:30.180Z] [LOG_ENDPOINT] [DEBUG] Processed 8 client logs
+Data: {
+  "sessionId": "1761046405171-pd118vyhc"
+}
+[2025-10-21T11:33:30.181Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "3ms"
+}
+[2025-10-21T11:33:49.285Z] [HTTP_REQUEST] [INFO] GET /me
+Data: {
+  "method": "GET",
+  "path": "/me",
+  "statusCode": 304,
+  "duration": "246ms"
+}
+[2025-10-21T11:33:49.304Z] [CLIENT-CONSOLE] [WARN] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.029Z"
+}
+[2025-10-21T11:33:49.304Z] [CLIENT-CONSOLE] [WARN] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.030Z"
+}
+[2025-10-21T11:33:49.305Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.301Z"
+}
+[2025-10-21T11:33:49.305Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.301Z"
+}
+[2025-10-21T11:33:49.305Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.301Z"
+}
+[2025-10-21T11:33:49.305Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.301Z"
+}
+[2025-10-21T11:33:49.305Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.301Z"
+}
+[2025-10-21T11:33:49.305Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.301Z"
+}
+[2025-10-21T11:33:49.305Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.301Z"
+}
+[2025-10-21T11:33:49.306Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.301Z"
+}
+[2025-10-21T11:33:49.306Z] [LOG_ENDPOINT] [DEBUG] Processed 10 client logs
+Data: {
+  "sessionId": "1761046429020-wj533x0wr"
+}
+[2025-10-21T11:33:49.306Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "2ms"
+}
+[2025-10-21T11:33:54.032Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.390Z"
+}
+[2025-10-21T11:33:54.033Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.391Z"
+}
+[2025-10-21T11:33:54.034Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.391Z"
+}
+[2025-10-21T11:33:54.034Z] [CLIENT-CONSOLE] [INFO] 🚪 No hay usuario autenticado
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.391Z"
+}
+[2025-10-21T11:33:54.035Z] [CLIENT-CONSOLE] [INFO] 🔔 Auth cambió: INITIAL_SESSION {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.392Z"
+}
+[2025-10-21T11:33:54.036Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.392Z"
+}
+[2025-10-21T11:33:54.036Z] [CLIENT-CONSOLE] [INFO] 🚪 No hay usuario autenticado
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.392Z"
+}
+[2025-10-21T11:33:54.037Z] [CLIENT-CONSOLE] [INFO] 🔔 Auth cambió: INITIAL_SESSION {
+  "hasSession": false
+}
+Data: {
+  "session": "1761046429020-wj533x0wr",
+  "timestamp": "2025-10-21T11:33:49.394Z"
+}
+[2025-10-21T11:33:54.038Z] [LOG_ENDPOINT] [DEBUG] Processed 8 client logs
+Data: {
+  "sessionId": "1761046429020-wj533x0wr"
+}
+[2025-10-21T11:33:54.040Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "8ms"
+}
+[2025-10-21T14:44:54.801Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T14:44:54.801Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T14:45:14.735Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T14:45:14.736Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T14:45:22.201Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T14:45:22.201Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:51:09.005Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:51:09.004Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:51:19.605Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:51:19.605Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:51:29.884Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:51:29.884Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:51:35.335Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:51:35.336Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:51:42.635Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:51:42.635Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:51:50.054Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:51:50.054Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:52:07.013Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:52:07.013Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:52:13.254Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T15:52:13.255Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T16:14:30.719Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T16:14:45.191Z] [HTTP_REQUEST] [INFO] GET /me
+Data: {
+  "method": "GET",
+  "path": "/me",
+  "statusCode": 401,
+  "duration": "3ms"
+}
+[2025-10-21T16:14:50.197Z] [CLIENT-CONSOLE] [WARN] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:45.170Z"
+}
+[2025-10-21T16:14:50.197Z] [CLIENT-CONSOLE] [WARN] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:45.170Z"
+}
+[2025-10-21T16:14:50.198Z] [CLIENT-CONSOLE] [ERROR] {
+  "__isAuthError": true,
+  "name": "AuthApiError",
+  "status": 400,
+  "code": "refresh_token_not_found"
+}
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:46.150Z"
+}
+[2025-10-21T16:14:50.198Z] [LOG_ENDPOINT] [DEBUG] Processed 3 client logs
+Data: {
+  "sessionId": "1761063285162-yfmtqxnxr"
+}
+[2025-10-21T16:14:50.199Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "2ms"
+}
+[2025-10-21T16:14:53.740Z] [HTTP_REQUEST] [INFO] POST /signin
+Data: {
+  "method": "POST",
+  "path": "/signin",
+  "statusCode": 200,
+  "duration": "1166ms"
+}
+[2025-10-21T16:14:53.810Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.768Z"
+}
+[2025-10-21T16:14:53.811Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.768Z"
+}
+[2025-10-21T16:14:53.812Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.768Z"
+}
+[2025-10-21T16:14:53.812Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.768Z"
+}
+[2025-10-21T16:14:53.813Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.768Z"
+}
+[2025-10-21T16:14:53.814Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.768Z"
+}
+[2025-10-21T16:14:53.816Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.768Z"
+}
+[2025-10-21T16:14:53.816Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.768Z"
+}
+[2025-10-21T16:14:53.817Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.795Z"
+}
+[2025-10-21T16:14:53.817Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.803Z"
+}
+[2025-10-21T16:14:53.818Z] [LOG_ENDPOINT] [DEBUG] Processed 10 client logs
+Data: {
+  "sessionId": "1761063285162-yfmtqxnxr"
+}
+[2025-10-21T16:14:53.819Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "9ms"
+}
+[2025-10-21T16:14:55.173Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.804Z"
+}
+[2025-10-21T16:14:55.175Z] [CLIENT-CONSOLE] [INFO] 🚪 No hay usuario autenticado
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.804Z"
+}
+[2025-10-21T16:14:55.176Z] [CLIENT-CONSOLE] [INFO] 🔔 Auth cambió: INITIAL_SESSION {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.806Z"
+}
+[2025-10-21T16:14:55.177Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.806Z"
+}
+[2025-10-21T16:14:55.179Z] [CLIENT-CONSOLE] [INFO] 🚪 No hay usuario autenticado
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.806Z"
+}
+[2025-10-21T16:14:55.180Z] [CLIENT-CONSOLE] [INFO] 🔔 Auth cambió: INITIAL_SESSION {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:14:53.809Z"
+}
+[2025-10-21T16:14:55.181Z] [LOG_ENDPOINT] [DEBUG] Processed 6 client logs
+Data: {
+  "sessionId": "1761063285162-yfmtqxnxr"
+}
+[2025-10-21T16:14:55.183Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "10ms"
+}
+[2025-10-21T16:15:07.658Z] [CLIENT-WINDOW] [ERROR] Uncaught error: logger is not defined
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "data": {
+    "filename": "http://localhost:8081/src/components/network/UserSearch.tsx",
+    "lineno": 97,
+    "colno": 9,
+    "stack": "ReferenceError: logger is not defined\n    at UserSearch (http://localhost:8081/src/components/network/UserSearch.tsx:97:9)\n    at renderWithHooks (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:11548:26)\n    at mountIndeterminateComponent (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:14926:21)\n    at beginWork (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:15914:22)\n    at HTMLUnknownElement.callCallback2 (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:3674:22)\n    at Object.invokeGuardedCallbackDev (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:3699:24)\n    at invokeGuardedCallback (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:3733:39)\n    at beginWork$1 (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:19765:15)\n    at performUnitOfWork (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:19198:20)\n    at workLoopSync (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:19137:13)"
+  },
+  "timestamp": "2025-10-21T16:15:07.629Z"
+}
+[2025-10-21T16:15:07.660Z] [CLIENT-WINDOW] [ERROR] Uncaught error: logger is not defined
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "data": {
+    "filename": "http://localhost:8081/src/components/network/UserSearch.tsx",
+    "lineno": 97,
+    "colno": 9,
+    "stack": "ReferenceError: logger is not defined\n    at UserSearch (http://localhost:8081/src/components/network/UserSearch.tsx:97:9)\n    at renderWithHooks (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:11548:26)\n    at mountIndeterminateComponent (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:14926:21)\n    at beginWork (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:15914:22)\n    at HTMLUnknownElement.callCallback2 (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:3674:22)\n    at Object.invokeGuardedCallbackDev (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:3699:24)\n    at invokeGuardedCallback (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:3733:39)\n    at beginWork$1 (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:19765:15)\n    at performUnitOfWork (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:19198:20)\n    at workLoopSync (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:19137:13)"
+  },
+  "timestamp": "2025-10-21T16:15:07.636Z"
+}
+[2025-10-21T16:15:07.660Z] [CLIENT-CONSOLE] [ERROR] The above error occurred in the <UserSearch> component:
+
+    at UserSearch (http://localhost:8081/src/components/network/UserSearch.tsx:32:30)
+    at ErrorBoundary (http://localhost:8081/src/components/ErrorBoundary.tsx:100:9)
+    at div
+    at _c8 (http://localhost:8081/src/components/ui/card.tsx:67:61)
+    at div
+    at _c (http://localhost:8081/src/components/ui/card.tsx:23:53)
+    at div
+    at div
+    at NetworkPage
+    at ProtectedRoute (http://localhost:8081/src/app/features/auth/components/ProtectedRoute.tsx:26:34)
+    at RenderedRoute (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:4088:5)
+    at Routes (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:4558:5)
+    at ErrorBoundary (http://localhost:8081/src/components/ErrorBoundary.tsx:100:9)
+    at App (http://localhost:8081/src/App.tsx:38:33)
+    at Router (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:4501:15)
+    at BrowserRouter (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:5247:5)
+    at AuthProvider (http://localhost:8081/src/app/features/auth/hooks/useAuthContext.tsx:30:32)
+    at QueryClientProvider (http://localhost:8081/node_modules/.vite/deps/@tanstack_react-query.js?v=0ccf1f36:2934:3)
+    at QueryProvider (http://localhost:8081/src/app/providers/QueryProvider.tsx:37:33)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:15:07.638Z"
+}
+[2025-10-21T16:15:07.661Z] [CLIENT-CONSOLE] [ERROR] ErrorBoundary caught an error: {} {
+  "componentStack": "\n    at UserSearch (http://localhost:8081/src/components/network/UserSearch.tsx:32:30)\n    at ErrorBoundary (http://localhost:8081/src/components/ErrorBoundary.tsx:100:9)\n    at div\n    at _c8 (http://localhost:8081/src/components/ui/card.tsx:67:61)\n    at div\n    at _c (http://localhost:8081/src/components/ui/card.tsx:23:53)\n    at div\n    at div\n    at NetworkPage\n    at ProtectedRoute (http://localhost:8081/src/app/features/auth/components/ProtectedRoute.tsx:26:34)\n    at RenderedRoute (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:4088:5)\n    at Routes (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:4558:5)\n    at ErrorBoundary (http://localhost:8081/src/components/ErrorBoundary.tsx:100:9)\n    at App (http://localhost:8081/src/App.tsx:38:33)\n    at Router (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:4501:15)\n    at BrowserRouter (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:5247:5)\n    at AuthProvider (http://localhost:8081/src/app/features/auth/hooks/useAuthContext.tsx:30:32)\n    at QueryClientProvider (http://localhost:8081/node_modules/.vite/deps/@tanstack_react-query.js?v=0ccf1f36:2934:3)\n    at QueryProvider (http://localhost:8081/src/app/providers/QueryProvider.tsx:37:33)"
+}
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:15:07.638Z"
+}
+[2025-10-21T16:15:07.662Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:15:07.639Z"
+}
+[2025-10-21T16:15:07.662Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:15:07.639Z"
+}
+[2025-10-21T16:15:07.662Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:15:07.639Z"
+}
+[2025-10-21T16:15:07.663Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:15:07.639Z"
+}
+[2025-10-21T16:15:07.663Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:15:07.649Z"
+}
+[2025-10-21T16:15:07.664Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:15:07.653Z"
+}
+[2025-10-21T16:15:07.664Z] [LOG_ENDPOINT] [DEBUG] Processed 10 client logs
+Data: {
+  "sessionId": "1761063285162-yfmtqxnxr"
+}
+[2025-10-21T16:15:07.665Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "7ms"
+}
+[2025-10-21T16:15:10.172Z] [CLIENT-CONSOLE] [INFO] 🚪 No hay usuario autenticado
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:15:07.653Z"
+}
+[2025-10-21T16:15:10.174Z] [CLIENT-CONSOLE] [INFO] 🔔 Auth cambió: INITIAL_SESSION {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063285162-yfmtqxnxr",
+  "timestamp": "2025-10-21T16:15:07.654Z"
+}
+[2025-10-21T16:15:10.174Z] [LOG_ENDPOINT] [DEBUG] Processed 2 client logs
+Data: {
+  "sessionId": "1761063285162-yfmtqxnxr"
+}
+[2025-10-21T16:15:10.177Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "5ms"
+}
+[2025-10-21T16:15:11.951Z] [HTTP_REQUEST] [INFO] GET /me
+Data: {
+  "method": "GET",
+  "path": "/me",
+  "statusCode": 200,
+  "duration": "553ms"
+}
+[2025-10-21T16:15:11.990Z] [CLIENT-CONSOLE] [WARN] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:11.395Z"
+}
+[2025-10-21T16:15:11.991Z] [CLIENT-CONSOLE] [WARN] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:11.395Z"
+}
+[2025-10-21T16:15:11.992Z] [CLIENT-WINDOW] [ERROR] Uncaught error: logger is not defined
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "data": {
+    "filename": "http://localhost:8081/src/components/network/UserSearch.tsx",
+    "lineno": 97,
+    "colno": 9,
+    "stack": "ReferenceError: logger is not defined\n    at UserSearch (http://localhost:8081/src/components/network/UserSearch.tsx:97:9)\n    at renderWithHooks (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:11548:26)\n    at mountIndeterminateComponent (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:14926:21)\n    at beginWork (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:15914:22)\n    at HTMLUnknownElement.callCallback2 (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:3674:22)\n    at Object.invokeGuardedCallbackDev (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:3699:24)\n    at invokeGuardedCallback (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:3733:39)\n    at beginWork$1 (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:19765:15)\n    at performUnitOfWork (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:19198:20)\n    at workLoopSync (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:19137:13)"
+  },
+  "timestamp": "2025-10-21T16:15:11.971Z"
+}
+[2025-10-21T16:15:11.993Z] [CLIENT-WINDOW] [ERROR] Uncaught error: logger is not defined
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "data": {
+    "filename": "http://localhost:8081/src/components/network/UserSearch.tsx",
+    "lineno": 97,
+    "colno": 9,
+    "stack": "ReferenceError: logger is not defined\n    at UserSearch (http://localhost:8081/src/components/network/UserSearch.tsx:97:9)\n    at renderWithHooks (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:11548:26)\n    at mountIndeterminateComponent (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:14926:21)\n    at beginWork (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:15914:22)\n    at HTMLUnknownElement.callCallback2 (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:3674:22)\n    at Object.invokeGuardedCallbackDev (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:3699:24)\n    at invokeGuardedCallback (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:3733:39)\n    at beginWork$1 (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:19765:15)\n    at performUnitOfWork (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:19198:20)\n    at workLoopSync (http://localhost:8081/node_modules/.vite/deps/chunk-FJ2A54M7.js?v=c81d664d:19137:13)"
+  },
+  "timestamp": "2025-10-21T16:15:11.981Z"
+}
+[2025-10-21T16:15:11.995Z] [CLIENT-CONSOLE] [ERROR] The above error occurred in the <UserSearch> component:
+
+    at UserSearch (http://localhost:8081/src/components/network/UserSearch.tsx:32:30)
+    at ErrorBoundary (http://localhost:8081/src/components/ErrorBoundary.tsx:100:9)
+    at div
+    at _c8 (http://localhost:8081/src/components/ui/card.tsx:67:61)
+    at div
+    at _c (http://localhost:8081/src/components/ui/card.tsx:23:53)
+    at div
+    at div
+    at NetworkPage
+    at ProtectedRoute (http://localhost:8081/src/app/features/auth/components/ProtectedRoute.tsx:26:34)
+    at RenderedRoute (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:4088:5)
+    at Routes (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:4558:5)
+    at ErrorBoundary (http://localhost:8081/src/components/ErrorBoundary.tsx:100:9)
+    at App (http://localhost:8081/src/App.tsx:38:33)
+    at Router (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:4501:15)
+    at BrowserRouter (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:5247:5)
+    at AuthProvider (http://localhost:8081/src/app/features/auth/hooks/useAuthContext.tsx:30:32)
+    at QueryClientProvider (http://localhost:8081/node_modules/.vite/deps/@tanstack_react-query.js?v=0ccf1f36:2934:3)
+    at QueryProvider (http://localhost:8081/src/app/providers/QueryProvider.tsx:37:33)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:11.983Z"
+}
+[2025-10-21T16:15:11.996Z] [CLIENT-CONSOLE] [ERROR] ErrorBoundary caught an error: {} {
+  "componentStack": "\n    at UserSearch (http://localhost:8081/src/components/network/UserSearch.tsx:32:30)\n    at ErrorBoundary (http://localhost:8081/src/components/ErrorBoundary.tsx:100:9)\n    at div\n    at _c8 (http://localhost:8081/src/components/ui/card.tsx:67:61)\n    at div\n    at _c (http://localhost:8081/src/components/ui/card.tsx:23:53)\n    at div\n    at div\n    at NetworkPage\n    at ProtectedRoute (http://localhost:8081/src/app/features/auth/components/ProtectedRoute.tsx:26:34)\n    at RenderedRoute (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:4088:5)\n    at Routes (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:4558:5)\n    at ErrorBoundary (http://localhost:8081/src/components/ErrorBoundary.tsx:100:9)\n    at App (http://localhost:8081/src/App.tsx:38:33)\n    at Router (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:4501:15)\n    at BrowserRouter (http://localhost:8081/node_modules/.vite/deps/react-router-dom.js?v=ccf13ecd:5247:5)\n    at AuthProvider (http://localhost:8081/src/app/features/auth/hooks/useAuthContext.tsx:30:32)\n    at QueryClientProvider (http://localhost:8081/node_modules/.vite/deps/@tanstack_react-query.js?v=0ccf1f36:2934:3)\n    at QueryProvider (http://localhost:8081/src/app/providers/QueryProvider.tsx:37:33)"
+}
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:11.983Z"
+}
+[2025-10-21T16:15:11.996Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:11.983Z"
+}
+[2025-10-21T16:15:11.997Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:11.983Z"
+}
+[2025-10-21T16:15:11.997Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:11.984Z"
+}
+[2025-10-21T16:15:11.997Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:11.984Z"
+}
+[2025-10-21T16:15:11.997Z] [LOG_ENDPOINT] [DEBUG] Processed 10 client logs
+Data: {
+  "sessionId": "1761063311393-2uno84ptu"
+}
+[2025-10-21T16:15:11.999Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "8ms"
+}
+[2025-10-21T16:15:13.518Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:11.989Z"
+}
+[2025-10-21T16:15:13.519Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:11.989Z"
+}
+[2025-10-21T16:15:13.520Z] [CLIENT-CONSOLE] [INFO] 🚪 No hay usuario autenticado
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:11.990Z"
+}
+[2025-10-21T16:15:13.520Z] [CLIENT-CONSOLE] [INFO] 🔔 Auth cambió: INITIAL_SESSION {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:11.990Z"
+}
+[2025-10-21T16:15:13.520Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.506Z"
+}
+[2025-10-21T16:15:13.521Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.507Z"
+}
+[2025-10-21T16:15:13.522Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.507Z"
+}
+[2025-10-21T16:15:13.522Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.507Z"
+}
+[2025-10-21T16:15:13.522Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.507Z"
+}
+[2025-10-21T16:15:13.523Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.507Z"
+}
+[2025-10-21T16:15:13.523Z] [LOG_ENDPOINT] [DEBUG] Processed 10 client logs
+Data: {
+  "sessionId": "1761063311393-2uno84ptu"
+}
+[2025-10-21T16:15:13.524Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "6ms"
+}
+[2025-10-21T16:15:16.404Z] [CLIENT-CONSOLE] [INFO] 🔐 Auth hook iniciando
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.507Z"
+}
+[2025-10-21T16:15:16.406Z] [CLIENT-CONSOLE] [INFO] 📡 Obteniendo sesión...
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.507Z"
+}
+[2025-10-21T16:15:16.407Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.515Z"
+}
+[2025-10-21T16:15:16.408Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.517Z"
+}
+[2025-10-21T16:15:16.409Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.518Z"
+}
+[2025-10-21T16:15:16.410Z] [CLIENT-CONSOLE] [INFO] 🚪 No hay usuario autenticado
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.518Z"
+}
+[2025-10-21T16:15:16.411Z] [CLIENT-CONSOLE] [INFO] 🔔 Auth cambió: INITIAL_SESSION {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.519Z"
+}
+[2025-10-21T16:15:16.412Z] [CLIENT-CONSOLE] [INFO] 📡 Sesión obtenida: {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.519Z"
+}
+[2025-10-21T16:15:16.413Z] [CLIENT-CONSOLE] [INFO] 🚪 No hay usuario autenticado
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.519Z"
+}
+[2025-10-21T16:15:16.413Z] [CLIENT-CONSOLE] [INFO] 🔔 Auth cambió: INITIAL_SESSION {
+  "hasSession": false
+}
+Data: {
+  "session": "1761063311393-2uno84ptu",
+  "timestamp": "2025-10-21T16:15:13.522Z"
+}
+[2025-10-21T16:15:16.414Z] [LOG_ENDPOINT] [DEBUG] Processed 10 client logs
+Data: {
+  "sessionId": "1761063311393-2uno84ptu"
+}
+[2025-10-21T16:15:16.417Z] [HTTP_REQUEST] [INFO] POST /api/dev/logs
+Data: {
+  "method": "POST",
+  "path": "/api/dev/logs",
+  "statusCode": 200,
+  "duration": "13ms"
+}
+[2025-10-21T16:50:00.917Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T16:50:07.305Z] [HTTP_REQUEST] [INFO] GET /health
+Data: {
+  "method": "GET",
+  "path": "/health",
+  "statusCode": 200,
+  "duration": "6ms"
+}
+[2025-10-21T16:50:07.312Z] [PROCESS] [ERROR] Uncaught Exception
+Data: {
+  "message": "write EPIPE",
+  "stack": "Error: write EPIPE\n    at afterWriteDispatched (node:internal/stream_base_commons:161:15)\n    at writeGeneric (node:internal/stream_base_commons:152:3)\n    at Socket._writeGeneric (node:net:958:11)\n    at Socket._write (node:net:970:8)\n    at writeOrBuffer (node:internal/streams/writable:572:12)\n    at _write (node:internal/streams/writable:501:10)\n    at Writable.write (node:internal/streams/writable:510:10)\n    at console.value (node:internal/console/constructor:303:16)\n    at console.log (node:internal/console/constructor:378:26)\n    at ServerLogger.writeToFile (/Users/iperezmi/Library/Mobile Documents/com~apple~CloudDocs/tmp/espana-creativa-red-gurusup/server/logger.ts:53:13)"
+}
+[2025-10-21T17:24:04.510Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T17:24:04.511Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T17:24:04.530Z] [PROCESS] [ERROR] Uncaught Exception
+Data: {
+  "message": "write EPIPE",
+  "stack": "Error: write EPIPE\n    at afterWriteDispatched (node:internal/stream_base_commons:161:15)\n    at writeGeneric (node:internal/stream_base_commons:152:3)\n    at Socket._writeGeneric (node:net:958:11)\n    at Socket._write (node:net:970:8)\n    at writeOrBuffer (node:internal/streams/writable:572:12)\n    at _write (node:internal/streams/writable:501:10)\n    at Writable.write (node:internal/streams/writable:510:10)\n    at console.value (node:internal/console/constructor:303:16)\n    at console.log (node:internal/console/constructor:378:26)\n    at _log (/Users/iperezmi/Library/Mobile Documents/com~apple~CloudDocs/tmp/espana-creativa-red-gurusup/node_modules/dotenv/lib/main.js:139:11)"
+}
+[2025-10-21T17:24:11.986Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T17:24:11.986Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T17:24:12.001Z] [PROCESS] [ERROR] Uncaught Exception
+Data: {
+  "message": "write EPIPE",
+  "stack": "Error: write EPIPE\n    at afterWriteDispatched (node:internal/stream_base_commons:161:15)\n    at writeGeneric (node:internal/stream_base_commons:152:3)\n    at Socket._writeGeneric (node:net:958:11)\n    at Socket._write (node:net:970:8)\n    at writeOrBuffer (node:internal/streams/writable:572:12)\n    at _write (node:internal/streams/writable:501:10)\n    at Writable.write (node:internal/streams/writable:510:10)\n    at console.value (node:internal/console/constructor:303:16)\n    at console.log (node:internal/console/constructor:378:26)\n    at _log (/Users/iperezmi/Library/Mobile Documents/com~apple~CloudDocs/tmp/espana-creativa-red-gurusup/node_modules/dotenv/lib/main.js:139:11)"
+}
+[2025-10-21T17:24:12.313Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T17:24:12.327Z] [PROCESS] [ERROR] Uncaught Exception
+Data: {
+  "message": "write EPIPE",
+  "stack": "Error: write EPIPE\n    at afterWriteDispatched (node:internal/stream_base_commons:161:15)\n    at writeGeneric (node:internal/stream_base_commons:152:3)\n    at Socket._writeGeneric (node:net:958:11)\n    at Socket._write (node:net:970:8)\n    at writeOrBuffer (node:internal/streams/writable:572:12)\n    at _write (node:internal/streams/writable:501:10)\n    at Writable.write (node:internal/streams/writable:510:10)\n    at console.value (node:internal/console/constructor:303:16)\n    at console.log (node:internal/console/constructor:378:26)\n    at _log (/Users/iperezmi/Library/Mobile Documents/com~apple~CloudDocs/tmp/espana-creativa-red-gurusup/node_modules/dotenv/lib/main.js:139:11)"
+}
+[2025-10-21T17:24:31.505Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T17:24:31.522Z] [PROCESS] [ERROR] Uncaught Exception
+Data: {
+  "message": "write EPIPE",
+  "stack": "Error: write EPIPE\n    at afterWriteDispatched (node:internal/stream_base_commons:161:15)\n    at writeGeneric (node:internal/stream_base_commons:152:3)\n    at Socket._writeGeneric (node:net:958:11)\n    at Socket._write (node:net:970:8)\n    at writeOrBuffer (node:internal/streams/writable:572:12)\n    at _write (node:internal/streams/writable:501:10)\n    at Writable.write (node:internal/streams/writable:510:10)\n    at console.value (node:internal/console/constructor:303:16)\n    at console.log (node:internal/console/constructor:378:26)\n    at _log (/Users/iperezmi/Library/Mobile Documents/com~apple~CloudDocs/tmp/espana-creativa-red-gurusup/node_modules/dotenv/lib/main.js:139:11)"
+}
+[2025-10-21T17:24:41.634Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T17:24:43.978Z] [HTTP_REQUEST] [INFO] GET /health
+Data: {
+  "method": "GET",
+  "path": "/health",
+  "statusCode": 200,
+  "duration": "2ms"
+}
+[2025-10-21T17:28:19.336Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T17:28:26.858Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T17:28:32.240Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T17:28:38.322Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T17:28:38.334Z] [PROCESS] [ERROR] Uncaught Exception
+Data: {
+  "message": "write EPIPE",
+  "stack": "Error: write EPIPE\n    at afterWriteDispatched (node:internal/stream_base_commons:161:15)\n    at writeGeneric (node:internal/stream_base_commons:152:3)\n    at Socket._writeGeneric (node:net:958:11)\n    at Socket._write (node:net:970:8)\n    at writeOrBuffer (node:internal/streams/writable:572:12)\n    at _write (node:internal/streams/writable:501:10)\n    at Writable.write (node:internal/streams/writable:510:10)\n    at console.value (node:internal/console/constructor:303:16)\n    at console.log (node:internal/console/constructor:378:26)\n    at _log (/Users/iperezmi/Library/Mobile Documents/com~apple~CloudDocs/tmp/espana-creativa-red-gurusup/node_modules/dotenv/lib/main.js:139:11)"
+}
+[2025-10-21T17:29:44.240Z] [SERVER] [INFO] Starting España Creativa Red API Server (Hexagonal Architecture) on port 3001
+[2025-10-21T17:29:55.775Z] [HTTP_REQUEST] [INFO] GET /health
+Data: {
+  "method": "GET",
+  "path": "/health",
+  "statusCode": 200,
+  "duration": "2ms"
+}
+[2025-10-21T17:31:02.294Z] [HTTP_REQUEST] [INFO] GET /health
+Data: {
+  "method": "GET",
+  "path": "/health",
+  "statusCode": 200,
+  "duration": "1ms"
+}
+[2025-10-21T17:31:28.472Z] [HTTP_REQUEST] [INFO] GET /conversations
+Data: {
+  "method": "GET",
+  "path": "/conversations",
+  "statusCode": 401,
+  "duration": "1ms"
+}
+[2025-10-21T17:31:32.346Z] [HTTP_REQUEST] [INFO] GET /unread-count
+Data: {
+  "method": "GET",
+  "path": "/unread-count",
+  "statusCode": 401,
+  "duration": "1ms"
+}
