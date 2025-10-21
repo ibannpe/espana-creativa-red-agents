@@ -1,0 +1,165 @@
+// ABOUTME: Resend implementation of IEmailService port
+// ABOUTME: Handles email sending operations using Resend API
+
+import { Resend } from 'resend'
+import {
+  IEmailService,
+  EmailOptions,
+  EmailResult
+} from '../../../application/ports/services/IEmailService'
+import { Email } from '../../../domain/value-objects/Email'
+
+export class ResendEmailService implements IEmailService {
+  private readonly resend: Resend
+  private readonly defaultFrom: string
+
+  constructor(apiKey: string, defaultFrom: string = 'España Creativa <noreply@espanacreativa.com>') {
+    this.resend = new Resend(apiKey)
+    this.defaultFrom = defaultFrom
+  }
+
+  async sendEmail(options: EmailOptions): Promise<EmailResult> {
+    try {
+      const { data, error } = await this.resend.emails.send({
+        from: options.from || this.defaultFrom,
+        to: options.to.getValue(),
+        subject: options.subject,
+        html: options.html
+      })
+
+      if (error) {
+        return {
+          success: false,
+          error: new Error(error.message)
+        }
+      }
+
+      return {
+        success: true,
+        messageId: data?.id
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error as Error
+      }
+    }
+  }
+
+  async sendWelcomeEmail(to: Email, name: string): Promise<EmailResult> {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #22c55e;">¡Bienvenido/a a España Creativa Red!</h1>
+            <p>Hola ${name},</p>
+            <p>Nos alegra mucho que te hayas unido a nuestra red de emprendedores y mentores.</p>
+            <p>España Creativa Red es una plataforma diseñada para conectar profesionales, compartir oportunidades y construir una comunidad creativa.</p>
+            <p><strong>Próximos pasos:</strong></p>
+            <ol>
+              <li>Completa tu perfil para que otros miembros puedan conocerte mejor</li>
+              <li>Explora la red y encuentra a otros emprendedores y mentores</li>
+              <li>Participa en oportunidades que se alineen con tus intereses</li>
+            </ol>
+            <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
+            <p>¡Bienvenido/a a la comunidad!</p>
+            <p style="margin-top: 30px;">
+              <strong>El equipo de España Creativa</strong>
+            </p>
+          </div>
+        </body>
+      </html>
+    `
+
+    return this.sendEmail({
+      to,
+      subject: '¡Bienvenido/a a España Creativa Red!',
+      html
+    })
+  }
+
+  async sendProfileIncompleteEmail(to: Email, name: string, completionPct: number): Promise<EmailResult> {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #22c55e;">Completa tu perfil en España Creativa Red</h1>
+            <p>Hola ${name},</p>
+            <p>Tu perfil está ${completionPct}% completo. Un perfil completo te ayuda a:</p>
+            <ul>
+              <li>Conectar mejor con otros miembros de la comunidad</li>
+              <li>Recibir oportunidades más relevantes</li>
+              <li>Aumentar tu visibilidad en la red</li>
+            </ul>
+            <p><a href="${process.env.APP_URL || 'http://localhost:8080'}/profile" style="display: inline-block; padding: 10px 20px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 5px;">Completar mi perfil</a></p>
+            <p>¡Gracias por ser parte de España Creativa!</p>
+          </div>
+        </body>
+      </html>
+    `
+
+    return this.sendEmail({
+      to,
+      subject: 'Completa tu perfil en España Creativa Red',
+      html
+    })
+  }
+
+  async sendNewMessageEmail(recipientEmail: Email, recipientName: string, senderName: string): Promise<EmailResult> {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #22c55e;">Nuevo mensaje de ${senderName}</h1>
+            <p>Hola ${recipientName},</p>
+            <p>Has recibido un nuevo mensaje de <strong>${senderName}</strong> en España Creativa Red.</p>
+            <p><a href="${process.env.APP_URL || 'http://localhost:8080'}/messages" style="display: inline-block; padding: 10px 20px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 5px;">Ver mensaje</a></p>
+          </div>
+        </body>
+      </html>
+    `
+
+    return this.sendEmail({
+      to: recipientEmail,
+      subject: `Nuevo mensaje de ${senderName}`,
+      html
+    })
+  }
+
+  async sendNewOpportunityEmail(to: Email, name: string, opportunityTitle: string): Promise<EmailResult> {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #22c55e;">Nueva oportunidad: ${opportunityTitle}</h1>
+            <p>Hola ${name},</p>
+            <p>Hay una nueva oportunidad que podría interesarte: <strong>${opportunityTitle}</strong></p>
+            <p><a href="${process.env.APP_URL || 'http://localhost:8080'}/opportunities" style="display: inline-block; padding: 10px 20px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 5px;">Ver oportunidad</a></p>
+          </div>
+        </body>
+      </html>
+    `
+
+    return this.sendEmail({
+      to,
+      subject: `Nueva oportunidad: ${opportunityTitle}`,
+      html
+    })
+  }
+}
