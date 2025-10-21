@@ -12,43 +12,43 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Frontend development server (Vite on port 8080)
-npm run dev
+yarn dev
 
 # Backend API server (Express on port 3001)
-npm run dev:server
+yarn dev:server
 
 # Run both frontend and backend concurrently
-npm run dev:full
+yarn dev:full
 ```
 
 ### Build & Deployment
 
 ```bash
 # Production build
-npm run build
+yarn build
 
 # Development build (with source maps)
-npm run build:dev
+yarn build:dev
 
 # Preview production build
-npm run preview
+yarn preview
 ```
 
 ### Code Quality
 
 ```bash
 # Run ESLint
-npm run lint
+yarn lint
 ```
 
 ### Database Management
 
 ```bash
 # Clean all test data from database
-npm run clean-db
+yarn clean-db
 
 # Clean development environment (removes all user data)
-npm run clean-dev
+yarn clean-dev
 ```
 
 ## Architecture Overview

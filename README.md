@@ -65,8 +65,8 @@ La aplicación implementa un sistema de diseño moderno con:
 
 ## 📋 Requisitos Previos
 
-- Node.js 18+ 
-- npm o yarn
+- Node.js 18+
+- Yarn
 - Cuenta de Supabase
 - Cuenta de Resend (opcional, para emails)
 
@@ -80,7 +80,7 @@ La aplicación implementa un sistema de diseño moderno con:
 
 2. **Instalar dependencias**
    ```bash
-   npm install
+   yarn install
    ```
 
 3. **Configurar variables de entorno**
@@ -104,7 +104,7 @@ La aplicación implementa un sistema de diseño moderno con:
 
 5. **Ejecutar en desarrollo**
    ```bash
-   npm run dev
+   yarn dev
    ```
 
 La aplicación estará disponible en `http://localhost:3000`
@@ -199,23 +199,23 @@ docker run -p 3000:3000 --env-file .env.local espana-creativa-red
 
 ```bash
 # Ejecutar tests (cuando estén implementados)
-npm run test
+yarn test
 
 # Ejecutar tests en modo watch
-npm run test:watch
+yarn test:watch
 
 # Coverage
-npm run test:coverage
+yarn test:coverage
 ```
 
 ## 🔧 Scripts Disponibles
 
 ```bash
-npm run dev          # Desarrollo
-npm run build        # Construcción para producción
-npm run start        # Servidor de producción
-npm run lint         # Linting
-npm run type-check   # Verificación de tipos
+yarn dev          # Desarrollo
+yarn build        # Construcción para producción
+yarn start        # Servidor de producción
+yarn lint         # Linting
+yarn type-check   # Verificación de tipos
 ```
 
 ## 🤝 Contribución
