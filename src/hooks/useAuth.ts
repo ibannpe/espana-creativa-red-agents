@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { toast } from '@/hooks/use-toast';
@@ -21,6 +22,7 @@ let retryCount = 0;
 const maxRetries = 2;
 
 export const useAuth = (): AuthContextType => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -122,6 +124,7 @@ export const useAuth = (): AuthContextType => {
           console.log('🚪 Logout - limpiando estado');
           if (mounted) {
             setUser(null);
+            navigate('/auth', { replace: true }); // Redirect to login after logout
           }
         } else if (event === 'TOKEN_REFRESHED') {
           console.log('🔄 Token refreshed');
@@ -140,7 +143,7 @@ export const useAuth = (): AuthContextType => {
       clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
-  }, []);
+  }, [navigate]); // Include navigate in dependencies
 
   const signUp = async (email: string, password: string, userData?: { name?: string }) => {
     try {
