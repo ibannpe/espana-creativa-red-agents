@@ -302,7 +302,9 @@ RESEND_API_KEY=             # Resend API key for emails
 
 ### TypeScript Configuration
 
-Uses project references pattern with base [tsconfig.json](tsconfig.json). However, the referenced files (`tsconfig.app.json`, `tsconfig.node.json`) were deleted but still referenced. This may cause issues - consider consolidating to single tsconfig if problems arise.
+Uses project references pattern with base [tsconfig.json](tsconfig.json):
+- [tsconfig.app.json](tsconfig.app.json) - Configuration for React application code (src/)
+- [tsconfig.node.json](tsconfig.node.json) - Configuration for Node.js code (vite.config.ts, server/)
 
 ### Path Aliases
 
