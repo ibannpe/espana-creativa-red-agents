@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Upload, Camera, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 import { updateUserProfile } from '@/lib/api/users'
 
 interface PhotoUploadModalProps {
@@ -14,7 +14,7 @@ interface PhotoUploadModalProps {
 }
 
 export function PhotoUploadModal({ open, onOpenChange, onPhotoUpdated }: PhotoUploadModalProps) {
-  const { user } = useAuth()
+  const { user } = useAuthContext()
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)

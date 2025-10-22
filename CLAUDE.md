@@ -111,31 +111,69 @@ proxy: {
 
 ### State Management Pattern
 
-**Zustand Store** ([src/store/auth.ts](src/store/auth.ts)):
-- Single auth store managing user state globally
-- Used via `useAuthStore()` hook
-- Pattern: `const { user, loading, setUser, fetchUser } = useAuthStore()`
+**⚠️ IMPORTANT - Auth System Migration (Updated 2025-10-22)**
 
-**Hook Wrapper** ([src/hooks/useAuth.ts](src/hooks/useAuth.ts)):
-- `useAuth()` hook wraps Zustand store for convenience
-- Auto-fetches user on mount with session listener
-- This is the preferred way to access auth state in components
+The project has fully migrated to a **feature-based authentication system** using React Query and hexagonal architecture.
+
+**Current System (Use This):**
+- **Hook:** `useAuthContext` from `src/app/features/auth/hooks/useAuthContext.tsx`
+- **Architecture:** React Query + Hexagonal (Domain-Driven Design)
+- **Backend Integration:** All auth operations go through Express API endpoints
+- **State Management:** React Query cache with automatic invalidation
+
+**Deprecated System (DO NOT USE):**
+- ~~`useAuth` from `src/hooks/useAuth.ts`~~ - DEPRECATED
+- ~~`useAuthStore` from `src/store/auth.ts`~~ - DEPRECATED
+- ~~Auth functions from `src/lib/auth.ts`~~ - DEPRECATED
 
 ### Authentication Flow
 
-1. **Client Initialization** ([src/lib/supabase.ts](src/lib/supabase.ts)):
+**1. Client Initialization** ([src/lib/supabase.ts](src/lib/supabase.ts)):
    - Creates Supabase client with auto-refresh enabled
    - Uses environment variables: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
+   - Configured for session persistence and auto token refresh
 
-2. **Auth Functions** ([src/lib/auth.ts](src/lib/auth.ts)):
-   - `signUp()`, `signIn()`, `signInWithGoogle()`, `signOut()`
-   - `getCurrentUser()` with aggressive timeout handling (5s profile query, 10s auth query)
-   - Returns basic user object on timeout/error as fallback
-   - Welcome email sent automatically on successful signup
+**2. Auth Context Provider** ([src/app/features/auth/hooks/useAuthContext.tsx](src/app/features/auth/hooks/useAuthContext.tsx)):
+   - **Usage in components:**
+     ```typescript
+     import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 
-3. **Protected Routes** ([src/components/auth/ProtectedRoute.tsx](src/components/auth/ProtectedRoute.tsx)):
+     function MyComponent() {
+       const { user, isLoading, signIn, signOut, signUp } = useAuthContext()
+
+       if (isLoading) return <Loading />
+       if (!user) return <Login />
+
+       return <div>Hello {user.name}</div>
+     }
+     ```
+   - Provides auth state and operations via React Query
+   - Auto-manages cache and invalidation
+   - Integrated with backend API
+
+**3. Backend API Endpoints** ([server/infrastructure/api/routes/auth.routes.ts](server/infrastructure/api/routes/auth.routes.ts)):
+   - `POST /api/auth/signup` - Register new user
+   - `POST /api/auth/signin` - Authenticate user
+   - `POST /api/auth/signout` - Sign out current user (clears session)
+   - `GET /api/auth/me` - Get current authenticated user
+
+**4. Auth Service** ([src/app/features/auth/data/services/auth.service.ts](src/app/features/auth/data/services/auth.service.ts)):
+   - Handles all HTTP communication with backend
+   - Returns typed responses validated with Zod schemas
+   - Used by React Query mutations and queries
+
+**5. Protected Routes** ([src/app/features/auth/components/ProtectedRoute.tsx](src/app/features/auth/components/ProtectedRoute.tsx)):
    - Wraps routes requiring authentication
    - Redirects to `/auth` if no user session
+   - Shows loading state while checking auth
+
+**6. Features:**
+   - ✅ Auto-refresh tokens (Supabase)
+   - ✅ Session persistence across page reloads
+   - ✅ Automatic cache invalidation on logout
+   - ✅ Backend validation of all auth operations
+   - ✅ Welcome email on successful signup
+   - ✅ Proper redirect after logout to `/auth`
 
 ### Database Schema
 

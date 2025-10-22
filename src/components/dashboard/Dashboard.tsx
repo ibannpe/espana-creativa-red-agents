@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext';
 import { useNavigate } from 'react-router-dom';
 // import { useLogger } from '@/lib/logger';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 
 const Dashboard = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut } = useAuthContext();
   const navigate = useNavigate();
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
   // const logger = useLogger('Dashboard');
