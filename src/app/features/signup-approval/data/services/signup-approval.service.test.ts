@@ -51,6 +51,28 @@ describe('Signup Approval Service', () => {
       await expect(signupApprovalService.submitRequest(requestData)).rejects.toThrow('Email already exists')
     })
 
+    it('should extract error message from axios error response', async () => {
+      const requestData = {
+        email: 'invalid@email',
+        name: 'Test User'
+      }
+
+      const axiosError = {
+        isAxiosError: true,
+        response: {
+          status: 400,
+          data: {
+            error: 'Invalid email format'
+          }
+        },
+        message: 'Request failed with status code 400'
+      }
+
+      mockedAxios.post.mockRejectedValue(axiosError)
+
+      await expect(signupApprovalService.submitRequest(requestData)).rejects.toThrow('Invalid email format')
+    })
+
     it('should throw error on invalid response schema', async () => {
       const requestData = {
         email: 'test@example.com',
