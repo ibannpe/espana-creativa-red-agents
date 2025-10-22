@@ -11,6 +11,7 @@ import { createEmailRoutes } from './infrastructure/api/routes/email.routes'
 import { createConnectionsRoutes } from './infrastructure/api/routes/connections.routes'
 import { createOpportunitiesRoutes } from './infrastructure/api/routes/opportunities.routes'
 import { createMessagesRoutes } from './infrastructure/api/routes/messages.routes'
+import { createSignupApprovalRoutes } from './infrastructure/api/routes/signup-approval.routes'
 import { errorHandler } from './infrastructure/api/middleware/errorHandler'
 import { loggerMiddleware } from './infrastructure/api/middleware/logger.middleware'
 import { authMiddleware } from './infrastructure/api/middleware/auth.middleware'
@@ -93,6 +94,7 @@ app.post('/api/dev/logs', (req, res) => {
 // API Routes (Hexagonal Architecture)
 app.use('/api/auth', createAuthRoutes())
 app.use('/api/email', createEmailRoutes())
+app.use('/api/signup-approval', createSignupApprovalRoutes())
 
 // Protected routes (require authentication)
 app.use('/api/users', authMiddleware, createUsersRoutes())
