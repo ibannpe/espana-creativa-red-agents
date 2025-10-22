@@ -56,7 +56,8 @@
       "mcp__playwright__browser_snapshot",
       "Bash(echo:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(lsof:*)"
     ],
     "deny": [],
     "ask": []
