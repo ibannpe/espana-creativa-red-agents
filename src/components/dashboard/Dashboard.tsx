@@ -37,9 +37,16 @@ const Dashboard = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center">
-                <span className="text-lg font-bold text-primary-foreground">EC</span>
-              </div>
+              <img
+                src="/animacion-3-transparente.gif"
+                alt="España Creativa logo animado"
+                width="40"
+                height="40"
+                className="w-10 h-10 object-contain"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+              />
               <div>
                 <h1 className="text-xl font-bold text-foreground">España Creativa</h1>
                 <p className="text-sm text-muted-foreground">Red de emprendedores</p>
