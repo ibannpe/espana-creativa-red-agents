@@ -54,8 +54,8 @@ import { MarkMessagesAsReadUseCase } from '../../application/use-cases/messages/
 import { DeleteMessageUseCase } from '../../application/use-cases/messages/DeleteMessageUseCase'
 import { GetUnreadCountUseCase } from '../../application/use-cases/messages/GetUnreadCountUseCase'
 
-// Load environment variables
-dotenv.config()
+// Load environment variables (silent to avoid EPIPE errors)
+dotenv.config({ silent: true })
 
 export class Container {
   // Singletons

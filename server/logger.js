@@ -26,23 +26,31 @@ class ServerLogger {
     const timestamp = this.formatTimestamp();
     const dataStr = data ? `\nData: ${JSON.stringify(data, null, 2)}` : '';
     const logEntry = `[${timestamp}] [${source}] [${level.toUpperCase()}] ${message}${dataStr}\n`;
-    
+
     // Escribir a archivo
     fs.appendFileSync(this.logFile, logEntry);
-    
-    // También log a consola con colores
-    const colors = {
-      debug: '\x1b[36m', // cyan
-      info: '\x1b[34m',  // blue
-      warn: '\x1b[33m',  // yellow
-      error: '\x1b[31m', // red
-      reset: '\x1b[0m'
-    };
-    
-    const color = colors[level] || colors.reset;
-    console.log(`${color}[${source}] [${level.toUpperCase()}] ${message}${colors.reset}`);
-    if (data) {
-      console.log(`${color}Data:${colors.reset}`, data);
+
+    // También log a consola con colores (con manejo de EPIPE)
+    try {
+      const colors = {
+        debug: '\x1b[36m', // cyan
+        info: '\x1b[34m',  // blue
+        warn: '\x1b[33m',  // yellow
+        error: '\x1b[31m', // red
+        reset: '\x1b[0m'
+      };
+
+      const color = colors[level] || colors.reset;
+      console.log(`${color}[${source}] [${level.toUpperCase()}] ${message}${colors.reset}`);
+      if (data) {
+        console.log(`${color}Data:${colors.reset}`, data);
+      }
+    } catch (err) {
+      // Ignorar errores EPIPE cuando el stream se cierra
+      if (err.code !== 'EPIPE') {
+        // Re-lanzar si no es EPIPE
+        throw err;
+      }
     }
   }
 
