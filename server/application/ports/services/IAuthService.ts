@@ -51,4 +51,14 @@ export interface IAuthService {
    * Delete user from auth system
    */
   deleteUser(id: UserId): Promise<{ error: Error | null }>
+
+  /**
+   * Generate magic link for user signup (admin operation)
+   */
+  generateMagicLink(email: string): Promise<{ action_link: string } | null>
+
+  /**
+   * Check if email already exists in auth.users
+   */
+  checkEmailExists(email: string): Promise<boolean>
 }

@@ -162,4 +162,95 @@ export class ResendEmailService implements IEmailService {
       html
     })
   }
+
+  async sendAdminSignupNotification(email: Email, signup: any): Promise<EmailResult> {
+    const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').filter(e => e.trim())
+    const approveUrl = `${process.env.APP_URL || 'http://localhost:8080'}/admin/approve/${signup.approvalToken}`
+    const rejectUrl = `${process.env.APP_URL || 'http://localhost:8080'}/admin/reject/${signup.approvalToken}`
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head><meta charset="utf-8"></head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #ff5722;">Nueva solicitud de registro</h1>
+            <p><strong>Email:</strong> ${email.getValue()}</p>
+            <p><strong>Nombre:</strong> ${signup.name} ${signup.surname || ''}</p>
+            <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-ES')}</p>
+            <div style="margin: 30px 0; text-align: center;">
+              <a href="${approveUrl}" style="display: inline-block; margin: 0 10px; padding: 12px 24px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 6px;">Aprobar</a>
+              <a href="${rejectUrl}" style="display: inline-block; margin: 0 10px; padding: 12px 24px; background-color: #ef4444; color: white; text-decoration: none; border-radius: 6px;">Rechazar</a>
+            </div>
+          </div>
+        </body>
+      </html>
+    `
+
+    const results = await Promise.all(
+      adminEmails.map(adminEmail =>
+        this.resend.emails.send({
+          from: this.defaultFrom,
+          to: adminEmail.trim(),
+          subject: 'Nueva solicitud de registro - España Creativa',
+          html
+        })
+      )
+    )
+
+    return {
+      success: results.every(r => !r.error),
+      messageId: results[0]?.data?.id
+    }
+  }
+
+  async sendSignupApprovedEmail(email: Email, magicLink: string): Promise<EmailResult> {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head><meta charset="utf-8"></head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #22c55e;">¡Tu solicitud ha sido aprobada!</h1>
+            <p>¡Bienvenido/a a España Creativa Red!</p>
+            <p>Tu solicitud de registro ha sido aprobada. Haz clic en el botón para acceder a tu cuenta:</p>
+            <div style="margin: 30px 0; text-align: center;">
+              <a href="${magicLink}" style="display: inline-block; padding: 15px 30px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 6px; font-size: 16px;">Acceder a mi cuenta</a>
+            </div>
+            <p style="color: #666; font-size: 14px;">Este enlace es válido por 1 hora.</p>
+          </div>
+        </body>
+      </html>
+    `
+
+    return this.sendEmail({
+      to: email,
+      subject: '¡Tu cuenta ha sido aprobada! - España Creativa',
+      html
+    })
+  }
+
+  async sendSignupRejectedEmail(email: Email): Promise<EmailResult> {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head><meta charset="utf-8"></head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #ff5722;">Solicitud de registro - España Creativa</h1>
+            <p>Gracias por tu interés en España Creativa Red.</p>
+            <p>Lamentablemente, no podemos procesar tu solicitud de registro en este momento.</p>
+            <p>Si crees que esto es un error o tienes alguna pregunta, no dudes en contactarnos.</p>
+            <p>Saludos,<br><strong>El equipo de España Creativa</strong></p>
+          </div>
+        </body>
+      </html>
+    `
+
+    return this.sendEmail({
+      to: email,
+      subject: 'Solicitud de registro - España Creativa',
+      html
+    })
+  }
 }
