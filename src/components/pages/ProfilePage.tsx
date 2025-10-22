@@ -1,11 +1,11 @@
 import { Navigation } from '@/components/layout/Navigation'
 import { ProfileForm } from '@/components/profile/ProfileForm'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 import { User, Settings } from 'lucide-react'
 
 export function ProfilePage() {
-  const { user } = useAuth()
+  const { user } = useAuthContext()
 
   if (!user) {
     return <div>Cargando...</div>

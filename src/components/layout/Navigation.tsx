@@ -2,14 +2,14 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 import { 
   Users, 
   MessageSquare, 
@@ -22,14 +22,12 @@ import {
 } from 'lucide-react'
 
 export function Navigation() {
-  const { user, signOut } = useAuth()
+  const { user, signOut, isSigningOut } = useAuthContext()
   const location = useLocation()
   const [loading, setLoading] = useState(false)
 
-  const handleSignOut = async () => {
-    setLoading(true)
-    await signOut()
-    setLoading(false)
+  const handleSignOut = () => {
+    signOut()
   }
 
   const getInitials = (name: string | null) => {
@@ -129,9 +127,9 @@ export function Navigation() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-2" />
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={handleSignOut}
-                  disabled={loading}
+                  disabled={isSigningOut}
                   className="flex items-center rounded-md p-2 text-red-600 hover:bg-red-50 focus:bg-red-50"
                 >
                   <LogOut className="mr-3 h-4 w-4" />

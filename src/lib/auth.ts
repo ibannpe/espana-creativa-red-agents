@@ -1,3 +1,22 @@
+/**
+ * @deprecated These auth functions are deprecated and will be removed in a future version.
+ *
+ * **PLEASE USE authService INSTEAD**
+ *
+ * Migration guide:
+ * ```typescript
+ * // OLD (deprecated)
+ * import { signIn, signOut } from '@/lib/auth'
+ *
+ * // NEW (recommended)
+ * import { authService } from '@/app/features/auth/data/services/auth.service'
+ * // Use within React Query hooks via useAuthContext
+ * ```
+ *
+ * @see src/app/features/auth/data/services/auth.service.ts
+ * @see src/app/features/auth/hooks/useAuthContext.tsx
+ */
+
 import { supabase } from './supabase'
 import { User, Role } from '@/types'
 

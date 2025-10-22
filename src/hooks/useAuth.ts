@@ -1,3 +1,28 @@
+/**
+ * @deprecated This hook is deprecated and will be removed in a future version.
+ *
+ * **PLEASE USE useAuthContext INSTEAD**
+ *
+ * Migration guide:
+ * ```typescript
+ * // OLD (deprecated)
+ * import { useAuth } from '@/hooks/useAuth'
+ * const { user, loading, signIn, signOut, signUp } = useAuth()
+ *
+ * // NEW (recommended)
+ * import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
+ * const { user, isLoading, signIn, signOut, signUp } = useAuthContext()
+ * ```
+ *
+ * Key differences:
+ * - `loading` is now `isLoading`
+ * - Better integration with React Query
+ * - Automatic cache management
+ * - Backend API integration
+ *
+ * @see src/app/features/auth/hooks/useAuthContext.tsx
+ */
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Session } from '@supabase/supabase-js';
