@@ -1,15 +1,16 @@
-// ABOUTME: Authentication page with login and signup tabs
-// ABOUTME: Uses new useAuthContext hook from feature-based architecture with React Query
+// ABOUTME: Authentication page with login and request access tabs
+// ABOUTME: Uses new useAuthContext hook from feature-based architecture with React Query and admin-approval workflow
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext';
+import { RequestAccessForm } from '@/app/features/signup-approval/components/RequestAccessForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Mail, Lock, User } from 'lucide-react';
+import { Loader2, Mail, Lock } from 'lucide-react';
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -31,14 +32,6 @@ const AuthPage = () => {
     password: ''
   });
 
-  const [signupForm, setSignupForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
-
-  const [passwordMismatch, setPasswordMismatch] = useState(false);
 
   // Navigate to dashboard on successful authentication
   useEffect(() => {
@@ -52,21 +45,6 @@ const AuthPage = () => {
     signIn({ email: loginForm.email, password: loginForm.password });
   };
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (signupForm.password !== signupForm.confirmPassword) {
-      setPasswordMismatch(true);
-      return;
-    }
-
-    setPasswordMismatch(false);
-    signUp({
-      email: signupForm.email,
-      password: signupForm.password,
-      name: signupForm.name
-    });
-  };
 
   if (isLoading) {
     return (
@@ -100,7 +78,7 @@ const AuthPage = () => {
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
-                <TabsTrigger value="signup">Registrarse</TabsTrigger>
+                <TabsTrigger value="request">Solicitar Acceso</TabsTrigger>
               </TabsList>
               
               <TabsContent value="login" className="space-y-4 mt-4">
@@ -152,92 +130,8 @@ const AuthPage = () => {
                 </form>
               </TabsContent>
               
-              <TabsContent value="signup" className="space-y-4 mt-4">
-                <form onSubmit={handleSignup} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-name">Nombre completo</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="signup-name"
-                        type="text"
-                        placeholder="Tu nombre"
-                        value={signupForm.name}
-                        onChange={(e) => setSignupForm({ ...signupForm, name: e.target.value })}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="signup-email"
-                        type="email"
-                        placeholder="tu@email.com"
-                        value={signupForm.email}
-                        onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password">Contraseña</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="signup-password"
-                        type="password"
-                        placeholder="••••••••"
-                        value={signupForm.password}
-                        onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })}
-                        className="pl-10"
-                        minLength={6}
-                        required
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-confirm-password">Confirmar contraseña</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="signup-confirm-password"
-                        type="password"
-                        placeholder="••••••••"
-                        value={signupForm.confirmPassword}
-                        onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {passwordMismatch && (
-                    <div className="text-sm text-destructive">
-                      Las contraseñas no coinciden
-                    </div>
-                  )}
-
-                  {signUpError && (
-                    <div className="text-sm text-destructive">
-                      {signUpError.message || 'Error al crear cuenta'}
-                    </div>
-                  )}
-
-                  <Button type="submit" className="w-full h-11" disabled={isSigningUp}>
-                    {isSigningUp ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : null}
-                    Crear Cuenta
-                  </Button>
-                </form>
+              <TabsContent value="request" className="mt-4">
+                <RequestAccessForm />
               </TabsContent>
             </Tabs>
           </CardContent>

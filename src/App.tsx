@@ -1,10 +1,12 @@
 // ABOUTME: Main application component with routing and global providers
-// ABOUTME: Uses new feature-based architecture with React Query and AuthContext
+// ABOUTME: Uses new feature-based architecture with React Query, AuthContext, and admin-approval signup
 
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthPage } from '@/components/auth/AuthPage'
 import { ProtectedRoute } from '@/app/features/auth/components/ProtectedRoute'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
+import { PendingApprovalPage } from '@/app/features/signup-approval/components/PendingApprovalPage'
+import { AdminPendingList } from '@/app/features/signup-approval/components/AdminPendingList'
 import Dashboard from '@/components/dashboard/Dashboard'
 import { NetworkPage } from '@/components/pages/NetworkPage'
 import { MessagesPage } from '@/components/pages/MessagesPage'
@@ -34,6 +36,22 @@ function App() {
         <Route
           path="/auth"
           element={!user ? <AuthPage /> : <Navigate to="/dashboard" />}
+        />
+        <Route
+          path="/auth/pending"
+          element={<PendingApprovalPage />}
+        />
+        <Route
+          path="/admin/pending-signups"
+          element={
+            <ProtectedRoute>
+              <div className="min-h-screen bg-gray-50 p-8">
+                <div className="max-w-7xl mx-auto">
+                  <AdminPendingList />
+                </div>
+              </div>
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/dashboard"
