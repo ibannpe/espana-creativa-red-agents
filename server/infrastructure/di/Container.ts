@@ -9,16 +9,22 @@ import { SupabaseUserRepository } from '../adapters/repositories/SupabaseUserRep
 import { SupabaseConnectionRepository } from '../adapters/repositories/SupabaseConnectionRepository'
 import { SupabaseOpportunityRepository } from '../adapters/repositories/SupabaseOpportunityRepository'
 import { SupabaseMessageRepository } from '../adapters/repositories/SupabaseMessageRepository'
+import { SupabasePendingSignupRepository } from '../adapters/repositories/SupabasePendingSignupRepository'
 import { IUserRepository } from '../../application/ports/repositories/IUserRepository'
 import { ConnectionRepository } from '../../application/ports/ConnectionRepository'
 import { OpportunityRepository } from '../../application/ports/OpportunityRepository'
 import { MessageRepository } from '../../application/ports/MessageRepository'
+import { IPendingSignupRepository } from '../../application/ports/IPendingSignupRepository'
 
 // Services
 import { SupabaseAuthService } from '../adapters/services/SupabaseAuthService'
 import { ResendEmailService } from '../adapters/services/ResendEmailService'
+import { RateLimitService } from '../adapters/services/RateLimitService'
+import { TokenService } from '../adapters/services/TokenService'
 import { IAuthService } from '../../application/ports/services/IAuthService'
 import { IEmailService } from '../../application/ports/services/IEmailService'
+import { IRateLimitService } from '../../application/ports/IRateLimitService'
+import { ITokenService } from '../../application/ports/ITokenService'
 
 // Use Cases - Auth
 import { SignUpUseCase } from '../../application/use-cases/auth/SignUpUseCase'
@@ -54,6 +60,12 @@ import { MarkMessagesAsReadUseCase } from '../../application/use-cases/messages/
 import { DeleteMessageUseCase } from '../../application/use-cases/messages/DeleteMessageUseCase'
 import { GetUnreadCountUseCase } from '../../application/use-cases/messages/GetUnreadCountUseCase'
 
+// Use Cases - Signup Approval
+import { SubmitSignupRequestUseCase } from '../../application/use-cases/signup-approval/SubmitSignupRequestUseCase'
+import { ApproveSignupUseCase } from '../../application/use-cases/signup-approval/ApproveSignupUseCase'
+import { RejectSignupUseCase } from '../../application/use-cases/signup-approval/RejectSignupUseCase'
+import { GetPendingSignupsUseCase } from '../../application/use-cases/signup-approval/GetPendingSignupsUseCase'
+
 // Load environment variables (silent to avoid EPIPE errors)
 dotenv.config({ silent: true })
 
@@ -63,8 +75,11 @@ export class Container {
   private static connectionRepository: ConnectionRepository
   private static opportunityRepository: OpportunityRepository
   private static messageRepository: MessageRepository
+  private static pendingSignupRepository: IPendingSignupRepository
   private static authService: IAuthService
   private static emailService: IEmailService
+  private static rateLimitService: IRateLimitService
+  private static tokenService: ITokenService
 
   // Use Cases - Auth
   private static signUpUseCase: SignUpUseCase
@@ -100,6 +115,12 @@ export class Container {
   private static deleteMessageUseCase: DeleteMessageUseCase
   private static getUnreadCountUseCase: GetUnreadCountUseCase
 
+  // Use Cases - Signup Approval
+  private static submitSignupRequestUseCase: SubmitSignupRequestUseCase
+  private static approveSignupUseCase: ApproveSignupUseCase
+  private static rejectSignupUseCase: RejectSignupUseCase
+  private static getPendingSignupsUseCase: GetPendingSignupsUseCase
+
   // Initialize all dependencies
   static initialize() {
     // Create Supabase client
@@ -117,6 +138,7 @@ export class Container {
     this.connectionRepository = new SupabaseConnectionRepository(supabase)
     this.opportunityRepository = new SupabaseOpportunityRepository(supabase)
     this.messageRepository = new SupabaseMessageRepository(supabase)
+    this.pendingSignupRepository = new SupabasePendingSignupRepository(supabase)
 
     // Initialize services
     this.authService = new SupabaseAuthService(supabase)
@@ -126,6 +148,8 @@ export class Container {
       console.warn('RESEND_API_KEY not found, email service will fail')
     }
     this.emailService = new ResendEmailService(resendApiKey || '')
+    this.rateLimitService = new RateLimitService(supabase)
+    this.tokenService = new TokenService()
 
     // Initialize use cases
     this.signUpUseCase = new SignUpUseCase(
@@ -230,6 +254,29 @@ export class Container {
 
     this.getUnreadCountUseCase = new GetUnreadCountUseCase(
       this.messageRepository
+    )
+
+    // Initialize Signup Approval use cases
+    this.submitSignupRequestUseCase = new SubmitSignupRequestUseCase(
+      this.pendingSignupRepository,
+      this.rateLimitService,
+      this.emailService,
+      this.authService
+    )
+
+    this.approveSignupUseCase = new ApproveSignupUseCase(
+      this.pendingSignupRepository,
+      this.authService,
+      this.emailService
+    )
+
+    this.rejectSignupUseCase = new RejectSignupUseCase(
+      this.pendingSignupRepository,
+      this.emailService
+    )
+
+    this.getPendingSignupsUseCase = new GetPendingSignupsUseCase(
+      this.pendingSignupRepository
     )
 
     console.log('✅ DI Container initialized successfully')
@@ -348,5 +395,22 @@ export class Container {
 
   static getGetUnreadCountUseCase(): GetUnreadCountUseCase {
     return this.getUnreadCountUseCase
+  }
+
+  // Getters for use cases - Signup Approval
+  static getSubmitSignupRequestUseCase(): SubmitSignupRequestUseCase {
+    return this.submitSignupRequestUseCase
+  }
+
+  static getApproveSignupUseCase(): ApproveSignupUseCase {
+    return this.approveSignupUseCase
+  }
+
+  static getRejectSignupUseCase(): RejectSignupUseCase {
+    return this.rejectSignupUseCase
+  }
+
+  static getGetPendingSignupsUseCase(): GetPendingSignupsUseCase {
+    return this.getPendingSignupsUseCase
   }
 }
