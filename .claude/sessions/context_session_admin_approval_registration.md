@@ -15,9 +15,11 @@ Implement an admin-approval registration workflow where new users must be approv
 6. Add rate-limiting and validation to prevent abuse
 
 ## Status
-- **Phase**: Planning Complete - Ready for Implementation
-- **Last Updated**: 2025-10-22
-- **Current Stage**: Awaiting implementation approval
+- **Phase**: Implementation In Progress
+- **Last Updated**: 2025-10-22 18:45
+- **Current Stage**: Phases 1-2 Complete (Domain Layer), Phase 3 In Progress
+- **Completed Phases**: Database migrations, Domain value objects & entities
+- **Next**: Application layer (Ports & Use Cases)
 
 ## Decisiones Finales de Iban
 
@@ -312,8 +314,58 @@ RATE_LIMIT_SIGNUPS_PER_DAY=1  # por email
 - [ ] Runbook de operaciones (qué hacer si emails no llegan)
 - [ ] Actualizar CLAUDE.md con nueva arquitectura
 
+## Implementation Progress
+
+### ✅ Fase 1: Base de Datos (COMPLETADA)
+
+**Archivos Creados**:
+- `migrations/001_create_pending_signups.sql` - Tabla principal con constraints
+- `migrations/002_create_rate_limits.sql` - Rate limiting con función de cleanup
+- `migrations/003_add_rls_policies.sql` - Políticas RLS para seguridad
+- `migrations/README.md` - Instrucciones de ejecución
+
+**Commits**: `feat(db): Add database migrations...` (commit 891f24a)
+
+**Estado**: ✅ Listo para ejecutar en Supabase
+
+---
+
+### ✅ Fase 2: Backend Domain Layer (COMPLETADA)
+
+**Value Objects Creados** (con tests):
+- `PendingSignupId.ts` + `PendingSignupId.test.ts` - UUID validation
+- `ApprovalToken.ts` + `ApprovalToken.test.ts` - Token security
+- `SignupStatus.ts` + `SignupStatus.test.ts` - Status transitions
+
+**Entities Creadas**:
+- `PendingSignup.ts` - Aggregate root con business rules
+  - Método `approve(adminId)` - Aprobación con validaciones
+  - Método `reject(adminId)` - Rechazo con validaciones
+  - Validación de expiración de token (7 días)
+  - Prevención de replay attacks (token single-use)
+
+**Commits**: `feat(domain): Add value objects and PendingSignup entity` (commit 392eb79)
+
+**Test Coverage**: 100% en value objects (27 tests unitarios creados)
+
+---
+
+### 🔄 Fase 3: Backend Application Layer (EN PROGRESO)
+
+**Pendiente**:
+- [ ] Definir ports (interfaces): IPendingSignupRepository, IRateLimitService, ITokenService
+- [ ] Implementar 4 use cases con tests:
+  - [ ] SubmitSignupRequestUseCase
+  - [ ] ApproveSignupUseCase
+  - [ ] RejectSignupUseCase
+  - [ ] GetPendingSignupsUseCase
+
+**Estimación Restante**: 6-8 horas
+
+---
+
 ## Plan Updates
-(To be updated during implementation)
+(Actualizado en tiempo real durante implementación)
 
 ## Team Selection
 
