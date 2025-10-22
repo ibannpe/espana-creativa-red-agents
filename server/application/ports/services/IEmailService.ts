@@ -41,4 +41,19 @@ export interface IEmailService {
    * Send new opportunity notification
    */
   sendNewOpportunityEmail(to: Email, name: string, opportunityTitle: string): Promise<EmailResult>
+
+  /**
+   * Send admin notification when new signup request submitted
+   */
+  sendAdminSignupNotification(email: Email, signup: any): Promise<EmailResult>
+
+  /**
+   * Send approval email to user with magic link
+   */
+  sendSignupApprovedEmail(email: Email, magicLink: string): Promise<EmailResult>
+
+  /**
+   * Send rejection email to user
+   */
+  sendSignupRejectedEmail(email: Email): Promise<EmailResult>
 }

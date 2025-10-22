@@ -109,4 +109,31 @@ export class SupabaseAuthService implements IAuthService {
     const { error } = await this.supabase.auth.admin.deleteUser(id.getValue())
     return { error: error || null }
   }
+
+  async generateMagicLink(email: string): Promise<{ action_link: string } | null> {
+    try {
+      const { data, error } = await this.supabase.auth.admin.generateLink({
+        type: 'magiclink',
+        email
+      })
+
+      if (error || !data) {
+        throw error
+      }
+
+      return { action_link: data.properties?.action_link || '' }
+    } catch (error) {
+      console.error('Failed to generate magic link:', error)
+      return null
+    }
+  }
+
+  async checkEmailExists(email: string): Promise<boolean> {
+    try {
+      const { data } = await this.supabase.auth.admin.listUsers()
+      return data.users.some(user => user.email === email)
+    } catch (error) {
+      return false
+    }
+  }
 }
