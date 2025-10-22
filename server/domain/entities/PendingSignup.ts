@@ -1,6 +1,7 @@
 // ABOUTME: Aggregate root for pending signup approval workflow
 // ABOUTME: Enforces business rules for signup approval, token usage, and status transitions
 
+import { v4 as uuidv4 } from 'uuid'
 import { PendingSignupId } from '../value-objects/PendingSignupId'
 import { ApprovalToken } from '../value-objects/ApprovalToken'
 import { SignupStatus } from '../value-objects/SignupStatus'
@@ -43,8 +44,6 @@ export class PendingSignup {
   ) {}
 
   static create(props: PendingSignupProps): PendingSignup {
-    const { v4: uuidv4 } = require('uuid')
-
     const id = props.id || PendingSignupId.create(uuidv4())!
     const approvalToken = props.approvalToken || ApprovalToken.create(uuidv4())!
     const status = props.status || SignupStatus.pending()
