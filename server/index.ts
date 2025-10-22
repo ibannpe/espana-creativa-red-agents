@@ -16,8 +16,8 @@ import { loggerMiddleware } from './infrastructure/api/middleware/logger.middlew
 import { authMiddleware } from './infrastructure/api/middleware/auth.middleware'
 import { serverLogger } from './logger.js'
 
-// Load environment variables
-dotenv.config()
+// Load environment variables (silent to avoid EPIPE errors)
+dotenv.config({ silent: true })
 
 const app = express()
 const PORT = process.env.PORT || 3001
