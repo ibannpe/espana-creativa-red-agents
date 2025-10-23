@@ -94,7 +94,7 @@ export class PendingSignup {
       null,
       this.ipAddress,
       this.userAgent,
-      new Date()
+      null // Don't mark token as used yet - only when password is set
     )
   }
 

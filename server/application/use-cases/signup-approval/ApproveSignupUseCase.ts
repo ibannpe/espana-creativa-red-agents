@@ -1,5 +1,5 @@
 // ABOUTME: Use case for approving pending signup requests
-// ABOUTME: Validates token, creates auth user with magic link, sends approval email
+// ABOUTME: Validates token, approves signup, sends activation email with password setup link
 
 import { ApprovalToken } from '../../../domain/value-objects/ApprovalToken'
 import { UserId } from '../../../domain/value-objects/UserId'
@@ -14,7 +14,7 @@ interface ApproveSignupDTO {
 
 interface ApproveSignupResult {
   success: boolean
-  magicLink?: string
+  activationLink?: string
   error?: string
 }
 
@@ -53,22 +53,12 @@ export class ApproveSignupUseCase {
       return { success: false, error: 'Signup request already processed' }
     }
 
-    // Validate admin ID
-    const adminId = UserId.create(dto.adminId)
+    // Validate admin ID (use system default if not provided)
+    const SYSTEM_ADMIN_ID = '00000000-0000-0000-0000-000000000000'
+    const adminIdValue = dto.adminId || SYSTEM_ADMIN_ID
+    const adminId = UserId.create(adminIdValue)
     if (!adminId) {
       return { success: false, error: 'Invalid admin ID' }
-    }
-
-    // Generate magic link for user
-    let magicLink: string
-    try {
-      const result = await this.authService.generateMagicLink(pendingSignup.getEmail().getValue())
-      if (!result || !result.action_link) {
-        throw new Error('Failed to generate magic link')
-      }
-      magicLink = result.action_link
-    } catch (error) {
-      return { success: false, error: 'Failed to create user account' }
     }
 
     // Approve signup
@@ -78,19 +68,21 @@ export class ApproveSignupUseCase {
     try {
       await this.pendingSignupRepository.update(approvedSignup)
     } catch (error) {
-      // Rollback: delete auth user if repository update fails
-      // Note: In production, implement proper transaction handling
       return { success: false, error: 'Failed to update signup status' }
     }
 
+    // Generate activation link using approval token
+    const APP_URL = process.env.APP_URL || 'http://localhost:8080'
+    const activationLink = `${APP_URL}/auth/set-password/${pendingSignup.getApprovalToken().getValue()}`
+
     // Send approval email to user (fire-and-forget)
-    this.emailService.sendSignupApprovedEmail(pendingSignup.getEmail(), magicLink).catch(err => {
+    this.emailService.sendSignupApprovedEmail(pendingSignup.getEmail(), activationLink).catch(err => {
       console.error('Failed to send approval email:', err)
     })
 
     return {
       success: true,
-      magicLink
+      activationLink
     }
   }
 }

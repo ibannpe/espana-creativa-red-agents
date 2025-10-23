@@ -3,10 +3,12 @@
 
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthPage } from '@/components/auth/AuthPage'
+import { SetPasswordPage } from '@/components/auth/SetPasswordPage'
 import { ProtectedRoute } from '@/app/features/auth/components/ProtectedRoute'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 import { PendingApprovalPage } from '@/app/features/signup-approval/components/PendingApprovalPage'
 import { AdminPendingList } from '@/app/features/signup-approval/components/AdminPendingList'
+import { ApprovalActionPage } from '@/app/features/signup-approval/components/ApprovalActionPage'
 import Dashboard from '@/components/dashboard/Dashboard'
 import { NetworkPage } from '@/components/pages/NetworkPage'
 import { MessagesPage } from '@/components/pages/MessagesPage'
@@ -40,6 +42,14 @@ function App() {
         <Route
           path="/auth/pending"
           element={<PendingApprovalPage />}
+        />
+        <Route
+          path="/auth/set-password/:token"
+          element={<SetPasswordPage />}
+        />
+        <Route
+          path="/admin/signup-approval/:action/:token"
+          element={<ApprovalActionPage />}
         />
         <Route
           path="/admin/pending-signups"

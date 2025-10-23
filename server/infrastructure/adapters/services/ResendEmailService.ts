@@ -13,7 +13,7 @@ export class ResendEmailService implements IEmailService {
   private readonly resend: Resend
   private readonly defaultFrom: string
 
-  constructor(apiKey: string, defaultFrom: string = 'España Creativa <noreply@espanacreativa.com>') {
+  constructor(apiKey: string, defaultFrom: string = 'España Creativa <send@infinitofit.com>') {
     this.resend = new Resend(apiKey)
     this.defaultFrom = defaultFrom
   }
@@ -165,8 +165,8 @@ export class ResendEmailService implements IEmailService {
 
   async sendAdminSignupNotification(email: Email, signup: any): Promise<EmailResult> {
     const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').filter(e => e.trim())
-    const approveUrl = `${process.env.APP_URL || 'http://localhost:8080'}/admin/approve/${signup.approvalToken}`
-    const rejectUrl = `${process.env.APP_URL || 'http://localhost:8080'}/admin/reject/${signup.approvalToken}`
+    const approveUrl = `${process.env.APP_URL || 'http://localhost:8080'}/admin/signup-approval/approve/${signup.approvalToken}`
+    const rejectUrl = `${process.env.APP_URL || 'http://localhost:8080'}/admin/signup-approval/reject/${signup.approvalToken}`
 
     const html = `
       <!DOCTYPE html>
@@ -204,7 +204,7 @@ export class ResendEmailService implements IEmailService {
     }
   }
 
-  async sendSignupApprovedEmail(email: Email, magicLink: string): Promise<EmailResult> {
+  async sendSignupApprovedEmail(email: Email, activationLink: string): Promise<EmailResult> {
     const html = `
       <!DOCTYPE html>
       <html>
@@ -213,11 +213,11 @@ export class ResendEmailService implements IEmailService {
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
             <h1 style="color: #22c55e;">¡Tu solicitud ha sido aprobada!</h1>
             <p>¡Bienvenido/a a España Creativa Red!</p>
-            <p>Tu solicitud de registro ha sido aprobada. Haz clic en el botón para acceder a tu cuenta:</p>
+            <p>Tu solicitud de registro ha sido aprobada. Para completar tu registro, haz clic en el botón y crea tu contraseña:</p>
             <div style="margin: 30px 0; text-align: center;">
-              <a href="${magicLink}" style="display: inline-block; padding: 15px 30px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 6px; font-size: 16px;">Acceder a mi cuenta</a>
+              <a href="${activationLink}" style="display: inline-block; padding: 15px 30px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 6px; font-size: 16px;">Acceder a mi cuenta</a>
             </div>
-            <p style="color: #666; font-size: 14px;">Este enlace es válido por 1 hora.</p>
+            <p style="color: #666; font-size: 14px;">Este enlace es válido por 7 días.</p>
           </div>
         </body>
       </html>

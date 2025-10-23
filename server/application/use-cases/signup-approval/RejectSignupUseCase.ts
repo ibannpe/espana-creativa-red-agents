@@ -45,8 +45,10 @@ export class RejectSignupUseCase {
       return { success: false, error: 'Signup request already processed' }
     }
 
-    // Validate admin ID
-    const adminId = UserId.create(dto.adminId)
+    // Validate admin ID (use system default if not provided)
+    const SYSTEM_ADMIN_ID = '00000000-0000-0000-0000-000000000000'
+    const adminIdValue = dto.adminId || SYSTEM_ADMIN_ID
+    const adminId = UserId.create(adminIdValue)
     if (!adminId) {
       return { success: false, error: 'Invalid admin ID' }
     }
