@@ -62,9 +62,9 @@ export const signupApprovalService = {
    */
   async approveSignup(token: string, adminId?: string): Promise<ApproveRejectResponse> {
     try {
-      const response = await axios.post(`${API_BASE_URL}/approve/${token}`, {
-        adminId: adminId || 'system'
-      })
+      const response = await axios.post(`${API_BASE_URL}/approve/${token}`,
+        adminId ? { adminId } : {}
+      )
       return approveRejectResponseSchema.parse(response.data)
     } catch (error) {
       throw new Error(extractErrorMessage(error))
@@ -76,9 +76,9 @@ export const signupApprovalService = {
    */
   async rejectSignup(token: string, adminId?: string): Promise<ApproveRejectResponse> {
     try {
-      const response = await axios.post(`${API_BASE_URL}/reject/${token}`, {
-        adminId: adminId || 'system'
-      })
+      const response = await axios.post(`${API_BASE_URL}/reject/${token}`,
+        adminId ? { adminId } : {}
+      )
       return approveRejectResponseSchema.parse(response.data)
     } catch (error) {
       throw new Error(extractErrorMessage(error))

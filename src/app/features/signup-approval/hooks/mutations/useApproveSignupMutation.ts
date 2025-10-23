@@ -24,6 +24,7 @@ export function useApproveSignupMutation() {
 
   return {
     action: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
     isLoading: mutation.isPending,
     error: mutation.error,
     isSuccess: mutation.isSuccess,

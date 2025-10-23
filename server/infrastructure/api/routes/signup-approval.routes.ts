@@ -4,6 +4,9 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { Container } from '../../di/Container'
 
+// System admin ID used when no authenticated admin is available
+const SYSTEM_ADMIN_ID = '00000000-0000-0000-0000-000000000000'
+
 export const createSignupApprovalRoutes = (): Router => {
   const router = Router()
 
@@ -47,7 +50,7 @@ export const createSignupApprovalRoutes = (): Router => {
   router.post('/approve/:token', async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { token } = req.params
-      const adminId = req.body.adminId || 'system' // In production, get from auth context
+      const adminId = req.body.adminId || SYSTEM_ADMIN_ID // In production, get from auth context
 
       const useCase = Container.getApproveSignupUseCase()
       const result = await useCase.execute({ token, adminId })
@@ -71,7 +74,7 @@ export const createSignupApprovalRoutes = (): Router => {
   router.post('/reject/:token', async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { token } = req.params
-      const adminId = req.body.adminId || 'system'
+      const adminId = req.body.adminId || SYSTEM_ADMIN_ID
 
       const useCase = Container.getRejectSignupUseCase()
       const result = await useCase.execute({ token, adminId })
