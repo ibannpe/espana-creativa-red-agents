@@ -401,6 +401,9 @@ Reglas
 	•	Antes de comenzar cualquier trabajo, se debe revisar el archivo .claude/sessions/context_session_{feature_name}.md y los archivos .claude/doc/{feature_name}/*.
 	•	El archivo de sesión debe contener el contexto y el plan general, actualizado continuamente por los subagentes.
 	•	Al finalizar cada fase o tarea, debes actualizar el archivo de contexto con toda la información del trabajo realizado.
+	•	Responde siempre en español
+
+
 
 Sub-Agentes
 
