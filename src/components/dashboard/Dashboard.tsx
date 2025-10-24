@@ -44,7 +44,7 @@ const Dashboard = () => {
                 height="40"
                 className="w-10 h-10 object-contain"
                 loading="eager"
-                fetchPriority="high"
+                fetchpriority="high"
                 decoding="async"
               />
               <div>
