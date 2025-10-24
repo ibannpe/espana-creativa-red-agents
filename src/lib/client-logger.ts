@@ -208,7 +208,15 @@ const clientLogger = new ClientLogger();
 // Capturar errores globales también
 if (clientLogger['isDevelopment']) {
   window.addEventListener('error', (event) => {
-    clientLogger.log('error', 'WINDOW', `Uncaught error: ${event.error?.message || event.message}`, {
+    const errorMessage = event.error?.message || event.message || '';
+
+    // Filtrar errores de extensiones del navegador - no los logueamos
+    if (clientLogger['shouldSkipLog'](errorMessage) ||
+        clientLogger['shouldSkipLog'](event.filename || '')) {
+      return; // Skip logging this error
+    }
+
+    clientLogger.log('error', 'WINDOW', `Uncaught error: ${errorMessage}`, {
       filename: event.filename,
       lineno: event.lineno,
       colno: event.colno,
@@ -217,7 +225,14 @@ if (clientLogger['isDevelopment']) {
   });
 
   window.addEventListener('unhandledrejection', (event) => {
-    clientLogger.log('error', 'PROMISE', `Unhandled promise rejection: ${event.reason}`, {
+    const reason = String(event.reason || '');
+
+    // Filtrar errores de extensiones del navegador - no los logueamos
+    if (clientLogger['shouldSkipLog'](reason)) {
+      return; // Skip logging this error
+    }
+
+    clientLogger.log('error', 'PROMISE', `Unhandled promise rejection: ${reason}`, {
       reason: event.reason,
       promise: event.promise
     });

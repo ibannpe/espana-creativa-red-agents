@@ -58,7 +58,8 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(lsof:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(xargs kill -9)"
     ],
     "deny": [],
     "ask": []
