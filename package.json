@@ -16,6 +16,7 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:admin-email": "node test-admin-email.mjs",
     "clean-db": "node scripts/clean-test-data.js",
     "clean-dev": "node scripts/clean-dev-environment.js"
   },
