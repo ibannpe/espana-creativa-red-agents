@@ -6,7 +6,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://YOUR-RAILWAY-APP-URL.railway.app/api/:path*"
+      "destination": "https://espana-creativa-red-agents-production.up.railway.app//api/:path*"
     }
   ],
   "headers": [
@@ -19,7 +19,7 @@
         },
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://YOUR-RAILWAY-APP-URL.railway.app"
+          "value": "https://espana-creativa-red-agents-production.up.railway.app/"
         },
         {
           "key": "Access-Control-Allow-Methods",
