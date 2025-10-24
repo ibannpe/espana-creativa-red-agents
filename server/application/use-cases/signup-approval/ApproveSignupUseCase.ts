@@ -76,9 +76,22 @@ export class ApproveSignupUseCase {
     const activationLink = `${APP_URL}/auth/set-password/${pendingSignup.getApprovalToken().getValue()}`
 
     // Send approval email to user (fire-and-forget)
-    this.emailService.sendSignupApprovedEmail(pendingSignup.getEmail(), activationLink).catch(err => {
-      console.error('Failed to send approval email:', err)
-    })
+    console.log('📧 [ApproveSignupUseCase] Sending approval email to:', pendingSignup.getEmail().getValue())
+    console.log('📧 [ApproveSignupUseCase] Activation link:', activationLink)
+    console.log('📧 [ApproveSignupUseCase] APP_URL from env:', process.env.APP_URL)
+
+    this.emailService.sendSignupApprovedEmail(pendingSignup.getEmail(), activationLink)
+      .then(result => {
+        console.log('✅ [ApproveSignupUseCase] Email sent successfully:', result)
+      })
+      .catch(err => {
+        console.error('❌ [ApproveSignupUseCase] Failed to send approval email:', err)
+        console.error('❌ [ApproveSignupUseCase] Error details:', {
+          message: err.message,
+          stack: err.stack,
+          name: err.name
+        })
+      })
 
     return {
       success: true,

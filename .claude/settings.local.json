@@ -59,7 +59,10 @@
       "Bash(git commit:*)",
       "Bash(lsof:*)",
       "Bash(pkill:*)",
-      "Bash(xargs kill -9)"
+      "Bash(xargs kill -9)",
+      "Read(//tmp/**)",
+      "Bash(node test-email.mjs:*)",
+      "Bash(node test-approval-email.mjs:*)"
     ],
     "deny": [],
     "ask": []

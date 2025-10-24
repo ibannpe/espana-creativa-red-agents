@@ -205,6 +205,10 @@ export class ResendEmailService implements IEmailService {
   }
 
   async sendSignupApprovedEmail(email: Email, activationLink: string): Promise<EmailResult> {
+    console.log('📧 [ResendEmailService] sendSignupApprovedEmail called')
+    console.log('📧 [ResendEmailService] To:', email.getValue())
+    console.log('📧 [ResendEmailService] Activation link:', activationLink)
+
     const html = `
       <!DOCTYPE html>
       <html>
@@ -223,11 +227,14 @@ export class ResendEmailService implements IEmailService {
       </html>
     `
 
-    return this.sendEmail({
+    const result = await this.sendEmail({
       to: email,
       subject: '¡Tu cuenta ha sido aprobada! - España Creativa',
       html
     })
+
+    console.log('📧 [ResendEmailService] Result:', result)
+    return result
   }
 
   async sendSignupRejectedEmail(email: Email): Promise<EmailResult> {
