@@ -17,8 +17,8 @@ import { loggerMiddleware } from './infrastructure/api/middleware/logger.middlew
 import { authMiddleware } from './infrastructure/api/middleware/auth.middleware'
 import { serverLogger } from './logger.js'
 
-// Load environment variables (silent to avoid EPIPE errors)
-dotenv.config({ silent: true })
+// Load environment variables
+dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -53,21 +53,27 @@ app.use(cors({
 // Body parsing middleware
 app.use(express.json())
 
-// Logger middleware
-app.use(loggerMiddleware)
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({
-    status: 'OK',
-    timestamp: new Date().toISOString(),
-    architecture: 'hexagonal'
-  })
+// Special middleware for sendBeacon calls (text/plain content-type)
+app.use('/api/dev/logs', express.text({ type: 'text/plain' }), (req, _res, next) => {
+  // If body is a string (from sendBeacon), try to parse it as JSON
+  if (typeof req.body === 'string') {
+    try {
+      req.body = JSON.parse(req.body)
+    } catch (_e) {
+      // If parsing fails, leave it as is
+    }
+  }
+  next()
 })
 
-// Development logs endpoint (keep for compatibility)
+// Development logs endpoint (BEFORE logger middleware to avoid recursion)
 app.post('/api/dev/logs', (req, res) => {
   try {
+    // Validate that req.body exists and is an object
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({ error: 'Invalid request body' })
+    }
+
     const { logs, batchTimestamp, sessionId, unload } = req.body
 
     if (logs && Array.isArray(logs)) {
@@ -89,6 +95,18 @@ app.post('/api/dev/logs', (req, res) => {
     serverLogger.error('LOG_ENDPOINT', 'Failed to process client logs', error)
     res.status(500).json({ error: 'Failed to log messages' })
   }
+})
+
+// Logger middleware (after /api/dev/logs to avoid recursion)
+app.use(loggerMiddleware)
+
+// Health check endpoint
+app.get('/health', (_req, res) => {
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    architecture: 'hexagonal'
+  })
 })
 
 // API Routes (Hexagonal Architecture)
