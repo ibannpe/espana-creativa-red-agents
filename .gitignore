@@ -36,6 +36,7 @@ railway.env
 vercel.env
 varsPro.env
 *Pro.env
+*.env
 
 # vercel
 .vercel
