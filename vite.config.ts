@@ -3,17 +3,18 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode: _mode }) => ({
+export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
-    proxy: {
+    // Proxy solo en desarrollo. En producción, Vercel redirige con rewrites
+    proxy: mode === 'development' ? {
       '/api': {
-        target: 'http://localhost:3001',
+        target: process.env.VITE_API_URL || 'http://localhost:3001',
         changeOrigin: true,
         secure: false,
       }
-    }
+    } : undefined
   },
   plugins: [
     react(),

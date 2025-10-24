@@ -81,11 +81,14 @@ class DevLogger {
     try {
       // TEMPORALMENTE DESHABILITADO para evitar bucles infinitos
       return;
-      
+
       // Solo enviar en desarrollo
       if (!this.isDevelopment) return;
-      
-      await fetch('http://localhost:3001/api/dev/logs', {
+
+      // Usar variable de entorno para la URL del backend
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+
+      await fetch(`${API_URL}/api/dev/logs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

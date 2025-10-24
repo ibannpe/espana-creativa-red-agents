@@ -3,9 +3,13 @@
 
 import axios from 'axios'
 
-// Create custom axios instance
+// Create custom axios instance with dynamic baseURL
+// En desarrollo: '/api' usa el proxy de Vite
+// En producción: usa VITE_API_URL (URL del backend en Railway)
 const axiosInstance = axios.create({
-  baseURL: '/api'
+  baseURL: import.meta.env.VITE_API_URL
+    ? `${import.meta.env.VITE_API_URL}/api`
+    : '/api'
 })
 
 // Response interceptor to handle errors silently

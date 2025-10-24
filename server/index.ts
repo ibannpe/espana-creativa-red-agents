@@ -33,20 +33,29 @@ try {
   process.exit(1)
 }
 
-// CORS configuration
+// CORS configuration - dynamic origins based on environment
+const developmentOrigins = [
+  'http://localhost:8080',
+  'http://localhost:8081',
+  'http://localhost:8082',
+  'http://localhost:8083',
+  'http://localhost:8084',
+  'http://localhost:8085',
+  'http://localhost:8086',
+  'http://localhost:8087',
+  'http://localhost:8088',
+  'http://localhost:5173'
+]
+
+// En producción, usar FRONTEND_URL; en desarrollo, usar localhost
+const allowedOrigins = process.env.FRONTEND_URL
+  ? [...developmentOrigins, process.env.FRONTEND_URL]
+  : developmentOrigins
+
+serverLogger.info('SERVER', `CORS configured for origins: ${allowedOrigins.join(', ')}`)
+
 app.use(cors({
-  origin: [
-    'http://localhost:8080',
-    'http://localhost:8081',
-    'http://localhost:8082',
-    'http://localhost:8083',
-    'http://localhost:8084',
-    'http://localhost:8085',
-    'http://localhost:8086',
-    'http://localhost:8087',
-    'http://localhost:8088',
-    'http://localhost:5173'
-  ],
+  origin: allowedOrigins,
   credentials: true
 }))
 
