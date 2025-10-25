@@ -123,6 +123,52 @@ app.use('/api/auth', createAuthRoutes())
 app.use('/api/email', createEmailRoutes())
 app.use('/api/signup-approval', createSignupApprovalRoutes())
 
+// Public endpoint: Get recent users (no authentication required for discovery)
+app.get('/api/users/recent', async (req, res, next) => {
+  try {
+    const daysParam = req.query.days as string | undefined
+    const limitParam = req.query.limit as string | undefined
+
+    const days = daysParam ? parseInt(daysParam, 10) : undefined
+    const limit = limitParam ? parseInt(limitParam, 10) : undefined
+
+    const getRecentUsersUseCase = Container.getGetRecentUsersUseCase()
+    const result = await getRecentUsersUseCase.execute({ days, limit })
+
+    if (result.error) {
+      return res.status(500).json({ error: result.error })
+    }
+
+    const users = result.users.map(user => {
+      const primitives = user.toPrimitives()
+      return {
+        id: primitives.id,
+        email: primitives.email,
+        name: primitives.name,
+        avatar_url: primitives.avatarUrl || null, // Convert empty string to null
+        bio: primitives.bio || null, // Convert empty string to null
+        location: primitives.location || null, // Convert empty string to null
+        linkedin_url: primitives.linkedinUrl || null, // Convert empty string to null
+        website_url: primitives.websiteUrl || null, // Convert empty string to null
+        skills: primitives.skills,
+        interests: primitives.interests,
+        role_ids: primitives.roleIds,
+        completed_pct: user.calculateCompletionPercentage().getValue(),
+        created_at: primitives.createdAt,
+        updated_at: primitives.updatedAt
+      }
+    })
+
+    res.json({
+      users,
+      count: result.count,
+      days_filter: result.daysFilter
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
 // Protected routes (require authentication)
 app.use('/api/users', authMiddleware, createUsersRoutes())
 app.use('/api/connections', authMiddleware, createConnectionsRoutes())
