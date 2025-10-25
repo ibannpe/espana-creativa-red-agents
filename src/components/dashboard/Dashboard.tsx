@@ -77,7 +77,7 @@ const Dashboard = () => {
         {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-foreground mb-2">
-            ¡Bienvenido, {user?.name || user?.email}!
+            ¡Bienvenid@, {user?.name || user?.email}!
           </h2>
           <p className="text-muted-foreground">
             Conecta con emprendedores y colabora en proyectos en la red de España Creativa
