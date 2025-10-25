@@ -34,6 +34,7 @@ import { SignInUseCase } from '../../application/use-cases/auth/SignInUseCase'
 import { GetUserProfileUseCase } from '../../application/use-cases/users/GetUserProfileUseCase'
 import { UpdateUserProfileUseCase } from '../../application/use-cases/users/UpdateUserProfileUseCase'
 import { SearchUsersUseCase } from '../../application/use-cases/users/SearchUsersUseCase'
+import { GetRecentUsersUseCase } from '../../application/use-cases/users/GetRecentUsersUseCase'
 
 // Use Cases - Network
 import { RequestConnectionUseCase } from '../../application/use-cases/network/RequestConnectionUseCase'
@@ -89,6 +90,7 @@ export class Container {
   private static getUserProfileUseCase: GetUserProfileUseCase
   private static updateUserProfileUseCase: UpdateUserProfileUseCase
   private static searchUsersUseCase: SearchUsersUseCase
+  private static getRecentUsersUseCase: GetRecentUsersUseCase
 
   // Use Cases - Network
   private static requestConnectionUseCase: RequestConnectionUseCase
@@ -172,6 +174,10 @@ export class Container {
     )
 
     this.searchUsersUseCase = new SearchUsersUseCase(
+      this.userRepository
+    )
+
+    this.getRecentUsersUseCase = new GetRecentUsersUseCase(
       this.userRepository
     )
 
@@ -316,6 +322,10 @@ export class Container {
 
   static getSearchUsersUseCase(): SearchUsersUseCase {
     return this.searchUsersUseCase
+  }
+
+  static getGetRecentUsersUseCase(): GetRecentUsersUseCase {
+    return this.getRecentUsersUseCase
   }
 
   // Getters for use cases - Network
