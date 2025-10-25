@@ -198,6 +198,31 @@ export class SupabaseUserRepository implements IUserRepository {
     }
   }
 
+  async findRecentUsers(days: number, limit: number): Promise<User[]> {
+    // Calculate cutoff date (N days ago from now)
+    const cutoffDate = new Date()
+    cutoffDate.setDate(cutoffDate.getDate() - days)
+    const cutoffISO = cutoffDate.toISOString()
+
+    const { data, error } = await this.supabase
+      .from('users')
+      .select(`
+        *,
+        user_roles!inner(
+          role_id
+        )
+      `)
+      .gte('created_at', cutoffISO)
+      .order('created_at', { ascending: false })
+      .limit(limit)
+
+    if (error || !data) {
+      return []
+    }
+
+    return data.map(row => this.mapToEntity(row))
+  }
+
   // Helper method to map database row to domain entity
   private mapToEntity(data: any): User {
     const userId = UserId.create(data.id)!
