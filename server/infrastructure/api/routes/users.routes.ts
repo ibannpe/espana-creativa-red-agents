@@ -7,6 +7,59 @@ import { Container } from '../../di/Container'
 export const createUsersRoutes = (): Router => {
   const router = Router()
 
+  // GET /api/users/recent - Get recently registered users
+  // IMPORTANT: This route MUST be defined BEFORE /:id to avoid /recent being treated as an ID
+  router.get('/recent', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Parse and validate query parameters
+      const daysParam = req.query.days as string | undefined
+      const limitParam = req.query.limit as string | undefined
+
+      const days = daysParam ? parseInt(daysParam, 10) : undefined
+      const limit = limitParam ? parseInt(limitParam, 10) : undefined
+
+      const getRecentUsersUseCase = Container.getGetRecentUsersUseCase()
+      const result = await getRecentUsersUseCase.execute({
+        days,
+        limit
+      })
+
+      if (result.error) {
+        return res.status(500).json({
+          error: result.error
+        })
+      }
+
+      const users = result.users.map(user => {
+        const primitives = user.toPrimitives()
+        return {
+          id: primitives.id,
+          email: primitives.email,
+          name: primitives.name,
+          avatar_url: primitives.avatarUrl,
+          bio: primitives.bio,
+          location: primitives.location,
+          linkedin_url: primitives.linkedinUrl,
+          website_url: primitives.websiteUrl,
+          skills: primitives.skills,
+          interests: primitives.interests,
+          role_ids: primitives.roleIds,
+          completed_pct: user.calculateCompletionPercentage().getValue(),
+          created_at: primitives.createdAt,
+          updated_at: primitives.updatedAt
+        }
+      })
+
+      return res.status(200).json({
+        users,
+        count: result.count,
+        days_filter: result.daysFilter
+      })
+    } catch (error) {
+      next(error)
+    }
+  })
+
   // GET /api/users/:id - Get user profile by ID
   router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {

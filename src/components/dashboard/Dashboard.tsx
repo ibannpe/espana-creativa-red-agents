@@ -8,10 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { PhotoUploadModal } from '@/components/profile/PhotoUploadModal';
-import { 
-  Users, 
-  MessageSquare, 
-  Briefcase, 
+import { NewMembersSection } from '@/app/features/dashboard/components/NewMembersSection';
+import {
+  MessageSquare,
+  Briefcase,
   Calendar,
   LogOut,
   Settings,
@@ -214,35 +214,7 @@ const Dashboard = () => {
 
         {/* Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Users className="h-5 w-5 mr-2" />
-                Nuevos miembros
-              </CardTitle>
-              <CardDescription>
-                Conecta con los últimos miembros que se han unido
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center space-x-4">
-                    <Avatar>
-                      <AvatarFallback>U{i}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Usuario {i}</p>
-                      <p className="text-xs text-muted-foreground">Emprendedor</p>
-                    </div>
-                    <Button size="sm" variant="outline">
-                      Conectar
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <NewMembersSection />
 
           <Card>
             <CardHeader>
