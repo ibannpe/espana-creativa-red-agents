@@ -62,7 +62,17 @@
       "Bash(xargs kill -9)",
       "Read(//tmp/**)",
       "Bash(node test-email.mjs:*)",
-      "Bash(node test-approval-email.mjs:*)"
+      "Bash(node test-approval-email.mjs:*)",
+      "Bash(gh issue create:*)",
+      "Bash(git fetch:*)",
+      "Bash(gh issue view:*)",
+      "Bash(cd:*)",
+      "Bash(yarn install:*)",
+      "Bash(yarn dev:server)",
+      "Bash(yarn dev)",
+      "Bash(yarn lint:*)",
+      "Bash(gh pr create:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
