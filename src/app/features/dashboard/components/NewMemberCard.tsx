@@ -1,0 +1,118 @@
+// ABOUTME: Compact card component for displaying new members in dashboard
+// ABOUTME: Shows user info with connection button and handles connection states
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { UserPlus, UserCheck } from 'lucide-react'
+import { useRequestConnectionMutation } from '@/app/features/network/hooks/mutations/useRequestConnectionMutation'
+import { useConnectionStatusQuery } from '@/app/features/network/hooks/queries/useConnectionStatusQuery'
+import { useToast } from '@/hooks/use-toast'
+import type { DashboardUser } from '../data/schemas/dashboard.schema'
+
+interface NewMemberCardProps {
+  user: DashboardUser
+}
+
+export function NewMemberCard({ user }: NewMemberCardProps) {
+  const { data: connectionStatus } = useConnectionStatusQuery(user.id)
+  const { action: requestConnection, isLoading } = useRequestConnectionMutation()
+  const { toast } = useToast()
+
+  const handleConnect = async () => {
+    try {
+      await requestConnection({ addressee_id: user.id })
+      toast({
+        title: 'Solicitud enviada',
+        description: `Solicitud de conexión enviada a ${user.name}`,
+        duration: 3000
+      })
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'No se pudo enviar la solicitud',
+        variant: 'destructive',
+        duration: 5000
+      })
+    }
+  }
+
+  // Determine connection status
+  const status = connectionStatus?.status || 'none'
+
+  // Get user role label (default to "Miembro" if no roles)
+  const roleLabel = user.role_ids && user.role_ids.length > 0 ? getRoleLabel(user.role_ids[0]) : 'Miembro'
+
+  return (
+    <div className="flex items-center gap-3 p-4 rounded-lg hover:bg-muted/50 transition-colors">
+      {/* Avatar */}
+      <Avatar className="h-12 w-12">
+        <AvatarImage src={user.avatar_url || undefined} alt={user.name} />
+        <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-white text-sm">
+          {getInitials(user.name, user.email)}
+        </AvatarFallback>
+      </Avatar>
+
+      {/* User Info */}
+      <div className="flex-1 min-w-0">
+        <h3 className="text-sm font-semibold truncate">{user.name}</h3>
+        <span className="text-xs text-muted-foreground">{roleLabel}</span>
+      </div>
+
+      {/* Connection Action */}
+      <div className="flex-shrink-0">
+        {status === 'none' && (
+          <Button
+            size="sm"
+            onClick={handleConnect}
+            disabled={isLoading}
+            className="flex items-center gap-2"
+          >
+            <UserPlus className="h-4 w-4" />
+            {isLoading ? 'Conectando...' : 'Conectar'}
+          </Button>
+        )}
+
+        {status === 'pending' && (
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled
+            className="cursor-not-allowed"
+          >
+            Solicitud enviada
+          </Button>
+        )}
+
+        {status === 'accepted' && (
+          <Badge variant="default" className="flex items-center gap-1">
+            <UserCheck className="h-3 w-3" />
+            Conectado
+          </Badge>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// Helper function to get user initials
+function getInitials(name: string, email: string): string {
+  if (name && name.trim().length > 0) {
+    const parts = name.trim().split(' ')
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+    }
+    return name[0].toUpperCase()
+  }
+  return email[0].toUpperCase()
+}
+
+// Helper function to get role label from role ID
+function getRoleLabel(roleId: number): string {
+  const roleMap: Record<number, string> = {
+    1: 'Admin',
+    2: 'Mentor',
+    3: 'Emprendedor'
+  }
+  return roleMap[roleId] || 'Miembro'
+}
