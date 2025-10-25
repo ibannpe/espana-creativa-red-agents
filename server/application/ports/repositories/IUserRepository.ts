@@ -46,4 +46,12 @@ export interface IUserRepository {
    * Delete a user by ID
    */
   delete(id: UserId): Promise<void>
+
+  /**
+   * Find recent users registered within the last N days
+   * @param days Number of days to look back (1-365)
+   * @param limit Maximum number of users to return (1-50)
+   * @returns Array of User entities ordered by created_at DESC
+   */
+  findRecentUsers(days: number, limit: number): Promise<User[]>
 }
