@@ -1,7 +1,8 @@
 // ABOUTME: Custom Axios instance with request/response interceptors
-// ABOUTME: Suppresses expected errors (401 on auth checks) from browser console
+// ABOUTME: Adds Supabase authentication token to all requests and suppresses expected 401 errors
 
 import axios from 'axios'
+import { supabase } from './supabase'
 
 // Create custom axios instance with dynamic baseURL
 // En desarrollo: '/api' usa el proxy de Vite
@@ -11,6 +12,24 @@ const axiosInstance = axios.create({
     ? `${import.meta.env.VITE_API_URL}/api`
     : '/api'
 })
+
+// Request interceptor to add authentication token from Supabase
+axiosInstance.interceptors.request.use(
+  async (config) => {
+    // Get current session from Supabase
+    const { data: { session } } = await supabase.auth.getSession()
+
+    // If session exists, add Authorization header with Bearer token
+    if (session?.access_token) {
+      config.headers.Authorization = `Bearer ${session.access_token}`
+    }
+
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
 
 // Response interceptor to handle errors silently
 axiosInstance.interceptors.response.use(
