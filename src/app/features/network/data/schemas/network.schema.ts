@@ -32,7 +32,7 @@ export const connectionWithUserSchema = z.object({
 export const networkStatsSchema = z.object({
   total_connections: z.number(),
   pending_requests: z.number(),
-  mutual_connections: z.number()
+  sent_requests: z.number()
 })
 
 // Request connection schema
