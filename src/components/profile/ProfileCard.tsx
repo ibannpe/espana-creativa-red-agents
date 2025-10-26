@@ -3,16 +3,28 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { User } from '@/types'
-import { MapPin, Globe, Linkedin, MessageCircle } from 'lucide-react'
+import { MapPin, Globe, Linkedin, MessageCircle, UserPlus, UserCheck, Clock } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useConnectionStatusQuery } from '@/app/features/network/hooks/queries/useConnectionStatusQuery'
+import { useRequestConnectionMutation } from '@/app/features/network/hooks/mutations/useRequestConnectionMutation'
+import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
+import { useToast } from '@/hooks/use-toast'
 
 interface ProfileCardProps {
   user: User
   showActions?: boolean
   onStartChat?: () => void
+  showConnectButton?: boolean
 }
 
-export function ProfileCard({ user, showActions = true, onStartChat }: ProfileCardProps) {
+export function ProfileCard({ user, showActions = true, onStartChat, showConnectButton = true }: ProfileCardProps) {
+  const { user: currentUser } = useAuthContext()
+  const { data: connectionStatus } = useConnectionStatusQuery(user.id, {
+    enabled: showConnectButton && currentUser?.id !== user.id
+  })
+  const { action: requestConnection, isLoading } = useRequestConnectionMutation()
+  const { toast } = useToast()
+
   const getInitials = (name: string | null) => {
     if (!name) return 'U'
     return name.split(' ').map(n => n[0]).join('').toUpperCase()
@@ -30,6 +42,27 @@ export function ProfileCard({ user, showActions = true, onStartChat }: ProfileCa
         return 'bg-gray-100 text-gray-800'
     }
   }
+
+  const handleConnect = async () => {
+    try {
+      await requestConnection({ addressee_id: user.id })
+      toast({
+        title: 'Solicitud enviada',
+        description: `Solicitud de conexión enviada a ${user.name || 'el usuario'}`,
+        duration: 3000
+      })
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'No se pudo enviar la solicitud',
+        variant: 'destructive',
+        duration: 5000
+      })
+    }
+  }
+
+  const isCurrentUser = currentUser?.id === user.id
+  const status = connectionStatus?.status || 'none'
 
   return (
     <Card className="w-full">
@@ -113,12 +146,51 @@ export function ProfileCard({ user, showActions = true, onStartChat }: ProfileCa
             </Link>
           )}
         </div>
-        
+
+        {/* Connection Button */}
+        {showConnectButton && !isCurrentUser && (
+          <div className="mt-4">
+            {status === 'none' && (
+              <Button
+                onClick={handleConnect}
+                disabled={isLoading}
+                className="w-full"
+                variant="default"
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                {isLoading ? 'Conectando...' : 'Conectar'}
+              </Button>
+            )}
+
+            {status === 'pending' && (
+              <Button
+                variant="secondary"
+                disabled
+                className="w-full cursor-not-allowed"
+              >
+                <Clock className="h-4 w-4 mr-2" />
+                Solicitud enviada
+              </Button>
+            )}
+
+            {status === 'accepted' && (
+              <Button
+                variant="outline"
+                disabled
+                className="w-full"
+              >
+                <UserCheck className="h-4 w-4 mr-2" />
+                Conectados
+              </Button>
+            )}
+          </div>
+        )}
+
         {showActions && onStartChat && (
-          <Button 
-            onClick={onStartChat} 
+          <Button
+            onClick={onStartChat}
             className="w-full mt-4"
-            variant="default"
+            variant="outline"
           >
             <MessageCircle className="h-4 w-4 mr-2" />
             Iniciar Chat

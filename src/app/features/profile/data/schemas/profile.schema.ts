@@ -8,16 +8,16 @@ export const userProfileSchema = z.object({
   id: z.string().uuid(),
   email: z.string().email(),
   name: z.string(),
-  avatar_url: z.string().url().nullable(),
+  avatar_url: z.string().url().or(z.literal('')).nullable(),
   bio: z.string().nullable(),
   location: z.string().nullable(),
-  linkedin_url: z.string().url().nullable(),
-  website_url: z.string().url().nullable(),
+  linkedin_url: z.string().url().or(z.literal('')).nullable(),
+  website_url: z.string().url().or(z.literal('')).nullable(),
   skills: z.array(z.string()),
   interests: z.array(z.string()),
   completed_pct: z.number().min(0).max(100),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime()
+  created_at: z.string(), // Accept any string format from Postgres
+  updated_at: z.string()  // Accept any string format from Postgres
 })
 
 // Update profile request schema
