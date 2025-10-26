@@ -82,26 +82,38 @@ export class User {
   }
 
   // Business logic: Calculate profile completion percentage
+  // Criterios de completado (cada uno vale 20%):
+  // 1. Información básica (name)
+  // 2. Foto de perfil (avatar_url)
+  // 3. Biografía (bio)
+  // 4. Habilidades (skills)
+  // 5. Enlaces sociales (linkedin_url o website_url)
   calculateCompletionPercentage(): CompletionPercentage {
     let points = 0
 
+    // 1. Información básica (name) - 20%
     if (this.props.name && this.props.name.trim().length > 0) {
       points += 20
     }
 
+    // 2. Foto de perfil (avatar_url) - 20%
+    if (this.props.avatarUrl && this.props.avatarUrl.trim().length > 0) {
+      points += 20
+    }
+
+    // 3. Biografía (bio) - 20%
     if (this.props.bio && this.props.bio.trim().length > 0) {
-      points += 25
+      points += 20
     }
 
-    if (this.props.location && this.props.location.trim().length > 0) {
-      points += 15
-    }
-
+    // 4. Habilidades (skills) - 20%
     if (this.props.skills.length > 0) {
       points += 20
     }
 
-    if (this.props.interests.length > 0) {
+    // 5. Enlaces sociales (linkedin_url o website_url) - 20%
+    if ((this.props.linkedinUrl && this.props.linkedinUrl.trim().length > 0) ||
+        (this.props.websiteUrl && this.props.websiteUrl.trim().length > 0)) {
       points += 20
     }
 

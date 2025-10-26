@@ -105,13 +105,33 @@ describe('User Entity', () => {
   })
 
   describe('calculateCompletionPercentage', () => {
-    it('should calculate 100% for complete profile', () => {
+    // Los criterios de completado han cambiado:
+    // 1. Información básica (name) - 20%
+    // 2. Foto de perfil (avatar_url) - 20%
+    // 3. Biografía (bio) - 20%
+    // 4. Habilidades (skills) - 20%
+    // 5. Enlaces sociales (linkedin_url o website_url) - 20%
+
+    it('should calculate 100% for complete profile with all 5 criteria', () => {
       const user = createTestUser({
         name: 'Complete User',
+        avatarUrl: 'https://example.com/avatar.jpg',
         bio: 'I have a bio',
-        location: 'Madrid',
         skills: ['Skill1'],
-        interests: ['Interest1']
+        linkedinUrl: 'https://linkedin.com/in/user'
+      })
+
+      const completion = user.calculateCompletionPercentage()
+      expect(completion.getValue()).toBe(100)
+    })
+
+    it('should calculate 100% for complete profile with website instead of linkedin', () => {
+      const user = createTestUser({
+        name: 'Complete User',
+        avatarUrl: 'https://example.com/avatar.jpg',
+        bio: 'I have a bio',
+        skills: ['Skill1'],
+        websiteUrl: 'https://example.com'
       })
 
       const completion = user.calculateCompletionPercentage()
@@ -121,71 +141,103 @@ describe('User Entity', () => {
     it('should calculate 0% for empty profile', () => {
       const user = createTestUser({
         name: null,
+        avatarUrl: null,
         bio: null,
-        location: null,
         skills: [],
-        interests: []
+        linkedinUrl: null,
+        websiteUrl: null
       })
 
       const completion = user.calculateCompletionPercentage()
       expect(completion.getValue()).toBe(0)
     })
 
-    it('should give 20 points for name', () => {
+    it('should give 20 points for name only', () => {
       const user = createTestUser({
         name: 'User',
+        avatarUrl: null,
         bio: null,
-        location: null,
         skills: [],
-        interests: []
+        linkedinUrl: null,
+        websiteUrl: null
       })
 
       expect(user.calculateCompletionPercentage().getValue()).toBe(20)
     })
 
-    it('should give 25 points for bio', () => {
+    it('should give 20 points for avatar_url only', () => {
       const user = createTestUser({
         name: null,
+        avatarUrl: 'https://example.com/avatar.jpg',
+        bio: null,
+        skills: [],
+        linkedinUrl: null,
+        websiteUrl: null
+      })
+
+      expect(user.calculateCompletionPercentage().getValue()).toBe(20)
+    })
+
+    it('should give 20 points for bio only', () => {
+      const user = createTestUser({
+        name: null,
+        avatarUrl: null,
         bio: 'My bio',
-        location: null,
         skills: [],
-        interests: []
-      })
-
-      expect(user.calculateCompletionPercentage().getValue()).toBe(25)
-    })
-
-    it('should give 15 points for location', () => {
-      const user = createTestUser({
-        name: null,
-        bio: null,
-        location: 'City',
-        skills: [],
-        interests: []
-      })
-
-      expect(user.calculateCompletionPercentage().getValue()).toBe(15)
-    })
-
-    it('should give 20 points for skills', () => {
-      const user = createTestUser({
-        name: null,
-        bio: null,
-        location: null,
-        skills: ['Skill1'],
-        interests: []
+        linkedinUrl: null,
+        websiteUrl: null
       })
 
       expect(user.calculateCompletionPercentage().getValue()).toBe(20)
     })
 
-    it('should give 20 points for interests', () => {
+    it('should give 20 points for skills only', () => {
       const user = createTestUser({
         name: null,
+        avatarUrl: null,
         bio: null,
-        location: null,
+        skills: ['Skill1'],
+        linkedinUrl: null,
+        websiteUrl: null
+      })
+
+      expect(user.calculateCompletionPercentage().getValue()).toBe(20)
+    })
+
+    it('should give 20 points for linkedin_url only', () => {
+      const user = createTestUser({
+        name: null,
+        avatarUrl: null,
+        bio: null,
         skills: [],
-        interests: ['Interest1']
+        linkedinUrl: 'https://linkedin.com/in/user',
+        websiteUrl: null
+      })
+
+      expect(user.calculateCompletionPercentage().getValue()).toBe(20)
+    })
+
+    it('should give 20 points for website_url only', () => {
+      const user = createTestUser({
+        name: null,
+        avatarUrl: null,
+        bio: null,
+        skills: [],
+        linkedinUrl: null,
+        websiteUrl: 'https://example.com'
+      })
+
+      expect(user.calculateCompletionPercentage().getValue()).toBe(20)
+    })
+
+    it('should give 20 points for either linkedin or website (not 40)', () => {
+      const user = createTestUser({
+        name: null,
+        avatarUrl: null,
+        bio: null,
+        skills: [],
+        linkedinUrl: 'https://linkedin.com/in/user',
+        websiteUrl: 'https://example.com'
       })
 
       expect(user.calculateCompletionPercentage().getValue()).toBe(20)
@@ -194,10 +246,11 @@ describe('User Entity', () => {
     it('should not count whitespace-only fields', () => {
       const user = createTestUser({
         name: '   ',
-        bio: '  ',
-        location: '',
+        avatarUrl: '  ',
+        bio: '',
         skills: [],
-        interests: []
+        linkedinUrl: '   ',
+        websiteUrl: ''
       })
 
       expect(user.calculateCompletionPercentage().getValue()).toBe(0)
@@ -208,10 +261,12 @@ describe('User Entity', () => {
     it('should return true when completion >= 80%', () => {
       const user = createTestUser({
         name: 'User',
+        avatarUrl: 'https://example.com/avatar.jpg',
         bio: 'Bio',
-        location: 'Location',
         skills: ['Skill'],
-        interests: [] // 20+25+15+20 = 80%
+        linkedinUrl: null,
+        websiteUrl: null
+        // 20+20+20+20 = 80%
       })
 
       expect(user.isProfileComplete()).toBe(true)
@@ -220,10 +275,12 @@ describe('User Entity', () => {
     it('should return false when completion < 80%', () => {
       const user = createTestUser({
         name: 'User',
+        avatarUrl: 'https://example.com/avatar.jpg',
         bio: 'Bio',
-        location: 'Location',
         skills: [],
-        interests: [] // 20+25+15 = 60%
+        linkedinUrl: null,
+        websiteUrl: null
+        // 20+20+20 = 60%
       })
 
       expect(user.isProfileComplete()).toBe(false)

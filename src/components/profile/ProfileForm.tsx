@@ -1,371 +1,282 @@
-'use client'
+// ABOUTME: Profile form component for editing user profile information
+// ABOUTME: Handles profile updates with React Hook Form, Zod validation, and automatic completion percentage recalculation
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { Loader2, Plus, X } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { updateUserProfile } from '@/lib/api/users'
-import { User } from '@/types'
-import { X, Upload, Camera } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
-// import { useLogger } from '@/lib/logger'
+import axiosInstance from '@/lib/axios'
+import type { User } from '@/types/database'
+
+// Validation schema
+const profileFormSchema = z.object({
+  name: z.string().min(1, 'El nombre es requerido').max(100, 'El nombre es demasiado largo'),
+  bio: z.string().max(500, 'La biografía es demasiado larga').optional().nullable(),
+  location: z.string().max(100, 'La ubicación es demasiado larga').optional().nullable(),
+  linkedin_url: z.string().url('URL inválida').or(z.literal('')).optional().nullable(),
+  website_url: z.string().url('URL inválida').or(z.literal('')).optional().nullable(),
+})
+
+type ProfileFormData = z.infer<typeof profileFormSchema>
 
 interface ProfileFormProps {
   user: User
-  onUpdate?: (user: User) => void
 }
 
-export function ProfileForm({ user, onUpdate }: ProfileFormProps) {
-  // const logger = useLogger('ProfileForm');
-  
-  const [formData, setFormData] = useState({
-    name: user.name || '',
-    bio: user.bio || '',
-    location: user.location || '',
-    linkedin_url: user.linkedin_url || '',
-    website_url: user.website_url || '',
-    skills: user.skills || [],
-    interests: user.interests || [],
-    avatar_url: user.avatar_url || ''
+export function ProfileForm({ user }: ProfileFormProps) {
+  const { toast } = useToast()
+  const queryClient = useQueryClient()
+  const [skills, setSkills] = useState<string[]>(user.skills || [])
+  const [newSkill, setNewSkill] = useState('')
+  const [interests, setInterests] = useState<string[]>(user.interests || [])
+  const [newInterest, setNewInterest] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty }
+  } = useForm<ProfileFormData>({
+    resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      name: user.name || '',
+      bio: user.bio || '',
+      location: user.location || '',
+      linkedin_url: user.linkedin_url || '',
+      website_url: user.website_url || '',
+    }
   })
-  
-  const [skillInput, setSkillInput] = useState('')
-  const [interestInput, setInterestInput] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [uploadingPhoto, setUploadingPhoto] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    // logger.userAction('profile-form-submit', { userId: user.id, fields: Object.keys(formData).filter(key => formData[key as keyof typeof formData]) });
-    
-    setLoading(true)
-    setError('')
-    setSuccess(false)
-
-    const { data, error } = await updateUserProfile(user.id, formData)
-
-    if (error) {
-      // logger.error('Profile update failed', { userId: user.id, error: error.message });
-      setError(error.message)
-    } else {
-      // logger.info('Profile updated successfully', { userId: user.id, updatedFields: Object.keys(formData) });
-      setSuccess(true)
-      // User data will be refreshed automatically through useAuth hook
-      if (onUpdate && data) {
-        onUpdate({ ...user, ...data })
-      }
-    }
-
-    setLoading(false)
-  }
-
-  const addSkill = () => {
-    if (skillInput.trim() && !formData.skills.includes(skillInput.trim())) {
-      const skill = skillInput.trim();
-      // logger.userAction('skill-added', { userId: user.id, skill });
-      setFormData(prev => ({
-        ...prev,
-        skills: [...prev.skills, skill]
-      }))
-      setSkillInput('')
+  const handleAddSkill = () => {
+    if (newSkill.trim() && !skills.includes(newSkill.trim())) {
+      setSkills([...skills, newSkill.trim()])
+      setNewSkill('')
     }
   }
 
-  const removeSkill = (skill: string) => {
-    // logger.userAction('skill-removed', { userId: user.id, skill });
-    setFormData(prev => ({
-      ...prev,
-      skills: prev.skills.filter(s => s !== skill)
-    }))
+  const handleRemoveSkill = (skillToRemove: string) => {
+    setSkills(skills.filter(skill => skill !== skillToRemove))
   }
 
-  const addInterest = () => {
-    if (interestInput.trim() && !formData.interests.includes(interestInput.trim())) {
-      const interest = interestInput.trim();
-      // logger.userAction('interest-added', { userId: user.id, interest });
-      setFormData(prev => ({
-        ...prev,
-        interests: [...prev.interests, interest]
-      }))
-      setInterestInput('')
+  const handleAddInterest = () => {
+    if (newInterest.trim() && !interests.includes(newInterest.trim())) {
+      setInterests([...interests, newInterest.trim()])
+      setNewInterest('')
     }
   }
 
-  const removeInterest = (interest: string) => {
-    // logger.userAction('interest-removed', { userId: user.id, interest });
-    setFormData(prev => ({
-      ...prev,
-      interests: prev.interests.filter(i => i !== interest)
-    }))
+  const handleRemoveInterest = (interestToRemove: string) => {
+    setInterests(interests.filter(interest => interest !== interestToRemove))
   }
 
-
-  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
-    // logger.userAction('photo-upload-started', { userId: user.id, fileName: file.name, fileSize: file.size });
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      // logger.warn('Invalid file type selected', { userId: user.id, fileType: file.type });
-      setError('Por favor selecciona un archivo de imagen válido')
-      return
-    }
-
-    // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
-      // logger.warn('File size too large', { userId: user.id, fileSize: file.size });
-      setError('La imagen debe ser menor a 5MB')
-      return
-    }
-
-    setUploadingPhoto(true)
-    setError('')
+  const onSubmit = async (data: ProfileFormData) => {
+    setIsSubmitting(true)
 
     try {
-      // Create unique filename
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${user.id}-${Date.now()}.${fileExt}`
-      const filePath = `avatars/${fileName}`
+      // Use backend API endpoint with axios (includes auth token automatically)
+      await axiosInstance.put(`/users/${user.id}`, {
+        name: data.name,
+        bio: data.bio || null,
+        location: data.location || null,
+        linkedin_url: data.linkedin_url || null,
+        website_url: data.website_url || null,
+        skills,
+        interests,
+      })
 
-      // logger.debug('Uploading photo to Supabase', { userId: user.id, filePath });
+      // Invalidate React Query cache to trigger refetch and recalculation
+      await queryClient.invalidateQueries({ queryKey: ['auth', 'currentUser'] })
 
-      // Upload to Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from('fotos-perfil')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false
-        })
-
-      if (uploadError) {
-        // logger.error('Photo upload failed', { userId: user.id, error: uploadError });
-        setError('Error al subir la imagen. Inténtalo de nuevo.')
-        return
-      }
-
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('fotos-perfil')
-        .getPublicUrl(filePath)
-
-      // logger.info('Photo uploaded successfully', { userId: user.id, publicUrl });
-
-      // Update form data with new avatar URL
-      setFormData(prev => ({ ...prev, avatar_url: publicUrl }))
-      setSuccess(true)
-
+      toast({
+        title: 'Perfil actualizado',
+        description: 'Tu perfil se ha actualizado correctamente',
+      })
     } catch (error) {
-      // logger.error('Photo upload error', { userId: user.id, error });
-      setError('Error al subir la imagen')
+      console.error('Error updating profile:', error)
+      toast({
+        title: 'Error',
+        description: 'No se pudo actualizar el perfil. Por favor, inténtalo de nuevo.',
+        variant: 'destructive',
+      })
     } finally {
-      setUploadingPhoto(false)
+      setIsSubmitting(false)
     }
-  }
-
-  const triggerPhotoUpload = () => {
-    // logger.userAction('photo-upload-triggered', { userId: user.id });
-    fileInputRef.current?.click()
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Editar Perfil</CardTitle>
-        <CardDescription>
-          Completa tu perfil para mejorar tu visibilidad en la red
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Profile Photo Section */}
-          <div className="flex flex-col items-center space-y-4 pb-6 border-b">
-            <div className="relative">
-              <Avatar className="w-24 h-24">
-                <AvatarImage src={formData.avatar_url} alt="Foto de perfil" />
-                <AvatarFallback className="text-2xl bg-gradient-to-br from-primary to-primary/80 text-white">
-                  {formData.name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="absolute -bottom-2 -right-2">
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="secondary"
-                  className="rounded-full w-8 h-8 p-0"
-                  onClick={triggerPhotoUpload}
-                  disabled={uploadingPhoto}
-                >
-                  <Camera className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-            <div className="text-center">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={triggerPhotoUpload}
-                disabled={uploadingPhoto}
-                className="flex items-center gap-2"
-              >
-                <Upload className="h-4 w-4" />
-                {uploadingPhoto ? 'Subiendo...' : 'Cambiar foto de perfil'}
-              </Button>
-              <p className="text-xs text-muted-foreground mt-2">
-                JPG, PNG o GIF. Máximo 5MB.
-              </p>
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoUpload}
-              className="hidden"
-            />
-          </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* Name field */}
+      <div className="space-y-2">
+        <Label htmlFor="name">Nombre *</Label>
+        <Input
+          id="name"
+          {...register('name')}
+          placeholder="Tu nombre completo"
+        />
+        {errors.name && (
+          <p className="text-sm text-destructive">{errors.name.message}</p>
+        )}
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Nombre completo *
-              </label>
-              <Input
-                value={formData.name}
-                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Ubicación
-              </label>
-              <Input
-                value={formData.location}
-                onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                placeholder="Madrid, España"
-              />
-            </div>
-          </div>
+      {/* Bio field */}
+      <div className="space-y-2">
+        <Label htmlFor="bio">Biografía</Label>
+        <Textarea
+          id="bio"
+          {...register('bio')}
+          placeholder="Cuéntanos sobre ti..."
+          rows={4}
+        />
+        {errors.bio && (
+          <p className="text-sm text-destructive">{errors.bio.message}</p>
+        )}
+      </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Biografía
-            </label>
-            <Textarea
-              value={formData.bio}
-              onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-              placeholder="Cuéntanos sobre ti, tu experiencia y qué te apasiona..."
-              rows={4}
-            />
-          </div>
+      {/* Location field */}
+      <div className="space-y-2">
+        <Label htmlFor="location">Ubicación</Label>
+        <Input
+          id="location"
+          {...register('location')}
+          placeholder="Ciudad, País"
+        />
+        {errors.location && (
+          <p className="text-sm text-destructive">{errors.location.message}</p>
+        )}
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                LinkedIn URL
-              </label>
-              <Input
-                type="url"
-                value={formData.linkedin_url}
-                onChange={(e) => setFormData(prev => ({ ...prev, linkedin_url: e.target.value }))}
-                placeholder="https://linkedin.com/in/tu-perfil"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Sitio web
-              </label>
-              <Input
-                type="url"
-                value={formData.website_url}
-                onChange={(e) => setFormData(prev => ({ ...prev, website_url: e.target.value }))}
-                placeholder="https://tu-sitio-web.com"
-              />
-            </div>
-          </div>
+      {/* LinkedIn URL field */}
+      <div className="space-y-2">
+        <Label htmlFor="linkedin_url">LinkedIn</Label>
+        <Input
+          id="linkedin_url"
+          {...register('linkedin_url')}
+          placeholder="https://linkedin.com/in/tu-perfil"
+          type="url"
+        />
+        {errors.linkedin_url && (
+          <p className="text-sm text-destructive">{errors.linkedin_url.message}</p>
+        )}
+      </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Habilidades
-            </label>
-            <div className="flex gap-2 mb-2">
-              <Input
-                value={skillInput}
-                onChange={(e) => setSkillInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
-                placeholder="Agregar habilidad..."
-              />
-              <Button type="button" onClick={addSkill}>
-                Agregar
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {formData.skills.map((skill, index) => (
-                <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                  {skill}
-                  <X
-                    className="h-3 w-3 cursor-pointer"
-                    onClick={() => removeSkill(skill)}
-                  />
-                </Badge>
-              ))}
-            </div>
-          </div>
+      {/* Website URL field */}
+      <div className="space-y-2">
+        <Label htmlFor="website_url">Sitio web</Label>
+        <Input
+          id="website_url"
+          {...register('website_url')}
+          placeholder="https://tu-sitio.com"
+          type="url"
+        />
+        {errors.website_url && (
+          <p className="text-sm text-destructive">{errors.website_url.message}</p>
+        )}
+      </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Intereses
-            </label>
-            <div className="flex gap-2 mb-2">
-              <Input
-                value={interestInput}
-                onChange={(e) => setInterestInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addInterest())}
-                placeholder="Agregar interés..."
-              />
-              <Button type="button" onClick={addInterest}>
-                Agregar
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {formData.interests.map((interest, index) => (
-                <Badge key={index} variant="outline" className="flex items-center gap-1">
-                  {interest}
-                  <X
-                    className="h-3 w-3 cursor-pointer"
-                    onClick={() => removeInterest(interest)}
-                  />
-                </Badge>
-              ))}
-            </div>
-          </div>
-
-          {error && (
-            <div className="text-sm text-red-600 bg-red-50 p-3 rounded">
-              {error}
-            </div>
-          )}
-
-          {success && (
-            <div className="text-sm text-green-600 bg-green-50 p-3 rounded">
-              Perfil actualizado correctamente
-            </div>
-          )}
-
-          <Button type="submit" disabled={loading} className="w-full">
-            {loading ? 'Guardando...' : 'Guardar Cambios'}
+      {/* Skills field */}
+      <div className="space-y-2">
+        <Label>Habilidades</Label>
+        <div className="flex gap-2">
+          <Input
+            value={newSkill}
+            onChange={(e) => setNewSkill(e.target.value)}
+            placeholder="Añade una habilidad"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                handleAddSkill()
+              }
+            }}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={handleAddSkill}
+          >
+            <Plus className="h-4 w-4" />
           </Button>
-        </form>
-      </CardContent>
-    </Card>
+        </div>
+        <div className="flex flex-wrap gap-2 mt-2">
+          {skills.map((skill) => (
+            <Badge key={skill} variant="secondary" className="gap-1">
+              {skill}
+              <button
+                type="button"
+                onClick={() => handleRemoveSkill(skill)}
+                className="ml-1 hover:text-destructive"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      </div>
+
+      {/* Interests field */}
+      <div className="space-y-2">
+        <Label>Intereses</Label>
+        <div className="flex gap-2">
+          <Input
+            value={newInterest}
+            onChange={(e) => setNewInterest(e.target.value)}
+            placeholder="Añade un interés"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                handleAddInterest()
+              }
+            }}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={handleAddInterest}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+        <div className="flex flex-wrap gap-2 mt-2">
+          {interests.map((interest) => (
+            <Badge key={interest} variant="secondary" className="gap-1">
+              {interest}
+              <button
+                type="button"
+                onClick={() => handleRemoveInterest(interest)}
+                className="ml-1 hover:text-destructive"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      </div>
+
+      {/* Submit button */}
+      <div className="flex justify-end">
+        <Button
+          type="submit"
+          disabled={isSubmitting || (!isDirty && skills.length === (user.skills?.length || 0) && interests.length === (user.interests?.length || 0))}
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Guardando...
+            </>
+          ) : (
+            'Guardar cambios'
+          )}
+        </Button>
+      </div>
+    </form>
   )
 }
