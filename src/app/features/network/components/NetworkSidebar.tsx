@@ -1,6 +1,7 @@
 // ABOUTME: Sidebar component displaying network management stats similar to LinkedIn
 // ABOUTME: Shows connections count, pending requests, and groups/events placeholders
 
+import { Link } from 'react-router-dom'
 import { useNetworkStatsQuery } from '../hooks/queries/useNetworkStatsQuery'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -18,11 +19,12 @@ interface SidebarItemProps {
   label: string
   count?: number
   isLoading?: boolean
+  href?: string
 }
 
-function SidebarItem({ icon: Icon, label, count, isLoading }: SidebarItemProps) {
-  return (
-    <button className="w-full flex items-center justify-between py-3 px-2 rounded-lg hover:bg-muted/50 transition-colors text-left group">
+function SidebarItem({ icon: Icon, label, count, isLoading, href }: SidebarItemProps) {
+  const content = (
+    <>
       <div className="flex items-center gap-3">
         <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-colors">
           <Icon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
@@ -36,6 +38,22 @@ function SidebarItem({ icon: Icon, label, count, isLoading }: SidebarItemProps) 
           {count?.toLocaleString('es-ES') || 0}
         </span>
       )}
+    </>
+  )
+
+  const className = "w-full flex items-center justify-between py-3 px-2 rounded-lg hover:bg-muted/50 transition-colors text-left group"
+
+  if (href) {
+    return (
+      <Link to={href} className={className}>
+        {content}
+      </Link>
+    )
+  }
+
+  return (
+    <button className={className} disabled>
+      {content}
     </button>
   )
 }
@@ -62,6 +80,7 @@ export function NetworkSidebar() {
             label="Mi red"
             count={stats?.total_connections}
             isLoading={isLoading}
+            href="/network/my-network"
           />
 
           {/* Solicitudes pendientes - Pending requests (received + sent) */}
@@ -70,6 +89,7 @@ export function NetworkSidebar() {
             label="Siguiendo y seguidores"
             count={totalPending}
             isLoading={isLoading}
+            href="/network/followers"
           />
 
           {/* Grupos - Placeholder (future feature) */}

@@ -11,10 +11,13 @@ import { AdminPendingList } from '@/app/features/signup-approval/components/Admi
 import { ApprovalActionPage } from '@/app/features/signup-approval/components/ApprovalActionPage'
 import Dashboard from '@/components/dashboard/Dashboard'
 import { NetworkPage } from '@/components/pages/NetworkPage'
+import { MyNetworkPage } from '@/components/pages/MyNetworkPage'
+import { FollowersPage } from '@/components/pages/FollowersPage'
 import { MessagesPage } from '@/components/pages/MessagesPage'
 import { OpportunitiesPage } from '@/components/pages/OpportunitiesPage'
 import { ProgramsPage } from '@/components/pages/ProgramsPage'
 import { ProfilePage } from '@/components/pages/ProfilePage'
+import { UserProfileViewPage } from '@/components/pages/UserProfileViewPage'
 import { Toaster } from "@/components/ui/toaster"
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 
@@ -80,6 +83,22 @@ function App() {
           }
         />
         <Route
+          path="/network/my-network"
+          element={
+            <ProtectedRoute>
+              <MyNetworkPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/network/followers"
+          element={
+            <ProtectedRoute>
+              <FollowersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/messages"
           element={
             <ProtectedRoute>
@@ -116,6 +135,14 @@ function App() {
           element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users/:userId"
+          element={
+            <ProtectedRoute>
+              <UserProfileViewPage />
             </ProtectedRoute>
           }
         />
