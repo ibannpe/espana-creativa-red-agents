@@ -1,6 +1,7 @@
 import { Navigation } from '@/components/layout/Navigation'
 import { UserSearch } from '@/components/network/UserSearch'
 import { ConnectionsSection } from '@/app/features/network/components/ConnectionsSection'
+import { NetworkSidebar } from '@/app/features/network/components/NetworkSidebar'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { Users, Search } from 'lucide-react'
@@ -9,7 +10,7 @@ export function NetworkPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
       <Navigation />
-      
+
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -26,51 +27,40 @@ export function NetworkPage() {
           </div>
         </div>
 
-        {/* Search Section */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Search className="h-5 w-5 mr-2" />
-              Buscar Miembros
-            </CardTitle>
-            <CardDescription>
-              Encuentra emprendedores, mentores y colaboradores por nombre, ubicación o habilidades
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+        {/* Two-column layout: Main content + Sidebar */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Content - Takes 2/3 of space on large screens */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Search Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Search className="h-5 w-5 mr-2" />
+                  Buscar Miembros
+                </CardTitle>
+                <CardDescription>
+                  Encuentra emprendedores, mentores y colaboradores por nombre, ubicación o habilidades
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ErrorBoundary>
+                  <UserSearch />
+                </ErrorBoundary>
+              </CardContent>
+            </Card>
+
+            {/* Connections Section */}
             <ErrorBoundary>
-              <UserSearch />
+              <ConnectionsSection />
             </ErrorBoundary>
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Connections Section */}
-        <div className="mb-8">
-          <ErrorBoundary>
-            <ConnectionsSection />
-          </ErrorBoundary>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-primary mb-2">150+</div>
-              <p className="text-sm text-muted-foreground">Miembros activos</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-primary mb-2">85</div>
-              <p className="text-sm text-muted-foreground">Emprendedores</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-primary mb-2">65</div>
-              <p className="text-sm text-muted-foreground">Mentores</p>
-            </CardContent>
-          </Card>
+          {/* Sidebar - Takes 1/3 of space on large screens, full width on mobile */}
+          <div className="lg:col-span-1">
+            <ErrorBoundary>
+              <NetworkSidebar />
+            </ErrorBoundary>
+          </div>
         </div>
       </div>
     </div>

@@ -80,7 +80,10 @@
       "Bash(gh pr view:*)",
       "Bash(rmdir .trees/)",
       "Bash(git branch -d feature-issue-5)",
-      "Bash(git branch -D feature-issue-5)"
+      "Bash(git branch -D feature-issue-5)",
+      "mcp__playwright__browser_tabs",
+      "Bash(psql:*)",
+      "mcp__playwright__browser_network_requests"
     ],
     "deny": [],
     "ask": []

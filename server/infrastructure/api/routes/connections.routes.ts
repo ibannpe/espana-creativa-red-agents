@@ -25,12 +25,14 @@ export const createConnectionsRoutes = (): Router => {
 
       return res.status(200).json({
         connections: connections.map((c) => ({
-          id: c.connection.id,
-          requester_id: c.connection.requesterId,
-          addressee_id: c.connection.addresseeId,
-          status: c.connection.status,
-          created_at: c.connection.createdAt.toISOString(),
-          updated_at: c.connection.updatedAt.toISOString(),
+          connection: {
+            id: c.connection.id,
+            requester_id: c.connection.requesterId,
+            addressee_id: c.connection.addresseeId,
+            status: c.connection.status,
+            created_at: c.connection.createdAt.toISOString(),
+            updated_at: c.connection.updatedAt.toISOString()
+          },
           user: c.user
         }))
       })
