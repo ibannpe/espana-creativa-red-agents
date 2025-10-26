@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tsx server/index.ts:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -336,7 +336,25 @@ SUPABASE_DB_CONNECTION_STRING=  # Full psql connection string
 
 # Email
 RESEND_API_KEY=             # Resend API key for emails
+
+# IMPORTANT: Local Development
+# For local development, VITE_API_URL must be commented out to use Vite proxy
+# VITE_API_URL should only be set in production deployment
 ```
+
+### Test Credentials
+
+El archivo `.env` incluye credenciales de test para desarrollo local. Puedes usar estas credenciales para probar el login y otras funcionalidades:
+
+```bash
+# Ver credenciales de test en el archivo .env
+# Sección: TEST_USER_EMAIL y TEST_USER_PASSWORD
+```
+
+**Uso recomendado:**
+- Usa las credenciales de test del `.env` para pruebas locales
+- No commitees credenciales reales al repositorio
+- Las credenciales de test están pensadas solo para desarrollo
 
 ### Using psql with Supabase
 
