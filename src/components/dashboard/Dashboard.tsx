@@ -54,13 +54,16 @@ const Dashboard = () => {
             </div>
             
             <div className="flex items-center space-x-4">
-              <Avatar className="h-8 w-8">
+              <Avatar
+                className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+                onClick={() => navigate('/profile')}
+              >
                 <AvatarImage src={user?.avatar_url} />
                 <AvatarFallback>
                   {user?.name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              
+
               <Button variant="ghost" size="sm" onClick={() => {
                 // logger.userAction('signout-clicked', { userId: user?.id });
                 signOut();

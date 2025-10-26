@@ -21,9 +21,18 @@ interface ConnectionRow {
 
 interface UserRow {
   id: string
+  email: string
   name: string
   avatar_url: string | null
-  professional_title: string | null
+  bio: string | null
+  location: string | null
+  linkedin_url: string | null
+  website_url: string | null
+  skills: string[]
+  interests: string[]
+  completed_pct: number
+  created_at: string
+  updated_at: string
 }
 
 /**
@@ -70,8 +79,36 @@ export class SupabaseConnectionRepository implements ConnectionRepository {
       .from('connections')
       .select(`
         *,
-        requester:users!connections_requester_id_fkey(id, name, avatar_url, professional_title),
-        addressee:users!connections_addressee_id_fkey(id, name, avatar_url, professional_title)
+        requester:users!connections_requester_id_fkey(
+          id,
+          email,
+          name,
+          avatar_url,
+          bio,
+          location,
+          linkedin_url,
+          website_url,
+          skills,
+          interests,
+          completed_pct,
+          created_at,
+          updated_at
+        ),
+        addressee:users!connections_addressee_id_fkey(
+          id,
+          email,
+          name,
+          avatar_url,
+          bio,
+          location,
+          linkedin_url,
+          website_url,
+          skills,
+          interests,
+          completed_pct,
+          created_at,
+          updated_at
+        )
       `)
       .or(`requester_id.eq.${params.userId},addressee_id.eq.${params.userId}`)
 
@@ -95,9 +132,18 @@ export class SupabaseConnectionRepository implements ConnectionRepository {
         connection,
         user: {
           id: otherUser.id,
+          email: otherUser.email,
           name: otherUser.name,
           avatar_url: otherUser.avatar_url,
-          professional_title: otherUser.professional_title
+          bio: otherUser.bio,
+          location: otherUser.location,
+          linkedin_url: otherUser.linkedin_url,
+          website_url: otherUser.website_url,
+          skills: otherUser.skills || [],
+          interests: otherUser.interests || [],
+          completed_pct: otherUser.completed_pct,
+          created_at: otherUser.created_at,
+          updated_at: otherUser.updated_at
         }
       }
     })
@@ -154,8 +200,36 @@ export class SupabaseConnectionRepository implements ConnectionRepository {
       .from('connections')
       .select(`
         *,
-        requester:users!connections_requester_id_fkey(id, name, avatar_url, professional_title),
-        addressee:users!connections_addressee_id_fkey(id, name, avatar_url, professional_title)
+        requester:users!connections_requester_id_fkey(
+          id,
+          email,
+          name,
+          avatar_url,
+          bio,
+          location,
+          linkedin_url,
+          website_url,
+          skills,
+          interests,
+          completed_pct,
+          created_at,
+          updated_at
+        ),
+        addressee:users!connections_addressee_id_fkey(
+          id,
+          email,
+          name,
+          avatar_url,
+          bio,
+          location,
+          linkedin_url,
+          website_url,
+          skills,
+          interests,
+          completed_pct,
+          created_at,
+          updated_at
+        )
       `)
       .eq('status', 'accepted')
       .or(`requester_id.eq.${userId2},addressee_id.eq.${userId2}`)
@@ -179,9 +253,18 @@ export class SupabaseConnectionRepository implements ConnectionRepository {
         connection,
         user: {
           id: otherUser.id,
+          email: otherUser.email,
           name: otherUser.name,
           avatar_url: otherUser.avatar_url,
-          professional_title: otherUser.professional_title
+          bio: otherUser.bio,
+          location: otherUser.location,
+          linkedin_url: otherUser.linkedin_url,
+          website_url: otherUser.website_url,
+          skills: otherUser.skills || [],
+          interests: otherUser.interests || [],
+          completed_pct: otherUser.completed_pct,
+          created_at: otherUser.created_at,
+          updated_at: otherUser.updated_at
         }
       }
     })

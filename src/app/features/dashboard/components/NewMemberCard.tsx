@@ -7,7 +7,9 @@ import { Badge } from '@/components/ui/badge'
 import { UserPlus, UserCheck } from 'lucide-react'
 import { useRequestConnectionMutation } from '@/app/features/network/hooks/mutations/useRequestConnectionMutation'
 import { useConnectionStatusQuery } from '@/app/features/network/hooks/queries/useConnectionStatusQuery'
+import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 import { useToast } from '@/hooks/use-toast'
+import { useNavigate } from 'react-router-dom'
 import type { DashboardUser } from '../data/schemas/dashboard.schema'
 
 interface NewMemberCardProps {
@@ -15,9 +17,11 @@ interface NewMemberCardProps {
 }
 
 export function NewMemberCard({ user }: NewMemberCardProps) {
+  const { user: currentUser } = useAuthContext()
   const { data: connectionStatus } = useConnectionStatusQuery(user.id)
   const { action: requestConnection, isLoading } = useRequestConnectionMutation()
   const { toast } = useToast()
+  const navigate = useNavigate()
 
   const handleConnect = async () => {
     try {
@@ -37,6 +41,13 @@ export function NewMemberCard({ user }: NewMemberCardProps) {
     }
   }
 
+  const handleAvatarClick = () => {
+    navigate(`/profile/${user.id}`)
+  }
+
+  // Don't show connection button if it's the current user
+  const isCurrentUser = currentUser?.id === user.id
+
   // Determine connection status
   const status = connectionStatus?.status || 'none'
 
@@ -46,7 +57,10 @@ export function NewMemberCard({ user }: NewMemberCardProps) {
   return (
     <div className="flex items-center gap-3 p-4 rounded-lg hover:bg-muted/50 transition-colors">
       {/* Avatar */}
-      <Avatar className="h-12 w-12">
+      <Avatar
+        className="h-12 w-12 cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+        onClick={handleAvatarClick}
+      >
         <AvatarImage src={user.avatar_url || undefined} alt={user.name} />
         <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-white text-sm">
           {getInitials(user.name, user.email)}
@@ -61,34 +75,43 @@ export function NewMemberCard({ user }: NewMemberCardProps) {
 
       {/* Connection Action */}
       <div className="flex-shrink-0">
-        {status === 'none' && (
-          <Button
-            size="sm"
-            onClick={handleConnect}
-            disabled={isLoading}
-            className="flex items-center gap-2"
-          >
-            <UserPlus className="h-4 w-4" />
-            {isLoading ? 'Conectando...' : 'Conectar'}
-          </Button>
-        )}
-
-        {status === 'pending' && (
-          <Button
-            size="sm"
-            variant="secondary"
-            disabled
-            className="cursor-not-allowed"
-          >
-            Solicitud enviada
-          </Button>
-        )}
-
-        {status === 'accepted' && (
-          <Badge variant="default" className="flex items-center gap-1">
-            <UserCheck className="h-3 w-3" />
-            Conectado
+        {/* Don't show any connection button if viewing own profile */}
+        {isCurrentUser ? (
+          <Badge variant="secondary" className="text-xs">
+            Tú
           </Badge>
+        ) : (
+          <>
+            {status === 'none' && (
+              <Button
+                size="sm"
+                onClick={handleConnect}
+                disabled={isLoading}
+                className="flex items-center gap-2"
+              >
+                <UserPlus className="h-4 w-4" />
+                {isLoading ? 'Conectando...' : 'Conectar'}
+              </Button>
+            )}
+
+            {status === 'pending' && (
+              <Button
+                size="sm"
+                variant="secondary"
+                disabled
+                className="cursor-not-allowed"
+              >
+                Solicitud enviada
+              </Button>
+            )}
+
+            {status === 'accepted' && (
+              <Badge variant="default" className="flex items-center gap-1">
+                <UserCheck className="h-3 w-3" />
+                Conectado
+              </Badge>
+            )}
+          </>
         )}
       </div>
     </div>
