@@ -97,11 +97,11 @@ const Dashboard = () => {
                   Un perfil completo te ayuda a conectar mejor con otros miembros
                 </CardDescription>
               </div>
-              <Badge variant="secondary">30% completado</Badge>
+              <Badge variant="secondary">{user?.completed_pct || 0}% completado</Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Progress value={30} className="w-full" />
+            <Progress value={user?.completed_pct || 0} className="w-full" />
             <div className="flex flex-wrap gap-2">
               <Button 
                 size="sm" 
