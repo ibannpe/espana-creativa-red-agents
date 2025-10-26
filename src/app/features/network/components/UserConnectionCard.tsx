@@ -5,11 +5,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { MapPin, Briefcase, UserPlus, UserCheck, UserX, Trash2 } from 'lucide-react'
+import { MapPin, Briefcase, UserPlus, UserCheck, UserX, Trash2, Eye } from 'lucide-react'
 import { useRequestConnectionMutation } from '../hooks/mutations/useRequestConnectionMutation'
 import { useUpdateConnectionMutation } from '../hooks/mutations/useUpdateConnectionMutation'
 import { useDeleteConnectionMutation } from '../hooks/mutations/useDeleteConnectionMutation'
 import { useConnectionStatusQuery } from '../hooks/queries/useConnectionStatusQuery'
+import { useNavigate } from 'react-router-dom'
 import type { UserProfile } from '@/app/features/profile/data/schemas/profile.schema'
 
 interface UserConnectionCardProps {
@@ -25,6 +26,7 @@ export function UserConnectionCard({
   showActions = true,
   compact = false
 }: UserConnectionCardProps) {
+  const navigate = useNavigate()
   const { data: connectionStatus } = useConnectionStatusQuery(user.id)
   const { action: requestConnection, isLoading: isRequesting } = useRequestConnectionMutation()
   const { action: updateConnection, isLoading: isUpdating } = useUpdateConnectionMutation()
@@ -58,15 +60,22 @@ export function UserConnectionCard({
     }
   }
 
+  const handleCardClick = () => {
+    navigate(`/users/${user.id}`)
+  }
+
   const status = connectionStatus?.status
   const isLoading = isRequesting || isUpdating || isDeleting
 
   return (
-    <Card className={compact ? 'hover:shadow-md transition-shadow' : ''}>
+    <Card className={compact ? 'hover:shadow-md transition-shadow cursor-pointer' : 'cursor-pointer hover:shadow-md transition-shadow'}>
       <CardContent className={compact ? 'p-4' : 'p-6'}>
         <div className="flex items-start gap-4">
           {/* Avatar */}
-          <Avatar className={compact ? 'h-12 w-12' : 'h-16 w-16'}>
+          <Avatar
+            className={`${compact ? 'h-12 w-12' : 'h-16 w-16'} cursor-pointer`}
+            onClick={handleCardClick}
+          >
             <AvatarImage src={user.avatar_url || undefined} alt={user.name} />
             <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-white">
               {user.name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase()}
@@ -75,7 +84,10 @@ export function UserConnectionCard({
 
           {/* User Info */}
           <div className="flex-1 min-w-0">
-            <h3 className={`font-semibold ${compact ? 'text-sm' : 'text-base'} truncate`}>
+            <h3
+              className={`font-semibold ${compact ? 'text-sm' : 'text-base'} truncate cursor-pointer hover:text-primary transition-colors`}
+              onClick={handleCardClick}
+            >
               {user.name}
             </h3>
 
@@ -100,7 +112,7 @@ export function UserConnectionCard({
 
             {/* Connection Actions */}
             {showActions && (
-              <div className="flex gap-2 mt-3">
+              <div className="flex flex-wrap gap-2 mt-3">
                 {status === null && (
                   <Button
                     size="sm"
@@ -138,7 +150,7 @@ export function UserConnectionCard({
                 )}
 
                 {status === 'accepted' && (
-                  <div className="flex items-center gap-2">
+                  <>
                     <Badge variant="default" className="flex items-center gap-1">
                       <UserCheck className="h-3 w-3" />
                       Conectado
@@ -153,12 +165,23 @@ export function UserConnectionCard({
                       <Trash2 className="h-4 w-4" />
                       Eliminar
                     </Button>
-                  </div>
+                  </>
                 )}
 
                 {status === 'rejected' && (
                   <Badge variant="secondary">Solicitud rechazada</Badge>
                 )}
+
+                {/* Ver Perfil button - always visible */}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleCardClick}
+                  className="flex items-center gap-2"
+                >
+                  <Eye className="h-4 w-4" />
+                  Ver Perfil
+                </Button>
               </div>
             )}
           </div>

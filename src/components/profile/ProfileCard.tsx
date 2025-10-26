@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { User } from '@/types'
-import { MapPin, Globe, Linkedin, MessageCircle, UserPlus, UserCheck, Clock } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { MapPin, Globe, Linkedin, MessageCircle, UserPlus, UserCheck, Clock, Eye } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useConnectionStatusQuery } from '@/app/features/network/hooks/queries/useConnectionStatusQuery'
 import { useRequestConnectionMutation } from '@/app/features/network/hooks/mutations/useRequestConnectionMutation'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
@@ -19,6 +19,7 @@ interface ProfileCardProps {
 
 export function ProfileCard({ user, showActions = true, onStartChat, showConnectButton = true }: ProfileCardProps) {
   const { user: currentUser } = useAuthContext()
+  const navigate = useNavigate()
   const { data: connectionStatus } = useConnectionStatusQuery(user.id, {
     enabled: showConnectButton && currentUser?.id !== user.id
   })
@@ -61,19 +62,31 @@ export function ProfileCard({ user, showActions = true, onStartChat, showConnect
     }
   }
 
+  const handleViewProfile = () => {
+    navigate(`/users/${user.id}`)
+  }
+
   const isCurrentUser = currentUser?.id === user.id
   const status = connectionStatus?.status || 'none'
 
   return (
     <Card className="w-full">
       <CardHeader className="text-center">
-        <Avatar className="h-20 w-20 mx-auto mb-4">
+        <Avatar
+          className="h-20 w-20 mx-auto mb-4 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={handleViewProfile}
+        >
           <AvatarImage src={user.avatar_url || ''} />
           <AvatarFallback className="text-lg">
             {getInitials(user.name)}
           </AvatarFallback>
         </Avatar>
-        <h3 className="text-xl font-semibold">{user.name || 'Usuario'}</h3>
+        <h3
+          className="text-xl font-semibold cursor-pointer hover:text-primary transition-colors"
+          onClick={handleViewProfile}
+        >
+          {user.name || 'Usuario'}
+        </h3>
         <div className="flex justify-center gap-2 mt-2">
           {user.roles?.map((role) => (
             <Badge key={role.id} className={getRoleColors(role.name)}>
@@ -196,7 +209,17 @@ export function ProfileCard({ user, showActions = true, onStartChat, showConnect
             Iniciar Chat
           </Button>
         )}
-        
+
+        {/* Ver Perfil button - always visible */}
+        <Button
+          onClick={handleViewProfile}
+          className="w-full mt-2"
+          variant="outline"
+        >
+          <Eye className="h-4 w-4 mr-2" />
+          Ver Perfil
+        </Button>
+
         <div className="pt-2 border-t">
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>Perfil completado</span>

@@ -1,13 +1,14 @@
-// ABOUTME: ConnectionsSection component for managing user connections
-// ABOUTME: Displays received requests, sent requests, and active connections in tabs
+// ABOUTME: Page displaying followers and following (pending connections)
+// ABOUTME: Shows received and sent connection requests in tabs
 
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Navigation } from '@/components/layout/Navigation'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
-import { useConnectionsQuery } from '../hooks/queries/useConnectionsQuery'
-import { useUpdateConnectionMutation } from '../hooks/mutations/useUpdateConnectionMutation'
-import { useDeleteConnectionMutation } from '../hooks/mutations/useDeleteConnectionMutation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useConnectionsQuery } from '@/app/features/network/hooks/queries/useConnectionsQuery'
+import { useUpdateConnectionMutation } from '@/app/features/network/hooks/mutations/useUpdateConnectionMutation'
+import { useDeleteConnectionMutation } from '@/app/features/network/hooks/mutations/useDeleteConnectionMutation'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -17,28 +18,23 @@ import {
   Check,
   X,
   Clock,
-  Trash2,
-  UserCheck,
+  UserPlus,
   Inbox,
   Send,
-  Users,
   MapPin,
   Loader2,
-  Eye
+  Eye,
+  ArrowLeft
 } from 'lucide-react'
-import type { ConnectionWithUser } from '../data/schemas/network.schema'
+import type { ConnectionWithUser } from '@/app/features/network/data/schemas/network.schema'
 
-export function ConnectionsSection() {
-  // Auth context para obtener el usuario actual
-  const { user } = useAuthContext()
+export function FollowersPage() {
   const navigate = useNavigate()
+  const { user } = useAuthContext()
 
-  // Queries para obtener conexiones
+  // Query para obtener conexiones pendientes
   const { data: pendingConnections, isLoading: isLoadingPending } =
     useConnectionsQuery({ status: 'pending' })
-
-  const { data: acceptedConnections, isLoading: isLoadingAccepted } =
-    useConnectionsQuery({ status: 'accepted' })
 
   // Mutations para acciones
   const { action: updateConnection, isLoading: isUpdating } =
@@ -65,7 +61,6 @@ export function ConnectionsSection() {
   // Contadores
   const receivedCount = receivedRequests.length
   const sentCount = sentRequests.length
-  const connectionsCount = acceptedConnections?.length || 0
 
   // Aceptar solicitud recibida
   const handleAccept = (connectionId: string) => {
@@ -130,32 +125,13 @@ export function ConnectionsSection() {
     })
   }
 
-  // Eliminar conexión activa
-  const handleRemove = (connectionId: string) => {
-    deleteConnection(connectionId, {
-      onSuccess: () => {
-        toast({
-          title: 'Conexión eliminada',
-          description: 'La conexión ha sido eliminada correctamente'
-        })
-      },
-      onError: (error) => {
-        toast({
-          title: 'Error',
-          description: error.message || 'No se pudo eliminar la conexión',
-          variant: 'destructive'
-        })
-      }
-    })
-  }
-
   // Componente interno para renderizar cada conexión
   function ConnectionItem({
     connectionWithUser,
     type
   }: {
     connectionWithUser: ConnectionWithUser
-    type: 'received' | 'sent' | 'connected'
+    type: 'received' | 'sent'
   }) {
     const { connection, user: otherUser } = connectionWithUser
     const isLoading = isUpdating || isDeleting
@@ -165,7 +141,7 @@ export function ConnectionsSection() {
     }
 
     return (
-      <Card className="hover:shadow-md transition-shadow cursor-pointer">
+      <Card className="hover:shadow-md transition-shadow">
         <CardContent className="p-6">
           <div className="flex items-start gap-4">
             {/* Avatar */}
@@ -253,25 +229,6 @@ export function ConnectionsSection() {
                   </>
                 )}
 
-                {type === 'connected' && (
-                  <>
-                    <Badge variant="default" className="flex items-center gap-1">
-                      <UserCheck className="h-3 w-3" />
-                      Conectado
-                    </Badge>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleRemove(connection.id)}
-                      disabled={isLoading}
-                      className="flex items-center gap-2"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      Eliminar
-                    </Button>
-                  </>
-                )}
-
                 {/* Ver Perfil button - always visible */}
                 <Button
                   size="sm"
@@ -290,7 +247,7 @@ export function ConnectionsSection() {
     )
   }
 
-  // Componente EmptyState (Interno)
+  // Componente EmptyState
   function EmptyState({
     icon: Icon,
     title,
@@ -312,94 +269,103 @@ export function ConnectionsSection() {
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="text-2xl">Mis Conexiones</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="received">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="received">
-              Solicitudes recibidas ({receivedCount})
-            </TabsTrigger>
-            <TabsTrigger value="sent">
-              Solicitudes enviadas ({sentCount})
-            </TabsTrigger>
-            <TabsTrigger value="connections">
-              Mis conexiones ({connectionsCount})
-            </TabsTrigger>
-          </TabsList>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+      <Navigation />
 
-          {/* Tab: Solicitudes Recibidas */}
-          <TabsContent value="received" className="space-y-4 mt-6">
-            {isLoadingPending ? (
-              <div className="text-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
-              </div>
-            ) : receivedRequests.length === 0 ? (
-              <EmptyState
-                icon={Inbox}
-                title="No tienes solicitudes recibidas"
-                description="Las solicitudes de conexión que recibas aparecerán aquí"
-              />
-            ) : (
-              receivedRequests.map((item) => (
-                <ConnectionItem
-                  key={item.connection.id}
-                  connectionWithUser={item}
-                  type="received"
-                />
-              ))
-            )}
-          </TabsContent>
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/network')}
+            className="mb-4 flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Volver a Red
+          </Button>
 
-          {/* Tab: Solicitudes Enviadas */}
-          <TabsContent value="sent" className="space-y-4 mt-6">
-            {isLoadingPending ? (
-              <div className="text-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
-              </div>
-            ) : sentRequests.length === 0 ? (
-              <EmptyState
-                icon={Send}
-                title="No has enviado solicitudes"
-                description="Busca usuarios y envíales una solicitud de conexión"
-              />
-            ) : (
-              sentRequests.map((item) => (
-                <ConnectionItem
-                  key={item.connection.id}
-                  connectionWithUser={item}
-                  type="sent"
-                />
-              ))
-            )}
-          </TabsContent>
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center">
+              <UserPlus className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Siguiendo y Seguidores</h1>
+              <p className="text-muted-foreground">
+                Gestiona tus solicitudes de conexión pendientes
+              </p>
+            </div>
+          </div>
+        </div>
 
-          {/* Tab: Mis Conexiones */}
-          <TabsContent value="connections" className="space-y-4 mt-6">
-            {isLoadingAccepted ? (
-              <div className="text-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
-              </div>
-            ) : connectionsCount === 0 ? (
-              <EmptyState
-                icon={Users}
-                title="Aún no tienes conexiones"
-                description="Comienza a conectar con otros miembros de España Creativa"
-              />
-            ) : (
-              acceptedConnections?.map((item) => (
-                <ConnectionItem
-                  key={item.connection.id}
-                  connectionWithUser={item}
-                  type="connected"
-                />
-              ))
-            )}
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+        {/* Content */}
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle className="text-2xl">Solicitudes de Conexión</CardTitle>
+            <CardDescription>
+              Revisa las solicitudes recibidas y las que has enviado
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="received">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="received">
+                  Recibidas ({receivedCount})
+                </TabsTrigger>
+                <TabsTrigger value="sent">
+                  Enviadas ({sentCount})
+                </TabsTrigger>
+              </TabsList>
+
+              {/* Tab: Solicitudes Recibidas */}
+              <TabsContent value="received" className="space-y-4 mt-6">
+                {isLoadingPending ? (
+                  <div className="text-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
+                  </div>
+                ) : receivedRequests.length === 0 ? (
+                  <EmptyState
+                    icon={Inbox}
+                    title="No tienes solicitudes recibidas"
+                    description="Las solicitudes de conexión que recibas aparecerán aquí"
+                  />
+                ) : (
+                  receivedRequests.map((item) => (
+                    <ConnectionItem
+                      key={item.connection.id}
+                      connectionWithUser={item}
+                      type="received"
+                    />
+                  ))
+                )}
+              </TabsContent>
+
+              {/* Tab: Solicitudes Enviadas */}
+              <TabsContent value="sent" className="space-y-4 mt-6">
+                {isLoadingPending ? (
+                  <div className="text-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
+                  </div>
+                ) : sentRequests.length === 0 ? (
+                  <EmptyState
+                    icon={Send}
+                    title="No has enviado solicitudes"
+                    description="Busca usuarios y envíales una solicitud de conexión"
+                  />
+                ) : (
+                  sentRequests.map((item) => (
+                    <ConnectionItem
+                      key={item.connection.id}
+                      connectionWithUser={item}
+                      type="sent"
+                    />
+                  ))
+                )}
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   )
 }

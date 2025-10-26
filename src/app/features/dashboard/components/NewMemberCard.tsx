@@ -4,7 +4,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { UserPlus, UserCheck } from 'lucide-react'
+import { UserPlus, UserCheck, Eye } from 'lucide-react'
 import { useRequestConnectionMutation } from '@/app/features/network/hooks/mutations/useRequestConnectionMutation'
 import { useConnectionStatusQuery } from '@/app/features/network/hooks/queries/useConnectionStatusQuery'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
@@ -41,8 +41,8 @@ export function NewMemberCard({ user }: NewMemberCardProps) {
     }
   }
 
-  const handleAvatarClick = () => {
-    navigate(`/profile/${user.id}`)
+  const handleViewProfile = () => {
+    navigate(`/users/${user.id}`)
   }
 
   // Don't show connection button if it's the current user
@@ -59,7 +59,7 @@ export function NewMemberCard({ user }: NewMemberCardProps) {
       {/* Avatar */}
       <Avatar
         className="h-12 w-12 cursor-pointer hover:ring-2 hover:ring-primary transition-all"
-        onClick={handleAvatarClick}
+        onClick={handleViewProfile}
       >
         <AvatarImage src={user.avatar_url || undefined} alt={user.name} />
         <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-white text-sm">
@@ -69,12 +69,17 @@ export function NewMemberCard({ user }: NewMemberCardProps) {
 
       {/* User Info */}
       <div className="flex-1 min-w-0">
-        <h3 className="text-sm font-semibold truncate">{user.name}</h3>
+        <h3
+          className="text-sm font-semibold truncate cursor-pointer hover:text-primary transition-colors"
+          onClick={handleViewProfile}
+        >
+          {user.name}
+        </h3>
         <span className="text-xs text-muted-foreground">{roleLabel}</span>
       </div>
 
       {/* Connection Action */}
-      <div className="flex-shrink-0">
+      <div className="flex-shrink-0 flex items-center gap-2">
         {/* Don't show any connection button if viewing own profile */}
         {isCurrentUser ? (
           <Badge variant="secondary" className="text-xs">
@@ -112,6 +117,19 @@ export function NewMemberCard({ user }: NewMemberCardProps) {
               </Badge>
             )}
           </>
+        )}
+
+        {/* Ver Perfil button - always visible except for current user */}
+        {!isCurrentUser && (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleViewProfile}
+            className="flex items-center gap-2"
+          >
+            <Eye className="h-4 w-4" />
+            Ver Perfil
+          </Button>
         )}
       </div>
     </div>
