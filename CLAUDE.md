@@ -331,10 +331,26 @@ Required variables in `.env`:
 VITE_SUPABASE_URL=          # Your Supabase project URL
 VITE_SUPABASE_ANON_KEY=     # Public anon key
 SUPABASE_SERVICE_ROLE_KEY=  # Service role key (server-side only)
+SUPABASE_DB_PASSWORD=       # PostgreSQL database password
+SUPABASE_DB_CONNECTION_STRING=  # Full psql connection string
 
 # Email
 RESEND_API_KEY=             # Resend API key for emails
 ```
+
+### Using psql with Supabase
+
+To connect to Supabase using `psql`, you **must** disable GSSAPI encryption. Use the connection string from `.env`:
+
+
+**Important:** The `gssencmode=disable` parameter is **required** to avoid GSSAPI negotiation errors with Supabase's pooler.
+
+**Common psql commands:**
+- `\dt` - List all tables
+- `\dt public.*` - List tables in public schema
+- `\d table_name` - Describe table structure
+- `\l` - List all databases
+- `\dn` - List all schemas
 
 ## Important Notes
 

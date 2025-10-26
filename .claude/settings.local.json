@@ -83,7 +83,20 @@
       "Bash(git branch -D feature-issue-5)",
       "mcp__playwright__browser_tabs",
       "Bash(psql:*)",
-      "mcp__playwright__browser_network_requests"
+      "mcp__playwright__browser_network_requests",
+      "Read(//Users/iperezmi/**)",
+      "Bash(npx:*)",
+      "WebSearch",
+      "WebFetch(domain:supabase.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(open \"https://supabase.com/dashboard/account/tokens\")",
+      "Bash(env)",
+      "Bash(brew install:*)",
+      "Bash(export PATH=\"/opt/homebrew/opt/postgresql@16/bin:$PATH\")",
+      "Bash(node test-supabase-tables.mjs:*)",
+      "Bash(open \"https://supabase.com/dashboard/project/jbkzymvswvnkrxriyzdx/settings/database\")",
+      "mcp__playwright__browser_evaluate",
+      "Bash(PGPASSWORD='E23lST9WncCdUGpu' psql:*)"
     ],
     "deny": [],
     "ask": []
