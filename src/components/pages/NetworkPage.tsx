@@ -1,5 +1,6 @@
 import { Navigation } from '@/components/layout/Navigation'
 import { UserSearch } from '@/components/network/UserSearch'
+import { ConnectionsSection } from '@/app/features/network/components/ConnectionsSection'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { Users, Search } from 'lucide-react'
@@ -42,6 +43,13 @@ export function NetworkPage() {
             </ErrorBoundary>
           </CardContent>
         </Card>
+
+        {/* Connections Section */}
+        <div className="mb-8">
+          <ErrorBoundary>
+            <ConnectionsSection />
+          </ErrorBoundary>
+        </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

@@ -72,7 +72,15 @@
       "Bash(yarn dev)",
       "Bash(yarn lint:*)",
       "Bash(gh pr create:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git checkout:*)",
+      "Bash(git pull:*)",
+      "Bash(git merge:*)",
+      "Bash(gh issue close:*)",
+      "Bash(gh pr view:*)",
+      "Bash(rmdir .trees/)",
+      "Bash(git branch -d feature-issue-5)",
+      "Bash(git branch -D feature-issue-5)"
     ],
     "deny": [],
     "ask": []

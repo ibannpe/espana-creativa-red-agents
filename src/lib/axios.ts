@@ -31,10 +31,10 @@ axiosInstance.interceptors.request.use(
   }
 )
 
-// Response interceptor to handle errors silently
+// Response interceptor to handle errors and token expiration
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     // Suppress 401 errors for auth/me endpoint (expected when not authenticated)
     if (error.config?.url?.includes('/auth/me') && error.response?.status === 401) {
       // Create a custom error that doesn't log to console
@@ -42,6 +42,14 @@ axiosInstance.interceptors.response.use(
       ;(silentError as any).response = error.response
       ;(silentError as any).config = error.config
       return Promise.reject(silentError)
+    }
+
+    // Handle 401 errors on protected endpoints (token expired or invalid)
+    if (error.response?.status === 401 && !error.config?.url?.includes('/auth/')) {
+      console.warn('🔐 Token inválido o expirado. Por favor, cierra sesión y vuelve a iniciar.')
+      // Optionally: you could sign out automatically here
+      // await supabase.auth.signOut()
+      // window.location.href = '/auth'
     }
 
     // For all other errors, pass through normally
