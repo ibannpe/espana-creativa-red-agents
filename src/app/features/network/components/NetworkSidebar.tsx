@@ -43,6 +43,11 @@ function SidebarItem({ icon: Icon, label, count, isLoading }: SidebarItemProps) 
 export function NetworkSidebar() {
   const { data: stats, isLoading } = useNetworkStatsQuery()
 
+  // Calculate total pending (received + sent)
+  const totalPending = stats
+    ? (stats.pending_requests || 0) + (stats.sent_requests || 0)
+    : undefined
+
   return (
     <Card className="sticky top-4">
       <CardHeader className="pb-3">
@@ -59,11 +64,11 @@ export function NetworkSidebar() {
             isLoading={isLoading}
           />
 
-          {/* Solicitudes pendientes - Pending requests */}
+          {/* Solicitudes pendientes - Pending requests (received + sent) */}
           <SidebarItem
             icon={UserPlus}
             label="Siguiendo y seguidores"
-            count={stats?.pending_requests}
+            count={totalPending}
             isLoading={isLoading}
           />
 

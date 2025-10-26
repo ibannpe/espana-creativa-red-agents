@@ -53,7 +53,7 @@ export const createConnectionsRoutes = (): Router => {
       const getNetworkStatsUseCase = Container.getGetNetworkStatsUseCase()
       const stats = await getNetworkStatsUseCase.execute({ userId })
 
-      return res.status(200).json(stats)
+      return res.status(200).json({ stats })
     } catch (error) {
       next(error)
     }
