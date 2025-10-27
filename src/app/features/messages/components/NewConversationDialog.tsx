@@ -27,9 +27,9 @@ export function NewConversationDialog({ children }: NewConversationDialogProps) 
   const [searchQuery, setSearchQuery] = useState('')
   const navigate = useNavigate()
 
-  // Fetch approved connections
+  // Fetch accepted connections
   const { data: connections, isLoading } = useConnectionsQuery(
-    { status: 'approved' },
+    { status: 'accepted' },
     { enabled: open }
   )
 
