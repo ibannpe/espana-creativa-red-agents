@@ -110,10 +110,10 @@ export const createMessagesRoutes = (): Router => {
       })
 
       // Get user information for sender and recipient
-      const getUserByIdUseCase = Container.getGetUserByIdUseCase()
+      const getUserProfileUseCase = Container.getGetUserProfileUseCase()
       const [sender, recipient] = await Promise.all([
-        getUserByIdUseCase.execute({ userId: message.senderId }),
-        getUserByIdUseCase.execute({ userId: message.recipientId })
+        getUserProfileUseCase.execute({ userId: message.senderId }),
+        getUserProfileUseCase.execute({ userId: message.recipientId })
       ])
 
       return res.status(201).json({
