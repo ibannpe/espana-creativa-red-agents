@@ -38,9 +38,19 @@ export function MessagesPage() {
     { enabled: !!userId }
   )
 
-  // Find selected conversation user
+  // Find selected conversation user from existing conversations
+  // or derive from messages if it's a new conversation
   const selectedConversation = conversationsData?.conversations.find(
     (conv) => conv.user.id === userId
+  )
+
+  // For new conversations, get user info from first message if available
+  const otherUser = selectedConversation?.user || (
+    messagesData?.messages.length ? (
+      messagesData.messages[0].sender.id === userId
+        ? messagesData.messages[0].sender
+        : messagesData.messages[0].recipient
+    ) : null
   )
 
   const handleSelectConversation = (selectedUserId: string) => {
@@ -105,26 +115,35 @@ export function MessagesPage() {
 
           {/* Columns 2-3: Chat Area */}
           <Card className="lg:col-span-2 flex flex-col">
-            {userId && selectedConversation ? (
+            {userId ? (
               <>
                 {/* Chat Header */}
                 <CardHeader className="border-b">
                   <div className="flex items-center space-x-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage
-                        src={selectedConversation.user.avatar_url || undefined}
-                        alt={selectedConversation.user.name}
-                      />
-                      <AvatarFallback>
-                        {selectedConversation.user.name?.charAt(0)?.toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <CardTitle className="text-lg">{selectedConversation.user.name}</CardTitle>
-                      <CardDescription>
-                        {selectedConversation.user.headline || 'Miembro de España Creativa'}
-                      </CardDescription>
-                    </div>
+                    {otherUser ? (
+                      <>
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage
+                            src={otherUser.avatar_url || undefined}
+                            alt={otherUser.name}
+                          />
+                          <AvatarFallback>
+                            {otherUser.name?.charAt(0)?.toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <CardTitle className="text-lg">{otherUser.name}</CardTitle>
+                          <CardDescription>
+                            {otherUser.headline || 'Miembro de España Creativa'}
+                          </CardDescription>
+                        </div>
+                      </>
+                    ) : (
+                      <div>
+                        <CardTitle className="text-lg">Nueva conversación</CardTitle>
+                        <CardDescription>Cargando información...</CardDescription>
+                      </div>
+                    )}
                   </div>
                 </CardHeader>
 
@@ -178,50 +197,57 @@ export function MessagesPage() {
           ) : (
             // Show chat
             <Card className="min-h-[calc(100vh-200px)] flex flex-col">
-              {selectedConversation && (
-                <>
-                  {/* Mobile Chat Header */}
-                  <CardHeader className="border-b">
-                    <div className="flex items-center space-x-3">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleBackToList}
-                        className="mr-2"
-                      >
-                        <ArrowLeft className="h-4 w-4" />
-                      </Button>
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage
-                          src={selectedConversation.user.avatar_url || undefined}
-                          alt={selectedConversation.user.name}
-                        />
-                        <AvatarFallback>
-                          {selectedConversation.user.name?.charAt(0)?.toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
+              <>
+                {/* Mobile Chat Header */}
+                <CardHeader className="border-b">
+                  <div className="flex items-center space-x-3">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleBackToList}
+                      className="mr-2"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                    </Button>
+                    {otherUser ? (
+                      <>
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage
+                            src={otherUser.avatar_url || undefined}
+                            alt={otherUser.name}
+                          />
+                          <AvatarFallback>
+                            {otherUser.name?.charAt(0)?.toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <CardTitle className="text-lg">
+                            {otherUser.name}
+                          </CardTitle>
+                          <CardDescription>
+                            {otherUser.headline || 'Miembro de España Creativa'}
+                          </CardDescription>
+                        </div>
+                      </>
+                    ) : (
                       <div>
-                        <CardTitle className="text-lg">
-                          {selectedConversation.user.name}
-                        </CardTitle>
-                        <CardDescription>
-                          {selectedConversation.user.headline || 'Miembro de España Creativa'}
-                        </CardDescription>
+                        <CardTitle className="text-lg">Nueva conversación</CardTitle>
+                        <CardDescription>Cargando información...</CardDescription>
                       </div>
-                    </div>
-                  </CardHeader>
+                    )}
+                  </div>
+                </CardHeader>
 
-                  {/* Messages Area */}
-                  <CardContent className="flex-1 overflow-hidden p-0">
-                    <MessagesList userId={userId} messages={messagesData?.messages || []} />
-                  </CardContent>
+                {/* Messages Area */}
+                <CardContent className="flex-1 overflow-hidden p-0">
+                  <MessagesList userId={userId} messages={messagesData?.messages || []} />
+                </CardContent>
 
-                  {/* Message Input */}
-                  <CardContent className="border-t p-4">
-                    <MessageInput recipientId={userId} />
-                  </CardContent>
-                </>
-              )}
+                {/* Message Input */}
+                <CardContent className="border-t p-4">
+                  <MessageInput recipientId={userId} />
+                </CardContent>
+              </>
             </Card>
           )}
         </div>
