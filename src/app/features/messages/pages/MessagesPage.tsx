@@ -12,6 +12,7 @@ import { MessageSquare, Search, Plus, ArrowLeft } from 'lucide-react'
 import { ConversationList } from '../components/ConversationList'
 import { MessagesList } from '../components/MessagesList'
 import { MessageInput } from '../components/MessageInput'
+import { NewConversationDialog } from '../components/NewConversationDialog'
 import { useConversationsQuery } from '../hooks/queries/useConversationsQuery'
 import { useConversationMessagesQuery } from '../hooks/queries/useConversationMessagesQuery'
 import { useRealtimeConversations } from '../hooks/useRealtimeConversations'
@@ -74,10 +75,7 @@ export function MessagesPage() {
                 </p>
               </div>
             </div>
-            <Button onClick={() => navigate('/network')}>
-              <Plus className="h-4 w-4 mr-2" />
-              Nuevo mensaje
-            </Button>
+            <NewConversationDialog />
           </div>
         </div>
 
