@@ -109,6 +109,13 @@ export const createMessagesRoutes = (): Router => {
         content: content.trim()
       })
 
+      // Get user information for sender and recipient
+      const getUserByIdUseCase = Container.getGetUserByIdUseCase()
+      const [sender, recipient] = await Promise.all([
+        getUserByIdUseCase.execute({ userId: message.senderId }),
+        getUserByIdUseCase.execute({ userId: message.recipientId })
+      ])
+
       return res.status(201).json({
         message: {
           id: message.id,
@@ -117,7 +124,49 @@ export const createMessagesRoutes = (): Router => {
           content: message.content,
           read_at: null,
           created_at: message.createdAt.toISOString(),
-          updated_at: message.updatedAt.toISOString()
+          updated_at: message.updatedAt.toISOString(),
+          sender: {
+            id: sender.id,
+            name: sender.name,
+            email: sender.email,
+            avatar_url: sender.avatarUrl,
+            headline: sender.headline,
+            bio: sender.bio,
+            location: sender.location,
+            website: sender.website,
+            linkedin_url: sender.linkedinUrl,
+            twitter_url: sender.twitterUrl,
+            github_url: sender.githubUrl,
+            skills: sender.skills,
+            interests: sender.interests,
+            completed_pct: sender.completedPct,
+            created_at: sender.createdAt.toISOString(),
+            updated_at: sender.updatedAt.toISOString(),
+            status: sender.status,
+            approved_at: sender.approvedAt?.toISOString() || null,
+            role: sender.role
+          },
+          recipient: {
+            id: recipient.id,
+            name: recipient.name,
+            email: recipient.email,
+            avatar_url: recipient.avatarUrl,
+            headline: recipient.headline,
+            bio: recipient.bio,
+            location: recipient.location,
+            website: recipient.website,
+            linkedin_url: recipient.linkedinUrl,
+            twitter_url: recipient.twitterUrl,
+            github_url: recipient.githubUrl,
+            skills: recipient.skills,
+            interests: recipient.interests,
+            completed_pct: recipient.completedPct,
+            created_at: recipient.createdAt.toISOString(),
+            updated_at: recipient.updatedAt.toISOString(),
+            status: recipient.status,
+            approved_at: recipient.approvedAt?.toISOString() || null,
+            role: recipient.role
+          }
         }
       })
     } catch (error: any) {
