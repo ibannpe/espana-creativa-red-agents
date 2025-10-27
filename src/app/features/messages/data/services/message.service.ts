@@ -32,7 +32,7 @@ export const messageService = {
    * Get messages in a conversation with a specific user
    */
   async getConversationMessages(params: GetConversationRequest): Promise<GetConversationMessagesResponse> {
-    const response = await axiosInstance.get(`/messages/conversation/${params.user_id}`, {
+    const response = await axiosInstance.get(`/messages/conversations/${params.user_id}`, {
       params: {
         limit: params.limit,
         offset: params.offset
