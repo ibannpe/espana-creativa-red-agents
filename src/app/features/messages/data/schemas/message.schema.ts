@@ -7,13 +7,13 @@ import { z } from 'zod'
  * Base message schema representing a single message
  */
 export const messageSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string(), // BIGSERIAL from database, not UUID
   sender_id: z.string().uuid(),
   recipient_id: z.string().uuid(),
   content: z.string(),
   read_at: z.string().datetime().nullable(),
   created_at: z.string().datetime(),
-  updated_at: z.string().datetime()
+  updated_at: z.string().datetime().optional() // Make optional for backward compatibility
 })
 
 export type Message = z.infer<typeof messageSchema>
@@ -44,7 +44,7 @@ export type MessageWithUsers = z.infer<typeof messageWithUsersSchema>
  */
 export const conversationSchema = z.object({
   user: messageUserSchema,
-  last_message: messageSchema,
+  last_message: messageSchema.nullable(),
   unread_count: z.number().int().min(0)
 })
 
@@ -66,7 +66,7 @@ export type SendMessageRequest = z.infer<typeof sendMessageRequestSchema>
  * Request to mark messages as read
  */
 export const markAsReadRequestSchema = z.object({
-  message_ids: z.array(z.string().uuid()).min(1, 'Debes especificar al menos un mensaje')
+  message_ids: z.array(z.string()).min(1, 'Debes especificar al menos un mensaje')
 })
 
 export type MarkAsReadRequest = z.infer<typeof markAsReadRequestSchema>

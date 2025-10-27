@@ -11,7 +11,7 @@ import {
 } from '../../../application/ports/MessageRepository'
 
 interface MessageRow {
-  id: string
+  id: string | number // BIGSERIAL from database returns as number
   sender_id: string
   recipient_id: string
   content: string
@@ -50,31 +50,49 @@ export class SupabaseMessageRepository implements MessageRepository {
   }
 
   async findByIdWithUsers(id: string): Promise<MessageWithUsers | null> {
-    const { data, error } = await this.supabase
+    const { data: message, error } = await this.supabase
       .from('messages')
-      .select(`
-        *,
-        sender:users!messages_sender_id_fkey(id, name, avatar_url),
-        recipient:users!messages_recipient_id_fkey(id, name, avatar_url)
-      `)
+      .select('*')
       .eq('id', id)
       .single()
 
-    if (error || !data) {
+    if (error || !message) {
       return null
     }
 
+    // Fetch user information separately
+    const { data: users } = await this.supabase
+      .from('users')
+      .select('id, name, avatar_url')
+      .in('id', [message.sender_id, message.recipient_id])
+
+    const userMap = new Map<string, UserRow>()
+    users?.forEach((user: UserRow) => {
+      userMap.set(user.id, user)
+    })
+
+    const sender = userMap.get(message.sender_id) || {
+      id: message.sender_id,
+      name: 'Unknown',
+      avatar_url: null
+    }
+    const recipient = userMap.get(message.recipient_id) || {
+      id: message.recipient_id,
+      name: 'Unknown',
+      avatar_url: null
+    }
+
     return {
-      message: this.toDomain(data),
+      message: this.toDomain(message),
       sender: {
-        id: data.sender.id,
-        name: data.sender.name,
-        avatar_url: data.sender.avatar_url
+        id: sender.id,
+        name: sender.name,
+        avatar_url: sender.avatar_url
       },
       recipient: {
-        id: data.recipient.id,
-        name: data.recipient.name,
-        avatar_url: data.recipient.avatar_url
+        id: recipient.id,
+        name: recipient.name,
+        avatar_url: recipient.avatar_url
       }
     }
   }
@@ -83,11 +101,7 @@ export class SupabaseMessageRepository implements MessageRepository {
     // Get all messages where user is involved (sender or recipient)
     const { data: messages, error } = await this.supabase
       .from('messages')
-      .select(`
-        *,
-        sender:users!messages_sender_id_fkey(id, name, avatar_url),
-        recipient:users!messages_recipient_id_fkey(id, name, avatar_url)
-      `)
+      .select('*')
       .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
       .order('created_at', { ascending: false })
 
@@ -95,18 +109,44 @@ export class SupabaseMessageRepository implements MessageRepository {
       return []
     }
 
+    if (messages.length === 0) {
+      return []
+    }
+
+    // Get unique user IDs
+    const userIds = new Set<string>()
+    messages.forEach((msg: any) => {
+      userIds.add(msg.sender_id)
+      userIds.add(msg.recipient_id)
+    })
+
+    // Fetch user information
+    const { data: users } = await this.supabase
+      .from('users')
+      .select('id, name, avatar_url')
+      .in('id', Array.from(userIds))
+
+    const userMap = new Map<string, UserRow>()
+    users?.forEach((user: UserRow) => {
+      userMap.set(user.id, user)
+    })
+
     // Group by other user and get last message + unread count
     const conversationsMap = new Map<string, Conversation>()
 
     for (const msgRow of messages) {
       const message = this.toDomain(msgRow)
       const otherUserId = message.senderId === userId ? message.recipientId : message.senderId
-      const otherUser = message.senderId === userId ? msgRow.recipient : msgRow.sender
+      const otherUser = userMap.get(otherUserId) || {
+        id: otherUserId,
+        name: 'Unknown',
+        avatar_url: null
+      }
 
       if (!conversationsMap.has(otherUserId)) {
         // Count unread messages from this user
         const unreadCount = messages.filter(
-          (m) =>
+          (m: any) =>
             m.sender_id === otherUserId &&
             m.recipient_id === userId &&
             m.read_at === null
@@ -133,17 +173,26 @@ export class SupabaseMessageRepository implements MessageRepository {
   async findConversationMessages(
     params: GetConversationMessagesParams
   ): Promise<MessageWithUsers[]> {
+    console.log('[SupabaseMessageRepository] findConversationMessages called with:', {
+      userId: params.userId,
+      otherUserId: params.otherUserId,
+      limit: params.limit,
+      offset: params.offset
+    })
+
+    // Build query for messages between two specific users
+    // Using separate queries for simplicity
     let query = this.supabase
       .from('messages')
-      .select(`
-        *,
-        sender:users!messages_sender_id_fkey(id, name, avatar_url),
-        recipient:users!messages_recipient_id_fkey(id, name, avatar_url)
-      `)
-      .or(
-        `and(sender_id.eq.${params.userId},recipient_id.eq.${params.otherUserId}),and(sender_id.eq.${params.otherUserId},recipient_id.eq.${params.userId})`
-      )
-      .order('created_at', { ascending: false })
+      .select('*')
+
+    // Filter for conversations between the two users (both directions)
+    query = query.or(
+      `and(sender_id.eq.${params.userId},recipient_id.eq.${params.otherUserId}),` +
+      `and(sender_id.eq.${params.otherUserId},recipient_id.eq.${params.userId})`
+    )
+
+    query = query.order('created_at', { ascending: false })
 
     if (params.limit) {
       query = query.limit(params.limit)
@@ -155,23 +204,88 @@ export class SupabaseMessageRepository implements MessageRepository {
 
     const { data, error } = await query
 
-    if (error || !data) {
+    if (error) {
+      console.error('[SupabaseMessageRepository] Error fetching conversation messages:', error)
+      console.error('[SupabaseMessageRepository] Error details:', JSON.stringify(error, null, 2))
       return []
     }
 
-    return data.map((row: any) => ({
-      message: this.toDomain(row),
-      sender: {
-        id: row.sender.id,
-        name: row.sender.name,
-        avatar_url: row.sender.avatar_url
-      },
-      recipient: {
-        id: row.recipient.id,
-        name: row.recipient.name,
-        avatar_url: row.recipient.avatar_url
+    if (!data) {
+      console.log('[SupabaseMessageRepository] No messages found for conversation')
+      return []
+    }
+
+    console.log(`[SupabaseMessageRepository] Found ${data.length} messages between ${params.userId} and ${params.otherUserId}`)
+
+    // If no messages, return empty array
+    if (data.length === 0) {
+      return []
+    }
+
+    // Get unique user IDs from messages
+    const userIds = new Set<string>()
+    data.forEach((msg: any) => {
+      userIds.add(msg.sender_id)
+      userIds.add(msg.recipient_id)
+    })
+
+    // Fetch user information for all users involved
+    const { data: users, error: userError } = await this.supabase
+      .from('users')
+      .select('id, name, avatar_url')
+      .in('id', Array.from(userIds))
+
+    if (userError) {
+      console.error('[SupabaseMessageRepository] Error fetching users:', userError)
+      // Return messages without user info if user fetch fails
+      return data.map((row: any) => ({
+        message: this.toDomain(row),
+        sender: {
+          id: row.sender_id,
+          name: 'Unknown',
+          avatar_url: null
+        },
+        recipient: {
+          id: row.recipient_id,
+          name: 'Unknown',
+          avatar_url: null
+        }
+      }))
+    }
+
+    // Create a map of users by ID
+    const userMap = new Map<string, UserRow>()
+    users?.forEach((user: UserRow) => {
+      userMap.set(user.id, user)
+    })
+
+    // Map messages with user information
+    return data.map((row: any) => {
+      const sender = userMap.get(row.sender_id) || {
+        id: row.sender_id,
+        name: 'Unknown',
+        avatar_url: null
       }
-    }))
+      const recipient = userMap.get(row.recipient_id) || {
+        id: row.recipient_id,
+        name: 'Unknown',
+        avatar_url: null
+      }
+
+      return {
+        message: this.toDomain(row),
+        sender: {
+          id: sender.id,
+          name: sender.name,
+          avatar_url: sender.avatar_url
+        },
+        recipient: {
+          id: recipient.id,
+          name: recipient.name,
+          avatar_url: recipient.avatar_url
+        }
+      }
+    })
   }
 
   async getUnreadCount(userId: string): Promise<number> {
@@ -186,10 +300,12 @@ export class SupabaseMessageRepository implements MessageRepository {
 
   async create(message: Message): Promise<Message> {
     const row = this.toRow(message)
+    // Remove id since it's auto-generated by database (BIGSERIAL)
+    const { id, ...rowWithoutId } = row
 
     const { data, error } = await this.supabase
       .from('messages')
-      .insert(row)
+      .insert(rowWithoutId)
       .select()
       .single()
 
@@ -253,7 +369,7 @@ export class SupabaseMessageRepository implements MessageRepository {
    */
   private toDomain(row: MessageRow): Message {
     return Message.create({
-      id: row.id,
+      id: String(row.id), // Convert bigint to string
       senderId: row.sender_id,
       recipientId: row.recipient_id,
       content: row.content,
