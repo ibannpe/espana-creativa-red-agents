@@ -24,7 +24,8 @@ import {
   Users,
   MapPin,
   Loader2,
-  Eye
+  Eye,
+  MessageSquare
 } from 'lucide-react'
 import type { ConnectionWithUser } from '../data/schemas/network.schema'
 
@@ -259,6 +260,14 @@ export function ConnectionsSection() {
                       <UserCheck className="h-3 w-3" />
                       Conectado
                     </Badge>
+                    <Button
+                      size="sm"
+                      onClick={() => navigate(`/messages/${otherUser.id}`)}
+                      className="flex items-center gap-2"
+                    >
+                      <MessageSquare className="h-4 w-4" />
+                      Enviar mensaje
+                    </Button>
                     <Button
                       size="sm"
                       variant="ghost"
