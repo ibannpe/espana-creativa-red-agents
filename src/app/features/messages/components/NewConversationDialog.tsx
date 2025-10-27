@@ -82,10 +82,18 @@ export function NewConversationDialog({ children }: NewConversationDialogProps) 
           ) : filteredConnections && filteredConnections.length > 0 ? (
             <div className="space-y-2">
               {filteredConnections.map((connection) => (
-                <button
+                <div
                   key={connection.user.id}
                   onClick={() => handleSelectUser(connection.user.id)}
-                  className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors"
+                  className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      handleSelectUser(connection.user.id)
+                    }
+                  }}
                 >
                   <Avatar className="h-10 w-10">
                     <AvatarImage
@@ -102,7 +110,7 @@ export function NewConversationDialog({ children }: NewConversationDialogProps) 
                       {connection.user.headline || 'Miembro de España Creativa'}
                     </p>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           ) : searchQuery ? (
