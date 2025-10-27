@@ -13,7 +13,7 @@ import Dashboard from '@/components/dashboard/Dashboard'
 import { NetworkPage } from '@/components/pages/NetworkPage'
 import { MyNetworkPage } from '@/components/pages/MyNetworkPage'
 import { FollowersPage } from '@/components/pages/FollowersPage'
-import { MessagesPage } from '@/components/pages/MessagesPage'
+import { MessagesPage } from '@/app/features/messages/pages/MessagesPage'
 import { OpportunitiesPage } from '@/components/pages/OpportunitiesPage'
 import { ProgramsPage } from '@/components/pages/ProgramsPage'
 import { ProfilePage } from '@/components/pages/ProfilePage'
@@ -100,6 +100,14 @@ function App() {
         />
         <Route
           path="/messages"
+          element={
+            <ProtectedRoute>
+              <MessagesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/messages/:userId"
           element={
             <ProtectedRoute>
               <MessagesPage />
