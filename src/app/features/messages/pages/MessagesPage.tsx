@@ -18,6 +18,7 @@ import { useConversationMessagesQuery } from '../hooks/queries/useConversationMe
 import { useRealtimeConversations } from '../hooks/useRealtimeConversations'
 import { useRealtimeMessages } from '../hooks/useRealtimeMessages'
 import { useUnreadNotifications } from '../hooks/useUnreadNotifications'
+import { useConnectionsQuery } from '@/app/features/network/hooks/queries/useConnectionsQuery'
 
 export function MessagesPage() {
   const { userId } = useParams<{ userId: string }>()
@@ -38,20 +39,30 @@ export function MessagesPage() {
     { enabled: !!userId }
   )
 
+  // Query connections to get user info if not in conversations
+  const { data: connections } = useConnectionsQuery(
+    { status: 'accepted' },
+    { enabled: !!userId }
+  )
+
   // Find selected conversation user from existing conversations
   // or derive from messages if it's a new conversation
   const selectedConversation = conversationsData?.conversations.find(
     (conv) => conv.user.id === userId
   )
 
-  // For new conversations, get user info from first message if available
-  const otherUser = selectedConversation?.user || (
-    messagesData?.messages.length ? (
+  // For new conversations, get user info from:
+  // 1. Existing conversation list
+  // 2. First message (if messages exist)
+  // 3. Connections list (if it's a new conversation)
+  const otherUser = selectedConversation?.user ||
+    (messagesData?.messages.length ? (
       messagesData.messages[0].sender.id === userId
         ? messagesData.messages[0].sender
         : messagesData.messages[0].recipient
-    ) : null
-  )
+    ) : null) ||
+    connections?.find(conn => conn.user.id === userId)?.user ||
+    null
 
   const handleSelectConversation = (selectedUserId: string) => {
     navigate(`/messages/${selectedUserId}`)
