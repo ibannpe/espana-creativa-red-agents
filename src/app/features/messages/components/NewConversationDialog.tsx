@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Search, Plus, UserPlus } from 'lucide-react'
 import { useConnectionsQuery } from '@/app/features/network/hooks/queries/useConnectionsQuery'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 interface NewConversationDialogProps {
   children?: React.ReactNode
@@ -74,7 +73,7 @@ export function NewConversationDialog({ children }: NewConversationDialogProps) 
         </div>
 
         {/* Connections List */}
-        <ScrollArea className="h-[400px] pr-4">
+        <div className="h-[400px] overflow-y-auto pr-4">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
               <p className="text-sm text-muted-foreground">Cargando...</p>
@@ -141,7 +140,7 @@ export function NewConversationDialog({ children }: NewConversationDialogProps) 
               </Button>
             </div>
           )}
-        </ScrollArea>
+        </div>
       </DialogContent>
     </Dialog>
   )
