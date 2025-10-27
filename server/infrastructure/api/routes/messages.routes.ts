@@ -21,10 +21,10 @@ export const createMessagesRoutes = (): Router => {
       return res.status(200).json({
         conversations: conversations.map(conv => ({
           user: {
-            id: conv.otherUser.id,
-            name: conv.otherUser.name,
-            email: conv.otherUser.email,
-            avatar_url: conv.otherUser.avatarUrl
+            id: conv.user.id,
+            name: conv.user.name,
+            email: conv.user.email || '',
+            avatar_url: conv.user.avatar_url
           },
           last_message: conv.lastMessage ? {
             id: conv.lastMessage.id,
@@ -111,10 +111,17 @@ export const createMessagesRoutes = (): Router => {
 
       // Get user information for sender and recipient
       const getUserProfileUseCase = Container.getGetUserProfileUseCase()
-      const [sender, recipient] = await Promise.all([
+      const [senderResult, recipientResult] = await Promise.all([
         getUserProfileUseCase.execute({ userId: message.senderId }),
         getUserProfileUseCase.execute({ userId: message.recipientId })
       ])
+
+      const sender = senderResult.user
+      const recipient = recipientResult.user
+
+      if (!sender || !recipient) {
+        return res.status(404).json({ error: 'User not found' })
+      }
 
       return res.status(201).json({
         message: {
@@ -126,46 +133,16 @@ export const createMessagesRoutes = (): Router => {
           created_at: message.createdAt.toISOString(),
           updated_at: message.updatedAt.toISOString(),
           sender: {
-            id: sender.id,
-            name: sender.name,
-            email: sender.email,
-            avatar_url: sender.avatarUrl,
-            headline: sender.headline,
-            bio: sender.bio,
-            location: sender.location,
-            website: sender.website,
-            linkedin_url: sender.linkedinUrl,
-            twitter_url: sender.twitterUrl,
-            github_url: sender.githubUrl,
-            skills: sender.skills,
-            interests: sender.interests,
-            completed_pct: sender.completedPct,
-            created_at: sender.createdAt.toISOString(),
-            updated_at: sender.updatedAt.toISOString(),
-            status: sender.status,
-            approved_at: sender.approvedAt?.toISOString() || null,
-            role: sender.role
+            id: sender.getId().getValue(),
+            name: sender.getName(),
+            email: sender.getEmail().getValue(),
+            avatar_url: sender.getAvatarUrl()
           },
           recipient: {
-            id: recipient.id,
-            name: recipient.name,
-            email: recipient.email,
-            avatar_url: recipient.avatarUrl,
-            headline: recipient.headline,
-            bio: recipient.bio,
-            location: recipient.location,
-            website: recipient.website,
-            linkedin_url: recipient.linkedinUrl,
-            twitter_url: recipient.twitterUrl,
-            github_url: recipient.githubUrl,
-            skills: recipient.skills,
-            interests: recipient.interests,
-            completed_pct: recipient.completedPct,
-            created_at: recipient.createdAt.toISOString(),
-            updated_at: recipient.updatedAt.toISOString(),
-            status: recipient.status,
-            approved_at: recipient.approvedAt?.toISOString() || null,
-            role: recipient.role
+            id: recipient.getId().getValue(),
+            name: recipient.getName(),
+            email: recipient.getEmail().getValue(),
+            avatar_url: recipient.getAvatarUrl()
           }
         }
       })
