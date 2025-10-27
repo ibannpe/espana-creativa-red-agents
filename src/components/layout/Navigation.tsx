@@ -10,13 +10,16 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
-import { 
-  Users, 
-  MessageSquare, 
-  Briefcase, 
-  Calendar, 
-  User, 
-  Settings, 
+import { useUnreadCountQuery } from '@/app/features/messages/hooks/queries/useUnreadCountQuery'
+import { useUnreadNotifications } from '@/app/features/messages/hooks/useUnreadNotifications'
+import { Badge } from '@/components/ui/badge'
+import {
+  Users,
+  MessageSquare,
+  Briefcase,
+  Calendar,
+  User,
+  Settings,
   LogOut,
   Home
 } from 'lucide-react'
@@ -25,6 +28,11 @@ export function Navigation() {
   const { user, signOut, isSigningOut } = useAuthContext()
   const location = useLocation()
   const [loading, setLoading] = useState(false)
+
+  // Real-time unread message count
+  useUnreadNotifications() // Subscribe to real-time updates
+  const { data: unreadData } = useUnreadCountQuery()
+  const unreadCount = unreadData?.unread_count || 0
 
   const handleSignOut = () => {
     signOut()
@@ -61,11 +69,12 @@ export function Navigation() {
             <div className="hidden md:flex space-x-1">
               {navItems.map((item) => {
                 const Icon = item.icon
+                const showBadge = item.href === '/messages' && unreadCount > 0
                 return (
                   <Link
                     key={item.href}
                     to={item.href}
-                    className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative ${
                       isActive(item.href)
                         ? 'bg-primary text-white shadow-sm'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -73,6 +82,14 @@ export function Navigation() {
                   >
                     <Icon className="h-4 w-4 mr-2" />
                     {item.label}
+                    {showBadge && (
+                      <Badge
+                        variant="destructive"
+                        className="ml-2 h-5 min-w-[20px] px-1 flex items-center justify-center text-xs"
+                      >
+                        {unreadCount > 99 ? '99+' : unreadCount}
+                      </Badge>
+                    )}
                   </Link>
                 )
               })}
@@ -147,17 +164,28 @@ export function Navigation() {
           {navItems.slice(0, 4).map((item) => {
             const Icon = item.icon
             const active = isActive(item.href)
+            const showBadge = item.href === '/messages' && unreadCount > 0
             return (
               <Link
                 key={item.href}
                 to={item.href}
-                className={`flex flex-col items-center px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 ${
+                className={`flex flex-col items-center px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 relative ${
                   active
                     ? 'text-primary bg-primary/10'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                <Icon className={`h-5 w-5 mb-1 ${active ? 'text-primary' : ''}`} />
+                <div className="relative">
+                  <Icon className={`h-5 w-5 mb-1 ${active ? 'text-primary' : ''}`} />
+                  {showBadge && (
+                    <Badge
+                      variant="destructive"
+                      className="absolute -top-1 -right-2 h-4 min-w-[16px] px-1 flex items-center justify-center text-[10px]"
+                    >
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </Badge>
+                  )}
+                </div>
                 {item.label}
               </Link>
             )
