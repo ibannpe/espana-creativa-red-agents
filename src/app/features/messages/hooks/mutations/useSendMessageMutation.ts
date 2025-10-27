@@ -26,11 +26,9 @@ export const useSendMessageMutation = () => {
         queryKey: ['conversation-messages', newMessage.recipient_id]
       })
 
-      // Snapshot the previous value
-      const previousMessages = queryClient.getQueryData<GetConversationMessagesResponse>([
-        'conversation-messages',
-        newMessage.recipient_id
-      ])
+      // Snapshot the previous value - get all conversation-messages queries for this user
+      const queryKey = ['conversation-messages', newMessage.recipient_id]
+      const previousMessages = queryClient.getQueryData<GetConversationMessagesResponse>(queryKey)
 
       // Optimistically update to show the new message immediately
       if (previousMessages) {
