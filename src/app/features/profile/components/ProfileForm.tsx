@@ -249,6 +249,22 @@ export function ProfileForm() {
 
             <div>
               <label className="block text-sm font-medium mb-2">
+                Correo electrónico
+              </label>
+              <Input
+                value={user.email || ''}
+                disabled
+                className="bg-muted cursor-not-allowed"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Para modificar tu correo, contacta al administrador
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">
                 Ubicación
               </label>
               <Input

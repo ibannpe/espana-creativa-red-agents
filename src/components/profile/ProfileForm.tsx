@@ -126,6 +126,20 @@ export function ProfileForm({ user }: ProfileFormProps) {
         )}
       </div>
 
+      {/* Email field (read-only) */}
+      <div className="space-y-2">
+        <Label htmlFor="email">Correo electrónico</Label>
+        <Input
+          id="email"
+          value={user.email || ''}
+          disabled
+          className="bg-muted cursor-not-allowed"
+        />
+        <p className="text-xs text-muted-foreground">
+          Para modificar tu correo, contacta al administrador
+        </p>
+      </div>
+
       {/* Bio field */}
       <div className="space-y-2">
         <Label htmlFor="bio">Biografía</Label>
