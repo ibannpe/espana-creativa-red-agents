@@ -35,7 +35,8 @@ export const createMessagesRoutes = (): Router => {
             created_at: conv.lastMessage.createdAt.toISOString()
           } : null,
           unread_count: conv.unreadCount
-        }))
+        })),
+        total: conversations.length
       })
     } catch (error) {
       next(error)
@@ -57,28 +58,26 @@ export const createMessagesRoutes = (): Router => {
       const offset = parseInt(req.query.offset as string) || 0
 
       const getConversationMessagesUseCase = Container.getGetConversationMessagesUseCase()
-      const messages = await getConversationMessagesUseCase.execute({
-        userId1: currentUserId,
-        userId2: otherUserId,
+      const messagesWithUsers = await getConversationMessagesUseCase.execute({
+        userId: currentUserId,
+        otherUserId,
         limit,
         offset
       })
 
       return res.status(200).json({
-        messages: messages.map(msg => ({
-          id: msg.id,
-          sender_id: msg.senderId,
-          recipient_id: msg.recipientId,
-          content: msg.content,
-          read_at: msg.readAt?.toISOString() || null,
-          created_at: msg.createdAt.toISOString(),
-          updated_at: msg.updatedAt.toISOString()
+        messages: messagesWithUsers.map(msgWithUser => ({
+          id: msgWithUser.message.id,
+          sender_id: msgWithUser.message.senderId,
+          recipient_id: msgWithUser.message.recipientId,
+          content: msgWithUser.message.content,
+          read_at: msgWithUser.message.readAt?.toISOString() || null,
+          created_at: msgWithUser.message.createdAt.toISOString(),
+          updated_at: msgWithUser.message.updatedAt.toISOString(),
+          sender: msgWithUser.sender,
+          recipient: msgWithUser.recipient
         })),
-        pagination: {
-          limit,
-          offset,
-          count: messages.length
-        }
+        total: messagesWithUsers.length
       })
     } catch (error) {
       next(error)
