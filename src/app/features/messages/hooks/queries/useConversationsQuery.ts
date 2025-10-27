@@ -19,7 +19,7 @@ export const useConversationsQuery = (options?: { enabled?: boolean }) => {
     },
     enabled: options?.enabled !== false,
     staleTime: 1 * 60 * 1000, // 1 minute
-    gcTime: 5 * 60 * 1000, // 5 minutes
-    refetchInterval: 30 * 1000 // Auto-refetch every 30 seconds for new messages
+    gcTime: 5 * 60 * 1000 // 5 minutes
+    // refetchInterval removed - using Realtime instead
   })
 }
