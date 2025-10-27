@@ -1,9 +1,12 @@
-// ABOUTME: Messages list component displaying conversation messages with auto-scroll
-// ABOUTME: Shows messages in chronological order with MessageCard components
+// ABOUTME: Messages list component displaying conversation messages with smart scroll
+// ABOUTME: Shows messages in chronological order with MessageCard components and auto-mark-as-read
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Loader2, MessageCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Loader2, MessageCircle, ArrowDown, RefreshCw, AlertCircle } from 'lucide-react'
 import { MessageCard } from './MessageCard'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 import { useMarkAsReadMutation } from '../hooks/mutations/useMarkAsReadMutation'
@@ -21,13 +24,47 @@ export function MessagesList({ userId, messages, isLoading, error }: MessagesLis
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const { action: markAsRead } = useMarkAsReadMutation()
+  const [showScrollButton, setShowScrollButton] = useState(false)
+  const previousMessagesLength = useRef(messages.length)
 
-  // Auto-scroll to bottom when new messages arrive
+  // Smart scroll: only auto-scroll if user is near bottom
   useEffect(() => {
-    if (messagesEndRef.current) {
+    if (!messagesEndRef.current || !scrollAreaRef.current) {
+      return
+    }
+
+    // Only auto-scroll when:
+    // 1. New messages arrive (length changed)
+    // 2. User is near the bottom (within 100px)
+    const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
+    if (!scrollContainer) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+      return
+    }
+
+    const isNearBottom =
+      scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight < 100
+
+    // If new messages arrived
+    if (messages.length !== previousMessagesLength.current) {
+      if (isNearBottom) {
+        // User is at bottom, auto-scroll
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+        setShowScrollButton(false)
+      } else {
+        // User is reading old messages, show "New messages" button
+        setShowScrollButton(true)
+      }
+      previousMessagesLength.current = messages.length
     }
   }, [messages])
+
+  const handleScrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+      setShowScrollButton(false)
+    }
+  }
 
   // Auto-mark messages as read when opening conversation
   useEffect(() => {
@@ -48,22 +85,30 @@ export function MessagesList({ userId, messages, isLoading, error }: MessagesLis
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-full p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="p-4 space-y-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className={`flex gap-3 ${i % 2 === 0 ? 'flex-row-reverse' : 'flex-row'}`}>
+            <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+            <div className="flex flex-col gap-1 max-w-[70%]">
+              <Skeleton className="h-16 w-48 rounded-lg" />
+              <Skeleton className="h-3 w-24" />
+            </div>
+          </div>
+        ))}
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-        <MessageCircle className="h-12 w-12 text-destructive mb-4" />
-        <p className="text-sm text-destructive font-medium mb-2">
-          Error al cargar mensajes
-        </p>
-        <p className="text-xs text-muted-foreground">
-          {error.message}
-        </p>
+      <div className="flex flex-col items-center justify-center h-full p-8">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="flex flex-col gap-2">
+            <p className="text-sm font-medium">Error al cargar mensajes</p>
+            <p className="text-xs">{error.message}</p>
+          </AlertDescription>
+        </Alert>
       </div>
     )
   }
@@ -80,18 +125,34 @@ export function MessagesList({ userId, messages, isLoading, error }: MessagesLis
   }
 
   return (
-    <ScrollArea className="h-full" ref={scrollAreaRef}>
-      <div className="p-4 space-y-4">
-        {messages.map((message) => (
-          <MessageCard
-            key={message.id}
-            message={message}
-            currentUserId={user?.id || ''}
-            showActions={true}
-          />
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-    </ScrollArea>
+    <div className="relative h-full">
+      <ScrollArea className="h-full" ref={scrollAreaRef}>
+        <div className="p-4 space-y-4">
+          {messages.map((message) => (
+            <MessageCard
+              key={message.id}
+              message={message}
+              currentUserId={user?.id || ''}
+              showActions={true}
+            />
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+      </ScrollArea>
+
+      {/* Scroll to bottom button */}
+      {showScrollButton && (
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+          <Button
+            onClick={handleScrollToBottom}
+            size="sm"
+            className="shadow-lg"
+          >
+            <ArrowDown className="h-4 w-4 mr-2" />
+            Nuevos mensajes
+          </Button>
+        </div>
+      )}
+    </div>
   )
 }

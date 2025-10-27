@@ -4,7 +4,10 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { Loader2, MessageCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Loader2, MessageCircle, RefreshCw, AlertCircle } from 'lucide-react'
 import { useConversationsQuery } from '../hooks/queries/useConversationsQuery'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -15,21 +18,47 @@ interface ConversationListProps {
 }
 
 export function ConversationList({ onSelectConversation, selectedUserId }: ConversationListProps) {
-  const { data, isLoading, error } = useConversationsQuery()
+  const { data, isLoading, error, refetch } = useConversationsQuery()
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="space-y-2">
+        {[1, 2, 3].map((i) => (
+          <Card key={i}>
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <Skeleton className="h-12 w-12 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-3 w-full" />
+                  <Skeleton className="h-3 w-16" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="p-4 text-center text-sm text-destructive">
-        Error al cargar conversaciones: {error.message}
-      </div>
+      <Alert variant="destructive" className="m-4">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription className="flex flex-col gap-2">
+          <p className="text-sm">Error al cargar conversaciones</p>
+          <p className="text-xs text-muted-foreground">{error.message}</p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            className="w-fit"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Reintentar
+          </Button>
+        </AlertDescription>
+      </Alert>
     )
   }
 
