@@ -14,11 +14,19 @@ import { MessagesList } from '../components/MessagesList'
 import { MessageInput } from '../components/MessageInput'
 import { useConversationsQuery } from '../hooks/queries/useConversationsQuery'
 import { useConversationMessagesQuery } from '../hooks/queries/useConversationMessagesQuery'
+import { useRealtimeConversations } from '../hooks/useRealtimeConversations'
+import { useRealtimeMessages } from '../hooks/useRealtimeMessages'
+import { useUnreadNotifications } from '../hooks/useUnreadNotifications'
 
 export function MessagesPage() {
   const { userId } = useParams<{ userId: string }>()
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
+
+  // Enable real-time subscriptions
+  useRealtimeConversations() // Listen for new messages in all conversations
+  useRealtimeMessages(userId) // Listen for new messages in active conversation
+  useUnreadNotifications() // Listen for unread count updates
 
   // Query conversations list
   const { data: conversationsData } = useConversationsQuery()
