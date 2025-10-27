@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Loader2, MessageCircle } from 'lucide-react'
 import { MessageCard } from './MessageCard'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
+import { useMarkAsReadMutation } from '../hooks/mutations/useMarkAsReadMutation'
 import type { MessageWithUsers } from '../data/schemas/message.schema'
 
 interface MessagesListProps {
@@ -19,6 +20,7 @@ export function MessagesList({ userId, messages, isLoading, error }: MessagesLis
   const { user } = useAuthContext()
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const { action: markAsRead } = useMarkAsReadMutation()
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -26,6 +28,23 @@ export function MessagesList({ userId, messages, isLoading, error }: MessagesLis
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
     }
   }, [messages])
+
+  // Auto-mark messages as read when opening conversation
+  useEffect(() => {
+    if (!userId || !messages || messages.length === 0) {
+      return
+    }
+
+    // Find unread messages from the other user
+    const unreadMessages = messages.filter(
+      (msg) => msg.recipient_id === user?.id && msg.sender_id === userId && !msg.read_at
+    )
+
+    if (unreadMessages.length > 0) {
+      // Mark all unread messages from this user as read
+      markAsRead({ sender_id: userId })
+    }
+  }, [userId, messages, user?.id, markAsRead])
 
   if (isLoading) {
     return (
