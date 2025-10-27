@@ -4,7 +4,10 @@
       "Bash(tsx server/index.ts:*)",
       "Bash(PGPASSWORD='E23lST9WncCdUGpu' psql:*)",
       "Read(//opt/homebrew/Cellar/postgresql@16/16.10/bin/**)",
-      "Bash(/opt/homebrew/opt/postgresql@16/bin/psql:*)"
+      "Bash(/opt/homebrew/opt/postgresql@16/bin/psql:*)",
+      "Bash(yarn test:*)",
+      "Bash(yarn build:*)",
+      "Bash(gh pr merge:*)"
     ],
     "deny": [],
     "ask": []
