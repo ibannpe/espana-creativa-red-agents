@@ -88,46 +88,48 @@ const Dashboard = () => {
         </div>
 
         {/* Profile Completion Card */}
-        <Card className="mb-8 border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-lg">Completa tu perfil</CardTitle>
-                <CardDescription>
-                  Un perfil completo te ayuda a conectar mejor con otros miembros
-                </CardDescription>
+        {user?.completed_pct !== 100 && (
+          <Card className="mb-8 border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg">Completa tu perfil</CardTitle>
+                  <CardDescription>
+                    Un perfil completo te ayuda a conectar mejor con otros miembros
+                  </CardDescription>
+                </div>
+                <Badge variant="secondary">{user?.completed_pct || 0}% completado</Badge>
               </div>
-              <Badge variant="secondary">{user?.completed_pct || 0}% completado</Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Progress value={user?.completed_pct || 0} className="w-full" />
-            <div className="flex flex-wrap gap-2">
-              <Button 
-                size="sm" 
-                variant="outline"
-                onClick={() => {
-                  // logger.userAction('photo-modal-opened', { userId: user?.id });
-                  setPhotoModalOpen(true);
-                }}
-              >
-                <User className="h-4 w-4 mr-2" />
-                Añadir foto de perfil
-              </Button>
-              <Button 
-                size="sm" 
-                variant="outline"
-                onClick={() => {
-                  // logger.userAction('navigate-to-profile', { userId: user?.id });
-                  navigate('/profile');
-                }}
-              >
-                <Settings className="h-4 w-4 mr-2" />
-                Completar información personal
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Progress value={user?.completed_pct || 0} className="w-full" />
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    // logger.userAction('photo-modal-opened', { userId: user?.id });
+                    setPhotoModalOpen(true);
+                  }}
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Añadir foto de perfil
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    // logger.userAction('navigate-to-profile', { userId: user?.id });
+                    navigate('/profile');
+                  }}
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Completar información personal
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Quick Actions Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
