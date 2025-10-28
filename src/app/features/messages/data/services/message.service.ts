@@ -53,8 +53,17 @@ export const messageService = {
    * Mark messages as read
    */
   async markAsRead(data: MarkAsReadRequest): Promise<MarkAsReadResponse> {
-    const response = await axiosInstance.put('/messages/read', data)
-    return markAsReadResponseSchema.parse(response.data)
+    console.log('[messageService] markAsRead called with:', data)
+    try {
+      const response = await axiosInstance.put('/messages/read', data)
+      console.log('[messageService] Raw response:', response.data)
+      const parsed = markAsReadResponseSchema.parse(response.data)
+      console.log('[messageService] Parsed response:', parsed)
+      return parsed
+    } catch (error) {
+      console.error('[messageService] Error in markAsRead:', error)
+      throw error
+    }
   },
 
   /**

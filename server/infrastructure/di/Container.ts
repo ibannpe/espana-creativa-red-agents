@@ -133,7 +133,20 @@ export class Container {
       throw new Error('Missing Supabase configuration')
     }
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      },
+      db: {
+        schema: 'public'
+      },
+      global: {
+        headers: {
+          'apikey': supabaseServiceKey
+        }
+      }
+    })
 
     // Initialize repositories
     this.userRepository = new SupabaseUserRepository(supabase)

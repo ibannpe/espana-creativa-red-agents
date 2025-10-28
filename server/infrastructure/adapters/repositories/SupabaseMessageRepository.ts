@@ -334,17 +334,28 @@ export class SupabaseMessageRepository implements MessageRepository {
   }
 
   async markAsRead(messageIds: string[]): Promise<number> {
-    const { error, count } = await this.supabase
+    console.log('[SupabaseMessageRepository] markAsRead called with IDs:', messageIds)
+
+    // Convert string IDs to numbers since database uses BIGSERIAL
+    const numericIds = messageIds.map(id => parseInt(id, 10))
+    console.log('[SupabaseMessageRepository] Converted to numeric IDs:', numericIds)
+
+    const { data, error } = await this.supabase
       .from('messages')
       .update({ read_at: new Date().toISOString() })
-      .in('id', messageIds)
+      .in('id', numericIds)
       .is('read_at', null) // Only update if not already read
+      .select()
+
+    console.log('[SupabaseMessageRepository] Update result:', { data, error, updatedCount: data?.length || 0 })
 
     if (error) {
+      console.error('[SupabaseMessageRepository] Error marking as read:', error)
       throw new Error(`Failed to mark messages as read: ${error.message}`)
     }
 
-    return count || 0
+    // Return the actual number of updated rows based on the returned data
+    return data?.length || 0
   }
 
   async delete(id: string): Promise<void> {

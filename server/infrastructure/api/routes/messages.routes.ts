@@ -159,30 +159,41 @@ export const createMessagesRoutes = (): Router => {
 
   // PUT /api/messages/read - Mark messages as read (bulk operation)
   router.put('/read', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    console.log('[messages.routes.ts] PUT /read - Request received')
+    console.log('[messages.routes.ts] User:', req.user?.id)
+    console.log('[messages.routes.ts] Body:', JSON.stringify(req.body, null, 2))
+
     try {
       const userId = req.user.id
       const { message_ids } = req.body
 
+      console.log('[messages.routes.ts] userId:', userId)
+      console.log('[messages.routes.ts] message_ids:', message_ids)
+
       if (!message_ids || !Array.isArray(message_ids) || message_ids.length === 0) {
+        console.log('[messages.routes.ts] Validation failed: message_ids invalid')
         return res.status(400).json({ error: 'Message IDs array is required' })
       }
 
       // Validate all message IDs are strings
       if (!message_ids.every(id => typeof id === 'string')) {
+        console.log('[messages.routes.ts] Validation failed: some IDs are not strings')
         return res.status(400).json({ error: 'All message IDs must be strings' })
       }
 
+      console.log('[messages.routes.ts] Calling markMessagesAsReadUseCase with:', { userId, messageIds: message_ids })
       const markMessagesAsReadUseCase = Container.getMarkMessagesAsReadUseCase()
-      await markMessagesAsReadUseCase.execute({
+      const updatedCount = await markMessagesAsReadUseCase.execute({
         userId,
         messageIds: message_ids
       })
 
+      console.log('[messages.routes.ts] Success! Updated count:', updatedCount)
       return res.status(200).json({
-        success: true,
-        marked_count: message_ids.length
+        updated_count: updatedCount
       })
     } catch (error: any) {
+      console.error('[messages.routes.ts] Error:', error)
       if (error.message.includes('not found')) {
         return res.status(404).json({ error: error.message })
       }
