@@ -140,8 +140,9 @@ const Dashboard = () => {
               <p className="text-sm text-muted-foreground mb-4">
                 Descubre emprendedores y mentores
               </p>
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
+                variant="outline"
                 className="w-full"
                 onClick={() => {
                   // logger.userAction('navigate-to-network', { userId: user?.id });
