@@ -77,9 +77,19 @@ export function MessagesList({ userId, messages, isLoading, error }: MessagesLis
       (msg) => msg.recipient_id === user?.id && msg.sender_id === userId && !msg.read_at
     )
 
+    console.log('[MessagesList] Checking unread messages:', {
+      userId,
+      currentUserId: user?.id,
+      totalMessages: messages.length,
+      unreadCount: unreadMessages.length,
+      unreadMessageIds: unreadMessages.map(m => m.id)
+    })
+
     if (unreadMessages.length > 0) {
       // Mark all unread messages from this user as read
-      markAsRead({ sender_id: userId })
+      const messageIds = unreadMessages.map((msg) => msg.id)
+      console.log('[MessagesList] Marking messages as read:', messageIds)
+      markAsRead({ message_ids: messageIds })
     }
   }, [userId, messages, user?.id, markAsRead])
 

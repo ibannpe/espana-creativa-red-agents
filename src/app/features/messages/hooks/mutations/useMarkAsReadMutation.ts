@@ -17,9 +17,14 @@ export const useMarkAsReadMutation = () => {
 
   const mutation = useMutation<{ updated_count: number }, Error, MarkAsReadRequest>({
     mutationFn: async (data: MarkAsReadRequest) => {
-      return await messageService.markAsRead(data)
+      console.log('[useMarkAsReadMutation] Sending request:', data)
+      const result = await messageService.markAsRead(data)
+      console.log('[useMarkAsReadMutation] Response:', result)
+      return result
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('[useMarkAsReadMutation] Success! Updated count:', data.updated_count)
+
       // Invalidate conversations (unread count may change)
       queryClient.invalidateQueries({ queryKey: ['conversations'] })
 
@@ -28,6 +33,11 @@ export const useMarkAsReadMutation = () => {
 
       // Invalidate unread count
       queryClient.invalidateQueries({ queryKey: ['unread-count'] })
+
+      console.log('[useMarkAsReadMutation] Queries invalidated')
+    },
+    onError: (error) => {
+      console.error('[useMarkAsReadMutation] Error marking messages as read:', error)
     }
   })
 
