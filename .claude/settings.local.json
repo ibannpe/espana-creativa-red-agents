@@ -11,7 +11,8 @@
       "mcp__playwright__browser_press_key",
       "Bash(PGPASSWORD='E23lST9WncCdUGpu' psql -h aws-0-eu-central-1.pooler.supabase.com -U postgres.jbkzymvswvnkrxriyzdx -d postgres -c \"SELECT id, sender_id, recipient_id, content, created_at FROM messages ORDER BY created_at DESC LIMIT 5;\")",
       "Bash(PGPASSWORD='E23lST9WncCdUGpu' /opt/homebrew/opt/postgresql@16/bin/psql:*)",
-      "Bash(PGPASSWORD='E23lST9WncCdUGpu' /opt/homebrew/opt/postgresql@16/bin/psql -h aws-0-eu-central-1.pooler.supabase.com -U postgres.jbkzymvswvnkrxriyzdx -d postgres -c \"SELECT id, sender_id, recipient_id, content, created_at FROM messages ORDER BY created_at DESC;\")"
+      "Bash(PGPASSWORD='E23lST9WncCdUGpu' /opt/homebrew/opt/postgresql@16/bin/psql -h aws-0-eu-central-1.pooler.supabase.com -U postgres.jbkzymvswvnkrxriyzdx -d postgres -c \"SELECT id, sender_id, recipient_id, content, created_at FROM messages ORDER BY created_at DESC;\")",
+      "Bash(xargs:*)"
     ],
     "deny": [],
     "ask": []

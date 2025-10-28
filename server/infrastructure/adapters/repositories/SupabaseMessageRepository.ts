@@ -192,7 +192,7 @@ export class SupabaseMessageRepository implements MessageRepository {
       `and(sender_id.eq.${params.otherUserId},recipient_id.eq.${params.userId})`
     )
 
-    query = query.order('created_at', { ascending: false })
+    query = query.order('created_at', { ascending: true })
 
     if (params.limit) {
       query = query.limit(params.limit)
