@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Loader2, Plus, X } from 'lucide-react'
+import { Loader2, Plus, X, Camera } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
@@ -13,6 +13,8 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { PhotoUploadModal } from '@/components/profile/PhotoUploadModal'
 import axiosInstance from '@/lib/axios'
 import type { User } from '@/types/database'
 
@@ -39,6 +41,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
   const [interests, setInterests] = useState<string[]>(user.interests || [])
   const [newInterest, setNewInterest] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false)
 
   const {
     register,
@@ -111,6 +114,16 @@ export function ProfileForm({ user }: ProfileFormProps) {
     }
   }
 
+  const handlePhotoUpdated = async () => {
+    // Invalidate React Query cache to refetch user with new avatar
+    await queryClient.invalidateQueries({ queryKey: ['auth', 'currentUser'] })
+
+    toast({
+      title: 'Foto actualizada',
+      description: 'Tu foto de perfil se ha actualizado correctamente',
+    })
+  }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* Name field */}
@@ -138,6 +151,33 @@ export function ProfileForm({ user }: ProfileFormProps) {
         <p className="text-xs text-muted-foreground">
           Para modificar tu correo, contacta al administrador
         </p>
+      </div>
+
+      {/* Profile Photo */}
+      <div className="space-y-2">
+        <Label>Foto de perfil</Label>
+        <div className="flex items-center gap-4">
+          <Avatar className="w-20 h-20">
+            <AvatarImage src={user.avatar_url || ''} alt={user.name || 'Usuario'} />
+            <AvatarFallback className="text-xl bg-gradient-to-br from-primary to-primary/80 text-white">
+              {user.name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || 'U'}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsPhotoModalOpen(true)}
+              className="w-full sm:w-auto"
+            >
+              <Camera className="h-4 w-4 mr-2" />
+              {user.avatar_url ? 'Cambiar foto' : 'Subir foto'}
+            </Button>
+            <p className="text-xs text-muted-foreground mt-2">
+              JPG, PNG o GIF. Máximo 5MB.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Bio field */}
@@ -291,6 +331,13 @@ export function ProfileForm({ user }: ProfileFormProps) {
           )}
         </Button>
       </div>
+
+      {/* Photo Upload Modal */}
+      <PhotoUploadModal
+        open={isPhotoModalOpen}
+        onOpenChange={setIsPhotoModalOpen}
+        onPhotoUpdated={handlePhotoUpdated}
+      />
     </form>
   )
 }
