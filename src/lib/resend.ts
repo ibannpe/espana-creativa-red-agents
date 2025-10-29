@@ -50,7 +50,7 @@ export const emailTemplates = {
     subject: '¡Bienvenido a España Creativa Red!',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h1 style="color: #2563eb; text-align: center;">¡Bienvenido a España Creativa Red!</h1>
+        <h1 style="color: #dc2626; text-align: center;">¡Bienvenido a España Creativa Red!</h1>
         <p>Hola ${name},</p>
         <p>¡Nos complace darte la bienvenida a nuestra comunidad de emprendedores y mentores!</p>
         <p>España Creativa Red es la plataforma donde podrás:</p>
@@ -62,8 +62,8 @@ export const emailTemplates = {
         </ul>
         <p>Para comenzar, completa tu perfil y empieza a explorar la red.</p>
         <div style="text-align: center; margin: 30px 0;">
-          <a href="${process.env.VITE_APP_URL || 'http://localhost:8082'}/dashboard" 
-             style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
+          <a href="${process.env.VITE_APP_URL || 'http://localhost:8082'}/dashboard"
+             style="background-color: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
             Ir al Dashboard
           </a>
         </div>
@@ -77,7 +77,7 @@ export const emailTemplates = {
     subject: 'Completa tu perfil en España Creativa Red',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h1 style="color: #2563eb;">Completa tu perfil</h1>
+        <h1 style="color: #dc2626;">Completa tu perfil</h1>
         <p>Hola ${name},</p>
         <p>Tu perfil está ${completionPct}% completo. Un perfil completo te ayudará a:</p>
         <ul>
@@ -86,8 +86,8 @@ export const emailTemplates = {
           <li>Conectar con personas afines</li>
         </ul>
         <div style="text-align: center; margin: 30px 0;">
-          <a href="${process.env.VITE_APP_URL || 'http://localhost:8082'}/profile" 
-             style="background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
+          <a href="${process.env.VITE_APP_URL || 'http://localhost:8082'}/profile"
+             style="background-color: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
             Completar Perfil
           </a>
         </div>
@@ -100,12 +100,12 @@ export const emailTemplates = {
     subject: `Nuevo mensaje de ${senderName}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h1 style="color: #2563eb;">Nuevo Mensaje</h1>
+        <h1 style="color: #dc2626;">Nuevo Mensaje</h1>
         <p>Hola ${recipientName},</p>
         <p>Has recibido un nuevo mensaje de <strong>${senderName}</strong> en España Creativa Red.</p>
         <div style="text-align: center; margin: 30px 0;">
-          <a href="${process.env.VITE_APP_URL || 'http://localhost:8082'}/messages" 
-             style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
+          <a href="${process.env.VITE_APP_URL || 'http://localhost:8082'}/messages"
+             style="background-color: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
             Ver Mensaje
           </a>
         </div>
@@ -118,13 +118,13 @@ export const emailTemplates = {
     subject: `Nueva oportunidad: ${opportunityTitle}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h1 style="color: #2563eb;">Nueva Oportunidad</h1>
+        <h1 style="color: #dc2626;">Nueva Oportunidad</h1>
         <p>Hola ${name},</p>
         <p>Se ha publicado una nueva oportunidad que podría interesarte:</p>
-        <h2 style="color: #16a34a;">${opportunityTitle}</h2>
+        <h2 style="color: #3b82f6;">${opportunityTitle}</h2>
         <div style="text-align: center; margin: 30px 0;">
-          <a href="${process.env.VITE_APP_URL || 'http://localhost:8082'}/opportunities" 
-             style="background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
+          <a href="${process.env.VITE_APP_URL || 'http://localhost:8082'}/opportunities"
+             style="background-color: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
             Ver Oportunidad
           </a>
         </div>
