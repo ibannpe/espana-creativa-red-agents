@@ -17,35 +17,37 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 220 8.9% 16.1%;
 
-    /* España Creativa brand colors */
-    --primary: 14 100% 57%; /* Spanish orange/red accent */
+    /* España Creativa brand colors - Paleta de la imagen animación-3 */
+    --primary: 0 78% 54%; /* Rojo vibrante principal */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 11.3% 94.9%;
-    --secondary-foreground: 220 8.9% 16.1%;
+    --secondary: 217 91% 60%; /* Azul medio de la imagen */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 11.3% 94.9%;
+    --muted: 210 20% 96%;
     --muted-foreground: 220 8.9% 46.1%;
 
-    --accent: 210 11.3% 94.9%;
-    --accent-foreground: 220 8.9% 16.1%;
+    --accent: 217 91% 60%; /* Azul como acento */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 78% 54%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 14 100% 57%;
+    --ring: 0 78% 54%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
     /* Custom España Creativa gradients */
-    --gradient-brand: linear-gradient(135deg, hsl(14 100% 57%), hsl(14 100% 65%));
-    --gradient-subtle: linear-gradient(180deg, hsl(210 11.3% 98%), hsl(210 11.3% 94.9%));
-    
+    --gradient-brand: linear-gradient(135deg, hsl(0 78% 54%), hsl(0 78% 62%));
+    --gradient-accent: linear-gradient(135deg, hsl(217 91% 60%), hsl(217 91% 68%));
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 20% 98%));
+
     /* Shadows with brand color */
-    --shadow-brand: 0 4px 14px -2px hsl(14 100% 57% / 0.15);
-    --shadow-elegant: 0 10px 30px -10px hsl(220 8.9% 16.1% / 0.1);
+    --shadow-brand: 0 4px 14px -2px hsl(0 78% 54% / 0.15);
+    --shadow-accent: 0 4px 14px -2px hsl(217 91% 60% / 0.15);
+    --shadow-elegant: 0 10px 30px -10px hsl(220 8.9% 16.1% / 0.08);
 
     --sidebar-background: 0 0% 98%;
 
@@ -74,24 +76,24 @@ All colors MUST be HSL.
     --popover: 220 8.9% 4.9%;
     --popover-foreground: 210 11.3% 94.9%;
 
-    --primary: 14 100% 57%;
+    --primary: 0 78% 54%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 8.9% 14.9%;
-    --secondary-foreground: 210 11.3% 94.9%;
+    --secondary: 217 91% 60%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 220 8.9% 14.9%;
     --muted-foreground: 220 8.9% 65.1%;
 
-    --accent: 220 8.9% 14.9%;
-    --accent-foreground: 210 11.3% 94.9%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 50.6%;
+    --destructive: 0 78% 54%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 220 8.9% 14.9%;
     --input: 220 8.9% 14.9%;
-    --ring: 14 100% 57%;
+    --ring: 0 78% 54%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
