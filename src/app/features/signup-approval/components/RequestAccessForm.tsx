@@ -2,17 +2,20 @@
 // ABOUTME: Users submit email and name, admin receives notification, user gets magic link on approval
 
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useSubmitSignupRequestMutation } from '../hooks/mutations/useSubmitSignupRequestMutation'
 import { submitSignupRequestSchema } from '../data/schemas/signup-approval.schema'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Mail, User, Loader2 } from 'lucide-react'
 
 export function RequestAccessForm() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [surname, setSurname] = useState('')
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [localError, setLocalError] = useState('')
   const { action: submitRequest, isLoading, error: submitError, isSuccess } = useSubmitSignupRequestMutation()
 
@@ -136,7 +139,25 @@ export function RequestAccessForm() {
           </div>
         )}
 
-        <Button type="submit" className="w-full h-11" disabled={isLoading}>
+        <div className="flex items-start space-x-2">
+          <Checkbox
+            id="accept-terms"
+            checked={acceptedTerms}
+            onCheckedChange={(checked) => setAcceptedTerms(checked === true)}
+            disabled={isLoading}
+          />
+          <label
+            htmlFor="accept-terms"
+            className="text-sm text-muted-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Acepto los{' '}
+            <Link to="/privacidad" className="text-primary hover:underline" target="_blank">
+              términos de servicio y política de privacidad
+            </Link>
+          </label>
+        </div>
+
+        <Button type="submit" className="w-full h-11" disabled={isLoading || !acceptedTerms}>
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

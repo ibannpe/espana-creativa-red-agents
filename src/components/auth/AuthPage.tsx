@@ -2,7 +2,7 @@
 // ABOUTME: Uses new useAuthContext hook from feature-based architecture with React Query and admin-approval workflow
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext';
 import { RequestAccessForm } from '@/app/features/signup-approval/components/RequestAccessForm';
 import { Button } from '@/components/ui/button';
@@ -138,7 +138,10 @@ const AuthPage = () => {
         </Card>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
-          Al continuar, aceptas nuestros términos de servicio y política de privacidad
+          Al continuar, aceptas nuestros{' '}
+          <Link to="/privacidad" className="text-primary hover:underline">
+            términos de servicio y política de privacidad
+          </Link>
         </p>
       </div>
     </div>
