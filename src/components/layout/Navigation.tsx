@@ -62,7 +62,7 @@ export function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center space-x-8">
-            <Link to="/dashboard" className="text-xl font-bold bg-gradient-to-r from-primary to-emerald-600 bg-clip-text text-transparent">
+            <Link to="/dashboard" className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               España Creativa Red
             </Link>
             
@@ -109,7 +109,7 @@ export function Navigation() {
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-gray-50">
                   <Avatar className="h-10 w-10 ring-2 ring-gray-100">
                     <AvatarImage src={user.avatar_url || ''} />
-                    <AvatarFallback className="bg-gradient-to-br from-primary to-emerald-600 text-white font-semibold">
+                    <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white font-semibold">
                       {getInitials(user.name)}
                     </AvatarFallback>
                   </Avatar>
@@ -119,7 +119,7 @@ export function Navigation() {
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
                   <Avatar className="h-12 w-12">
                     <AvatarImage src={user.avatar_url || ''} />
-                    <AvatarFallback className="bg-gradient-to-br from-primary to-emerald-600 text-white font-semibold">
+                    <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white font-semibold">
                       {getInitials(user.name)}
                     </AvatarFallback>
                   </Avatar>
