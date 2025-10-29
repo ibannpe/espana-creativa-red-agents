@@ -6,7 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useApproveSignupMutation } from '../hooks/mutations/useApproveSignupMutation'
 import { useRejectSignupMutation } from '../hooks/mutations/useRejectSignupMutation'
 import { Button } from '@/components/ui/button'
-import { CheckCircle2, XCircle, Loader2, ArrowLeft } from 'lucide-react'
+import { CheckCircle2, XCircle, Loader2, X } from 'lucide-react'
 
 type ActionType = 'approve' | 'reject'
 
@@ -89,21 +89,14 @@ export function ApprovalActionPage() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex justify-center">
           <Button
-            onClick={() => navigate('/admin/pending-signups')}
-            className="w-full"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Ver solicitudes pendientes
-          </Button>
-
-          <Button
-            onClick={() => navigate('/dashboard')}
+            onClick={() => window.close()}
             variant="outline"
-            className="w-full"
+            className="w-full max-w-xs"
           >
-            Ir al dashboard
+            <X className="w-4 h-4 mr-2" />
+            Cerrar
           </Button>
         </div>
       </div>

@@ -55,7 +55,7 @@ export class ResendEmailService implements IEmailService {
         </head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #22c55e;">¡Bienvenido/a a España Creativa Red!</h1>
+            <h1 style="color: #dc2626;">¡Bienvenido/a a España Creativa Red!</h1>
             <p>Hola ${name},</p>
             <p>Nos alegra mucho que te hayas unido a nuestra red de emprendedores y mentores.</p>
             <p>España Creativa Red es una plataforma diseñada para conectar profesionales, compartir oportunidades y construir una comunidad creativa.</p>
@@ -91,7 +91,7 @@ export class ResendEmailService implements IEmailService {
         </head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #22c55e;">Completa tu perfil en España Creativa Red</h1>
+            <h1 style="color: #dc2626;">Completa tu perfil en España Creativa Red</h1>
             <p>Hola ${name},</p>
             <p>Tu perfil está ${completionPct}% completo. Un perfil completo te ayuda a:</p>
             <ul>
@@ -99,7 +99,7 @@ export class ResendEmailService implements IEmailService {
               <li>Recibir oportunidades más relevantes</li>
               <li>Aumentar tu visibilidad en la red</li>
             </ul>
-            <p><a href="${process.env.APP_URL || 'http://localhost:8080'}/profile" style="display: inline-block; padding: 10px 20px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 5px;">Completar mi perfil</a></p>
+            <p><a href="${process.env.APP_URL || 'http://localhost:8080'}/profile" style="display: inline-block; padding: 10px 20px; background-color: #dc2626; color: white; text-decoration: none; border-radius: 5px;">Completar mi perfil</a></p>
             <p>¡Gracias por ser parte de España Creativa!</p>
           </div>
         </body>
@@ -122,10 +122,10 @@ export class ResendEmailService implements IEmailService {
         </head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #22c55e;">Nuevo mensaje de ${senderName}</h1>
+            <h1 style="color: #dc2626;">Nuevo mensaje de ${senderName}</h1>
             <p>Hola ${recipientName},</p>
             <p>Has recibido un nuevo mensaje de <strong>${senderName}</strong> en España Creativa Red.</p>
-            <p><a href="${process.env.APP_URL || 'http://localhost:8080'}/messages" style="display: inline-block; padding: 10px 20px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 5px;">Ver mensaje</a></p>
+            <p><a href="${process.env.APP_URL || 'http://localhost:8080'}/messages" style="display: inline-block; padding: 10px 20px; background-color: #dc2626; color: white; text-decoration: none; border-radius: 5px;">Ver mensaje</a></p>
           </div>
         </body>
       </html>
@@ -147,10 +147,10 @@ export class ResendEmailService implements IEmailService {
         </head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #22c55e;">Nueva oportunidad: ${opportunityTitle}</h1>
+            <h1 style="color: #dc2626;">Nueva oportunidad: ${opportunityTitle}</h1>
             <p>Hola ${name},</p>
             <p>Hay una nueva oportunidad que podría interesarte: <strong>${opportunityTitle}</strong></p>
-            <p><a href="${process.env.APP_URL || 'http://localhost:8080'}/opportunities" style="display: inline-block; padding: 10px 20px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 5px;">Ver oportunidad</a></p>
+            <p><a href="${process.env.APP_URL || 'http://localhost:8080'}/opportunities" style="display: inline-block; padding: 10px 20px; background-color: #dc2626; color: white; text-decoration: none; border-radius: 5px;">Ver oportunidad</a></p>
           </div>
         </body>
       </html>
@@ -174,12 +174,12 @@ export class ResendEmailService implements IEmailService {
         <head><meta charset="utf-8"></head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #ff5722;">Nueva solicitud de registro</h1>
+            <h1 style="color: #dc2626;">Nueva solicitud de registro</h1>
             <p><strong>Email:</strong> ${email.getValue()}</p>
             <p><strong>Nombre:</strong> ${signup.name} ${signup.surname || ''}</p>
             <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-ES')}</p>
             <div style="margin: 30px 0; text-align: center;">
-              <a href="${approveUrl}" style="display: inline-block; margin: 0 10px; padding: 12px 24px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 6px;">Aprobar</a>
+              <a href="${approveUrl}" style="display: inline-block; margin: 0 10px; padding: 12px 24px; background-color: #3b82f6; color: white; text-decoration: none; border-radius: 6px;">Aprobar</a>
               <a href="${rejectUrl}" style="display: inline-block; margin: 0 10px; padding: 12px 24px; background-color: #ef4444; color: white; text-decoration: none; border-radius: 6px;">Rechazar</a>
             </div>
           </div>
@@ -215,11 +215,11 @@ export class ResendEmailService implements IEmailService {
         <head><meta charset="utf-8"></head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #22c55e;">¡Tu solicitud ha sido aprobada!</h1>
+            <h1 style="color: #dc2626;">¡Tu solicitud ha sido aprobada!</h1>
             <p>¡Bienvenido/a a España Creativa Red!</p>
             <p>Tu solicitud de registro ha sido aprobada. Para completar tu registro, haz clic en el botón y crea tu contraseña:</p>
             <div style="margin: 30px 0; text-align: center;">
-              <a href="${activationLink}" style="display: inline-block; padding: 15px 30px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 6px; font-size: 16px;">Acceder a mi cuenta</a>
+              <a href="${activationLink}" style="display: inline-block; padding: 15px 30px; background-color: #dc2626; color: white; text-decoration: none; border-radius: 6px; font-size: 16px;">Acceder a mi cuenta</a>
             </div>
             <p style="color: #666; font-size: 14px;">Este enlace es válido por 7 días.</p>
           </div>
@@ -244,7 +244,7 @@ export class ResendEmailService implements IEmailService {
         <head><meta charset="utf-8"></head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #ff5722;">Solicitud de registro - España Creativa</h1>
+            <h1 style="color: #dc2626;">Solicitud de registro - España Creativa</h1>
             <p>Gracias por tu interés en España Creativa Red.</p>
             <p>Lamentablemente, no podemos procesar tu solicitud de registro en este momento.</p>
             <p>Si crees que esto es un error o tienes alguna pregunta, no dudes en contactarnos.</p>
