@@ -48,3 +48,7 @@ next-env.d.ts
 
 #logs
 dev.log
+
+# Claude Code settings (may contain sensitive credentials)
+.claude/settings.json
+.claude/settings.local.json
