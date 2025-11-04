@@ -2,17 +2,30 @@
 // ABOUTME: Provides access to roles, user assignments, and system settings management
 
 import { useState } from 'react'
-import { Settings, Users, UserCog, Shield } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Settings, Users, UserCog, Shield, ArrowLeft } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
 import { RolesManagement } from '../components/RolesManagement'
 import { UserRolesAssignment } from '../components/UserRolesAssignment'
 import { SystemSettingsPanel } from '../components/SystemSettingsPanel'
 
 export const AdminConfigPage = () => {
   const [activeTab, setActiveTab] = useState('roles')
+  const navigate = useNavigate()
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-7xl">
+      {/* Botón Volver */}
+      <Button
+        variant="ghost"
+        onClick={() => navigate('/gestion')}
+        className="mb-6 hover:bg-gray-100"
+      >
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Volver a Gestión
+      </Button>
+
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <div className="p-2 bg-primary/10 rounded-lg">

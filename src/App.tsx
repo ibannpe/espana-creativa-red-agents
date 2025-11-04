@@ -7,7 +7,7 @@ import { SetPasswordPage } from '@/components/auth/SetPasswordPage'
 import { ProtectedRoute } from '@/app/features/auth/components/ProtectedRoute'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 import { PendingApprovalPage } from '@/app/features/signup-approval/components/PendingApprovalPage'
-import { AdminPendingList } from '@/app/features/signup-approval/components/AdminPendingList'
+import { AdminSignupApprovalPage } from '@/app/features/signup-approval/pages/AdminSignupApprovalPage'
 import { ApprovalActionPage } from '@/app/features/signup-approval/components/ApprovalActionPage'
 import Dashboard from '@/components/dashboard/Dashboard'
 import { NetworkPage } from '@/components/pages/NetworkPage'
@@ -63,11 +63,7 @@ function App() {
           path="/signup-approval"
           element={
             <ProtectedRoute>
-              <div className="min-h-screen bg-gray-50 p-8">
-                <div className="max-w-7xl mx-auto">
-                  <AdminPendingList />
-                </div>
-              </div>
+              <AdminSignupApprovalPage />
             </ProtectedRoute>
           }
         />
@@ -75,11 +71,7 @@ function App() {
           path="/admin/pending-signups"
           element={
             <ProtectedRoute>
-              <div className="min-h-screen bg-gray-50 p-8">
-                <div className="max-w-7xl mx-auto">
-                  <AdminPendingList />
-                </div>
-              </div>
+              <AdminSignupApprovalPage />
             </ProtectedRoute>
           }
         />
