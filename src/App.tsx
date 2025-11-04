@@ -59,6 +59,18 @@ function App() {
           element={<ApprovalActionPage />}
         />
         <Route
+          path="/signup-approval"
+          element={
+            <ProtectedRoute>
+              <div className="min-h-screen bg-gray-50 p-8">
+                <div className="max-w-7xl mx-auto">
+                  <AdminPendingList />
+                </div>
+              </div>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin/pending-signups"
           element={
             <ProtectedRoute>

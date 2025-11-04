@@ -310,4 +310,161 @@ src/app/features/admin-management/
 
 ---
 
-**Última Actualización**: 2025-11-04 - Implementación completa de MVP Usuarios y Estadísticas
+## Próxima Feature: Configuración del Sistema
+
+### Objetivo
+Crear un panel de configuración desde donde los administradores puedan gestionar aspectos clave de la plataforma sin necesidad de modificar código o variables de entorno.
+
+### Funcionalidades a Implementar
+
+#### 1. **Gestión de Roles**
+- **Listar roles existentes**: Mostrar tabla con todos los roles (admin, mentor, emprendedor, etc.)
+- **Crear nuevo rol**: Formulario para definir nombre y descripción
+- **Editar rol**: Modificar descripción de roles existentes
+- **Eliminar rol**: Eliminar roles que no estén en uso (validación)
+- **Ver usuarios por rol**: Link rápido a lista filtrada de usuarios
+
+**Modelo de datos**: Tabla `roles` ya existe
+
+#### 2. **Asignación de Roles a Usuarios**
+- **Asignar rol a usuario**: Modal o formulario para agregar rol
+- **Remover rol de usuario**: Quitar asignación de rol
+- **Validaciones**:
+  - No permitir eliminar último admin
+  - Confirmar acciones destructivas
+
+**Modelo de datos**: Tabla `user_roles` ya existe
+
+#### 3. **Configuración General de la Plataforma**
+Nueva tabla: `system_settings` (key-value store)
+
+**Configuraciones sugeridas**:
+- **Registro público habilitado**: true/false (si está deshabilitado, solo admin puede crear usuarios)
+- **Aprobación manual de registros**: true/false (activar/desactivar workflow de aprobación)
+- **Límite de conexiones por usuario**: número (ej: 500)
+- **Mensaje de bienvenida**: texto personalizable para email de bienvenida
+- **Texto de pie de página**: personalizar footer
+- **Email de contacto soporte**: email mostrado a usuarios
+- **Modo mantenimiento**: true/false (mostrar página de mantenimiento)
+- **Mensaje de mantenimiento**: texto personalizable
+
+#### 4. **Gestión de Oportunidades - Configuración**
+- **Categorías de oportunidades**: CRUD de categorías disponibles
+- **Moderación automática**: activar/desactivar revisión manual
+- **Duración por defecto**: días de vigencia de oportunidades
+
+#### 5. **Configuración de Notificaciones**
+- **Emails habilitados**: activar/desactivar sistema de emails
+- **Frecuencia de notificaciones**: diaria, semanal, inmediata
+- **Tipos de notificación por defecto**: qué notificaciones reciben usuarios nuevos
+- **Templates de email personalizables**: editor simple para modificar templates
+
+#### 6. **Límites y Cuotas**
+- **Máximo de mensajes por día**: prevenir spam
+- **Máximo de oportunidades por usuario**: límite de creación
+- **Tamaño máximo de archivos**: para avatares y documentos
+- **Rate limiting**: configurar límites de API
+
+### Estructura de Implementación
+
+#### Backend
+
+**Nueva tabla `system_settings`**:
+```sql
+CREATE TABLE system_settings (
+  key VARCHAR(100) PRIMARY KEY,
+  value JSONB NOT NULL,
+  description TEXT,
+  data_type VARCHAR(50), -- 'boolean', 'number', 'string', 'text', 'json'
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_by UUID REFERENCES users(id)
+);
+```
+
+**Endpoints necesarios**:
+```
+GET    /api/admin/config/settings          - Obtener todas las configuraciones
+GET    /api/admin/config/settings/:key     - Obtener configuración específica
+PUT    /api/admin/config/settings/:key     - Actualizar configuración
+POST   /api/admin/config/settings          - Crear nueva configuración
+
+GET    /api/admin/config/roles             - Listar todos los roles
+POST   /api/admin/config/roles             - Crear nuevo rol
+PUT    /api/admin/config/roles/:id         - Actualizar rol
+DELETE /api/admin/config/roles/:id         - Eliminar rol
+
+POST   /api/admin/config/users/:userId/roles/:roleId    - Asignar rol
+DELETE /api/admin/config/users/:userId/roles/:roleId    - Remover rol
+```
+
+#### Frontend
+
+**Estructura de carpetas**:
+```
+src/app/features/admin-management/config/
+├── components/
+│   ├── SystemSettingsPanel.tsx      - Panel general de settings
+│   ├── RolesManagement.tsx          - CRUD de roles
+│   ├── UserRolesAssignment.tsx      - Asignar/remover roles
+│   ├── NotificationSettings.tsx     - Config de notificaciones
+│   └── LimitsSettings.tsx           - Límites y cuotas
+├── hooks/
+│   ├── queries/
+│   │   ├── useSystemSettingsQuery.ts
+│   │   └── useRolesQuery.ts
+│   └── mutations/
+│       ├── useUpdateSettingMutation.ts
+│       ├── useCreateRoleMutation.ts
+│       ├── useAssignRoleMutation.ts
+│       └── useRemoveRoleMutation.ts
+├── data/
+│   ├── schemas/config.schema.ts
+│   └── services/config.service.ts
+└── pages/
+    └── AdminConfigPage.tsx
+```
+
+**Componentes UI**:
+- Tabs para organizar secciones (General, Roles, Notificaciones, Límites)
+- Formularios con validación
+- Switches para configuraciones booleanas
+- Inputs numéricos con min/max
+- Textarea para textos largos
+- Confirmaciones antes de cambios críticos
+
+### Priorización de Implementación
+
+**Fase 1 (MVP)**:
+1. Gestión de Roles (CRUD)
+2. Asignación de Roles a Usuarios
+3. Configuraciones generales básicas (3-4 settings clave)
+
+**Fase 2 (Extendido)**:
+4. Configuración de Notificaciones
+5. Límites y Cuotas
+6. Configuración de Oportunidades
+
+**Fase 3 (Avanzado)**:
+7. Editor de templates de email
+8. Configuración de integraciones externas
+9. Backup y restauración de configuración
+
+### Consideraciones de Seguridad
+
+1. **Validación estricta**: Verificar siempre que el usuario es admin
+2. **Audit log**: Registrar todos los cambios de configuración
+3. **Valores por defecto seguros**: Settings críticos deben tener defaults seguros
+4. **Confirmación de acciones destructivas**: Modal de confirmación para eliminaciones
+5. **Validación de datos**: No permitir valores inválidos que puedan romper la app
+
+### UX y Diseño
+
+- **Organización clara**: Usar tabs o secciones colapsables
+- **Feedback inmediato**: Toast notifications al guardar cambios
+- **Indicadores visuales**: Mostrar qué settings están en valor por defecto vs modificados
+- **Ayuda contextual**: Tooltips explicando cada configuración
+- **Preview**: Donde sea posible, mostrar preview de cambios antes de aplicar
+
+---
+
+**Última Actualización**: 2025-11-04 - Plan de Configuración agregado tras completar Usuarios y Estadísticas
