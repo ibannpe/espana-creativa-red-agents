@@ -12,6 +12,7 @@ import { createConnectionsRoutes } from './infrastructure/api/routes/connections
 import { createOpportunitiesRoutes } from './infrastructure/api/routes/opportunities.routes'
 import { createMessagesRoutes } from './infrastructure/api/routes/messages.routes'
 import { createSignupApprovalRoutes } from './infrastructure/api/routes/signup-approval.routes'
+import { createAdminRoutes } from './infrastructure/api/routes/admin.routes'
 import { errorHandler } from './infrastructure/api/middleware/errorHandler'
 import { loggerMiddleware } from './infrastructure/api/middleware/logger.middleware'
 import { authMiddleware } from './infrastructure/api/middleware/auth.middleware'
@@ -174,6 +175,7 @@ app.use('/api/users', authMiddleware, createUsersRoutes())
 app.use('/api/connections', authMiddleware, createConnectionsRoutes())
 app.use('/api/opportunities', authMiddleware, createOpportunitiesRoutes())
 app.use('/api/messages', authMiddleware, createMessagesRoutes())
+app.use('/api/admin', authMiddleware, createAdminRoutes())
 
 // Legacy email endpoints (for backward compatibility - will be deprecated)
 app.post('/api/send-email', async (req, res, next) => {

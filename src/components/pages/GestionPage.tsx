@@ -76,7 +76,10 @@ export function GestionPage() {
           <p className="text-muted-foreground text-sm mb-4">
             Administra usuarios, roles y permisos del sistema
           </p>
-          <button className="text-primary hover:underline text-sm font-medium">
+          <button
+            onClick={() => navigate('/gestion/usuarios')}
+            className="text-primary hover:underline text-sm font-medium"
+          >
             Ver usuarios →
           </button>
         </div>
@@ -111,7 +114,10 @@ export function GestionPage() {
           <p className="text-muted-foreground text-sm mb-4">
             Métricas y análisis de uso de la plataforma
           </p>
-          <button className="text-primary hover:underline text-sm font-medium">
+          <button
+            onClick={() => navigate('/gestion/estadisticas')}
+            className="text-primary hover:underline text-sm font-medium"
+          >
             Ver estadísticas →
           </button>
         </div>

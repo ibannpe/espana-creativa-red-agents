@@ -19,6 +19,8 @@ import { ProgramsPage } from '@/components/pages/ProgramsPage'
 import { ProfilePage } from '@/components/pages/ProfilePage'
 import { UserProfileViewPage } from '@/components/pages/UserProfileViewPage'
 import { GestionPage } from '@/components/pages/GestionPage'
+import { AdminUsersPage } from '@/app/features/admin-management/users/pages/AdminUsersPage'
+import { AdminStatisticsPage } from '@/app/features/admin-management/statistics/pages/AdminStatisticsPage'
 import PrivacyPage from '@/components/pages/PrivacyPage'
 import { Toaster } from "@/components/ui/toaster"
 import { ErrorBoundary } from '@/components/ErrorBoundary'
@@ -161,6 +163,22 @@ function App() {
           element={
             <ProtectedRoute>
               <GestionPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/gestion/usuarios"
+          element={
+            <ProtectedRoute>
+              <AdminUsersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/gestion/estadisticas"
+          element={
+            <ProtectedRoute>
+              <AdminStatisticsPage />
             </ProtectedRoute>
           }
         />

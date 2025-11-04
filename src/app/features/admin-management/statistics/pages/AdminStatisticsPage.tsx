@@ -1,0 +1,60 @@
+// ABOUTME: Admin statistics page accessible only to admin role users
+// ABOUTME: Provides overview of platform metrics and key statistics
+
+import { useNavigate } from 'react-router-dom'
+import { useUserRoles } from '@/app/features/auth/hooks/useUserRoles'
+import { useEffect } from 'react'
+import { BarChart3, ArrowLeft } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { StatisticsOverview } from '../components/StatisticsOverview'
+
+export function AdminStatisticsPage() {
+  const { isAdmin, isLoading } = useUserRoles()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!isLoading && !isAdmin) {
+      navigate('/')
+    }
+  }, [isAdmin, isLoading, navigate])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
+
+  if (!isAdmin) {
+    return null
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      {/* Botón Volver */}
+      <Button
+        variant="ghost"
+        onClick={() => navigate('/gestion')}
+        className="mb-6 hover:bg-gray-100"
+      >
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Volver a Gestión
+      </Button>
+
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2">
+          <BarChart3 className="h-8 w-8 text-primary" />
+          <h1 className="text-3xl font-bold">Estadísticas de la Plataforma</h1>
+        </div>
+        <p className="text-muted-foreground">
+          Métricas y análisis de uso del sistema
+        </p>
+      </div>
+
+      {/* Statistics Overview Component */}
+      <StatisticsOverview />
+    </div>
+  )
+}
