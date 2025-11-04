@@ -10,10 +10,16 @@ import {
   CurrentUserResponse,
   ChangePasswordRequest,
   ChangePasswordResponse,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
   signUpResponseSchema,
   signInResponseSchema,
   currentUserResponseSchema,
-  changePasswordResponseSchema
+  changePasswordResponseSchema,
+  forgotPasswordResponseSchema,
+  resetPasswordResponseSchema
 } from '../schemas/auth.schema'
 
 const API_BASE_URL = ''
@@ -80,5 +86,21 @@ export const authService = {
   async changePassword(data: ChangePasswordRequest): Promise<ChangePasswordResponse> {
     const response = await axiosInstance.post(`${API_BASE_URL}/auth/change-password`, data)
     return changePasswordResponseSchema.parse(response.data)
+  },
+
+  /**
+   * Request password reset email
+   */
+  async forgotPassword(data: ForgotPasswordRequest): Promise<ForgotPasswordResponse> {
+    const response = await axiosInstance.post(`${API_BASE_URL}/auth/forgot-password`, data)
+    return forgotPasswordResponseSchema.parse(response.data)
+  },
+
+  /**
+   * Reset password with token
+   */
+  async resetPassword(data: ResetPasswordRequest): Promise<ResetPasswordResponse> {
+    const response = await axiosInstance.post(`${API_BASE_URL}/auth/reset-password`, data)
+    return resetPasswordResponseSchema.parse(response.data)
   }
 }

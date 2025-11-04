@@ -88,6 +88,35 @@ export const changePasswordResponseSchema = z.object({
 
 export type ChangePasswordResponse = z.infer<typeof changePasswordResponseSchema>
 
+// Forgot Password Request Schema
+export const forgotPasswordRequestSchema = z.object({
+  email: z.string().email('Email inválido')
+})
+
+export type ForgotPasswordRequest = z.infer<typeof forgotPasswordRequestSchema>
+
+// Forgot Password Response Schema
+export const forgotPasswordResponseSchema = z.object({
+  message: z.string()
+})
+
+export type ForgotPasswordResponse = z.infer<typeof forgotPasswordResponseSchema>
+
+// Reset Password Request Schema
+export const resetPasswordRequestSchema = z.object({
+  token: z.string().min(1, 'Token es requerido'),
+  password: passwordSchema
+})
+
+export type ResetPasswordRequest = z.infer<typeof resetPasswordRequestSchema>
+
+// Reset Password Response Schema
+export const resetPasswordResponseSchema = z.object({
+  message: z.string()
+})
+
+export type ResetPasswordResponse = z.infer<typeof resetPasswordResponseSchema>
+
 // Error Response Schema
 export const errorResponseSchema = z.object({
   error: z.string()

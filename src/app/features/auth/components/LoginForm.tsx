@@ -4,12 +4,14 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuthContext } from '../hooks/useAuthContext'
+import { ForgotPasswordModal } from './ForgotPasswordModal'
 import { signUpRequestSchema } from '../data/schemas/auth.schema'
 
 export function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [localError, setLocalError] = useState('')
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
   const navigate = useNavigate()
   const { signIn, isSigningIn, signInError } = useAuthContext()
 
@@ -61,9 +63,18 @@ export function LoginForm() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Contraseña
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-900">
+                Contraseña
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(true)}
+                className="text-sm text-primary hover:text-primary/80 font-medium"
+              >
+                ¿Olvidaste tu contraseña?
+              </button>
+            </div>
             <input
               type="password"
               placeholder="Tu contraseña"
@@ -124,6 +135,12 @@ export function LoginForm() {
           </Link>
         </p>
       </div>
+
+      {/* Forgot Password Modal */}
+      <ForgotPasswordModal
+        open={showForgotPassword}
+        onOpenChange={setShowForgotPassword}
+      />
     </div>
   )
 }

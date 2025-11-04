@@ -4,6 +4,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthPage } from '@/components/auth/AuthPage'
 import { SetPasswordPage } from '@/components/auth/SetPasswordPage'
+import { ResetPasswordPage } from '@/components/pages/ResetPasswordPage'
 import { ProtectedRoute } from '@/app/features/auth/components/ProtectedRoute'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 import { PendingApprovalPage } from '@/app/features/signup-approval/components/PendingApprovalPage'
@@ -54,6 +55,10 @@ function App() {
         <Route
           path="/auth/set-password/:token"
           element={<SetPasswordPage />}
+        />
+        <Route
+          path="/auth/reset-password"
+          element={<ResetPasswordPage />}
         />
         <Route
           path="/admin/signup-approval/:action/:token"

@@ -170,4 +170,36 @@ export class SupabaseAuthService implements IAuthService {
       return { error: error as Error }
     }
   }
+
+  async sendPasswordResetEmail(email: string): Promise<{ error: Error | null }> {
+    try {
+      const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${process.env.APP_URL || 'http://localhost:8080'}/auth/reset-password`
+      })
+
+      if (error) {
+        return { error }
+      }
+
+      return { error: null }
+    } catch (error) {
+      return { error: error as Error }
+    }
+  }
+
+  async resetPassword(newPassword: string): Promise<{ error: Error | null }> {
+    try {
+      const { error } = await this.supabase.auth.updateUser({
+        password: newPassword
+      })
+
+      if (error) {
+        return { error }
+      }
+
+      return { error: null }
+    } catch (error) {
+      return { error: error as Error }
+    }
+  }
 }
