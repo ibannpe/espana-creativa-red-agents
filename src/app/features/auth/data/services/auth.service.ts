@@ -98,9 +98,22 @@ export const authService = {
 
   /**
    * Reset password with token
+   * Note: This uses Supabase client directly because the token is handled client-side
    */
   async resetPassword(data: ResetPasswordRequest): Promise<ResetPasswordResponse> {
-    const response = await axiosInstance.post(`${API_BASE_URL}/auth/reset-password`, data)
-    return resetPasswordResponseSchema.parse(response.data)
+    // Import Supabase client dynamically to avoid circular dependencies
+    const { supabase } = await import('@/lib/supabase')
+
+    const { error } = await supabase.auth.updateUser({
+      password: data.password
+    })
+
+    if (error) {
+      throw new Error(error.message || 'Error al restablecer la contraseña')
+    }
+
+    return resetPasswordResponseSchema.parse({
+      message: 'Contraseña restablecida exitosamente'
+    })
   }
 }

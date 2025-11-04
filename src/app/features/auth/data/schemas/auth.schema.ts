@@ -103,8 +103,8 @@ export const forgotPasswordResponseSchema = z.object({
 export type ForgotPasswordResponse = z.infer<typeof forgotPasswordResponseSchema>
 
 // Reset Password Request Schema
+// Note: Token is optional because Supabase handles it via session automatically
 export const resetPasswordRequestSchema = z.object({
-  token: z.string().min(1, 'Token es requerido'),
   password: passwordSchema
 })
 

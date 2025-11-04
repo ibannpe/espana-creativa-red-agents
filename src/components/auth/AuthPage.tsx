@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext';
 import { RequestAccessForm } from '@/app/features/signup-approval/components/RequestAccessForm';
+import { ForgotPasswordModal } from '@/app/features/auth/components/ForgotPasswordModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -31,6 +32,8 @@ const AuthPage = () => {
     email: '',
     password: ''
   });
+
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
 
   // Navigate to dashboard on successful authentication
@@ -100,7 +103,16 @@ const AuthPage = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="login-password">Contraseña</Label>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="login-password">Contraseña</Label>
+                      <button
+                        type="button"
+                        onClick={() => setShowForgotPassword(true)}
+                        className="text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+                      >
+                        ¿Olvidaste tu contraseña?
+                      </button>
+                    </div>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
@@ -144,6 +156,12 @@ const AuthPage = () => {
           </Link>
         </p>
       </div>
+
+      {/* Forgot Password Modal */}
+      <ForgotPasswordModal
+        open={showForgotPassword}
+        onOpenChange={setShowForgotPassword}
+      />
     </div>
   );
 };

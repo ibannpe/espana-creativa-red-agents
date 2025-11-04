@@ -22,21 +22,14 @@ export function ResetPasswordPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
 
-  // Get token from URL
-  const token = searchParams.get('access_token') || searchParams.get('token') || ''
-
-  useEffect(() => {
-    if (!token) {
-      // Redirect to login if no token
-      navigate('/auth')
-    }
-  }, [token, navigate])
+  // Supabase handles the token automatically via session
+  // No need to extract token from URL manually
 
   // Redirect to login after successful reset
   useEffect(() => {
     if (isSuccess) {
       setTimeout(() => {
-        navigate('/auth/login')
+        navigate('/auth')
       }, 3000)
     }
   }, [isSuccess, navigate])
@@ -52,8 +45,8 @@ export function ResetPasswordPage() {
     }
 
     try {
-      // Validate password requirements
-      const validatedData = resetPasswordRequestSchema.parse({ token, password })
+      // Validate password requirements (only password, no token needed)
+      const validatedData = resetPasswordRequestSchema.parse({ password })
 
       // Call mutation
       resetPassword(validatedData)
@@ -189,7 +182,7 @@ export function ResetPasswordPage() {
           {!isSuccess && (
             <div className="text-center">
               <button
-                onClick={() => navigate('/auth/login')}
+                onClick={() => navigate('/auth')}
                 className="text-sm text-primary hover:text-primary/80 font-medium"
               >
                 Volver al inicio de sesión
