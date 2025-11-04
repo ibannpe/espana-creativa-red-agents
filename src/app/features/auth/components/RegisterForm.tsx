@@ -116,6 +116,15 @@ export function RegisterForm() {
               required
               disabled={isSigningUp}
             />
+            <div className="mt-2 text-xs text-gray-600 space-y-1">
+              <p className="font-medium">La contraseña debe contener:</p>
+              <ul className="list-disc list-inside space-y-0.5 ml-2">
+                <li>Mínimo 8 caracteres</li>
+                <li>Al menos una letra mayúscula</li>
+                <li>Al menos una letra minúscula</li>
+                <li>Al menos un número</li>
+              </ul>
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">

@@ -145,9 +145,15 @@ export function ChangePasswordModal({ open, onOpenChange }: ChangePasswordModalP
             {validationErrors.newPassword && (
               <p className="text-sm text-red-600">{validationErrors.newPassword}</p>
             )}
-            <p className="text-xs text-muted-foreground">
-              Mínimo 8 caracteres
-            </p>
+            <div className="text-xs text-muted-foreground space-y-1">
+              <p className="font-medium">La contraseña debe contener:</p>
+              <ul className="list-disc list-inside space-y-0.5 ml-2">
+                <li>Mínimo 8 caracteres</li>
+                <li>Al menos una letra mayúscula</li>
+                <li>Al menos una letra minúscula</li>
+                <li>Al menos un número</li>
+              </ul>
+            </div>
           </div>
 
           {/* Confirm Password */}
