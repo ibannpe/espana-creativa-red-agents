@@ -133,7 +133,10 @@ export function GestionPage() {
           <p className="text-muted-foreground text-sm mb-4">
             Ajustes generales del sistema y plataforma
           </p>
-          <button className="text-primary hover:underline text-sm font-medium">
+          <button
+            onClick={() => navigate('/gestion/configuracion')}
+            className="text-primary hover:underline text-sm font-medium"
+          >
             Configurar →
           </button>
         </div>
