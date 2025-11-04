@@ -1,11 +1,15 @@
+import { useState } from 'react'
 import { Navigation } from '@/components/layout/Navigation'
 import { ProfileForm } from '@/components/profile/ProfileForm'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
-import { User, Settings } from 'lucide-react'
+import { ChangePasswordModal } from '@/app/features/auth/components/ChangePasswordModal'
+import { User, Settings, Lock } from 'lucide-react'
 
 export function ProfilePage() {
   const { user } = useAuthContext()
+  const [showChangePassword, setShowChangePassword] = useState(false)
 
   if (!user) {
     return <div>Cargando...</div>
@@ -33,7 +37,7 @@ export function ProfilePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Perfil completado */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
@@ -52,7 +56,7 @@ export function ProfilePage() {
                     </div>
                     <p className="text-sm text-muted-foreground">Completado</p>
                   </div>
-                  
+
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-sm">
                       <span>Información básica</span>
@@ -88,6 +92,29 @@ export function ProfilePage() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Security Settings Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Lock className="h-5 w-5 mr-2" />
+                  Seguridad
+                </CardTitle>
+                <CardDescription>
+                  Gestiona la seguridad de tu cuenta
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button
+                  onClick={() => setShowChangePassword(true)}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Lock className="h-4 w-4 mr-2" />
+                  Cambiar Contraseña
+                </Button>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Formulario de perfil */}
@@ -106,6 +133,12 @@ export function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        open={showChangePassword}
+        onOpenChange={setShowChangePassword}
+      />
     </div>
   )
 }

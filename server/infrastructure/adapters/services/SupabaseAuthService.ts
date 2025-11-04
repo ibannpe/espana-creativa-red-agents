@@ -136,4 +136,38 @@ export class SupabaseAuthService implements IAuthService {
       return false
     }
   }
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<{ error: Error | null }> {
+    try {
+      // Get current user
+      const { data: userData, error: userError } = await this.supabase.auth.getUser()
+
+      if (userError || !userData.user) {
+        return { error: new Error('Usuario no autenticado') }
+      }
+
+      // Verify current password by attempting to sign in
+      const { error: signInError } = await this.supabase.auth.signInWithPassword({
+        email: userData.user.email!,
+        password: currentPassword
+      })
+
+      if (signInError) {
+        return { error: new Error('Contraseña actual incorrecta') }
+      }
+
+      // Update to new password
+      const { error: updateError } = await this.supabase.auth.updateUser({
+        password: newPassword
+      })
+
+      if (updateError) {
+        return { error: updateError }
+      }
+
+      return { error: null }
+    } catch (error) {
+      return { error: error as Error }
+    }
+  }
 }

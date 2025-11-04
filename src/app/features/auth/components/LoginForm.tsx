@@ -33,7 +33,7 @@ export function LoginForm() {
     )
   }
 
-  const error = signInError?.message || localError
+  const error = localError || signInError?.message || ''
 
   return (
     <div className="gap-8 flex flex-col">

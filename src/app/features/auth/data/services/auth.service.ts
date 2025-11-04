@@ -8,9 +8,12 @@ import {
   SignInRequest,
   SignInResponse,
   CurrentUserResponse,
+  ChangePasswordRequest,
+  ChangePasswordResponse,
   signUpResponseSchema,
   signInResponseSchema,
-  currentUserResponseSchema
+  currentUserResponseSchema,
+  changePasswordResponseSchema
 } from '../schemas/auth.schema'
 
 const API_BASE_URL = ''
@@ -69,5 +72,13 @@ export const authService = {
       // Re-throw to be handled by the caller
       throw error
     }
+  },
+
+  /**
+   * Change user password
+   */
+  async changePassword(data: ChangePasswordRequest): Promise<ChangePasswordResponse> {
+    const response = await axiosInstance.post(`${API_BASE_URL}/auth/change-password`, data)
+    return changePasswordResponseSchema.parse(response.data)
   }
 }

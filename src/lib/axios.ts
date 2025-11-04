@@ -127,6 +127,22 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(silentError)
     }
 
+    // Handle 401 errors on auth/signin endpoint (incorrect credentials)
+    if (error.config?.url?.includes('/auth/signin') && error.response?.status === 401) {
+      const authError = new Error(error.response?.data?.error || 'Email o contraseña incorrectos')
+      ;(authError as any).response = error.response
+      ;(authError as any).config = error.config
+      return Promise.reject(authError)
+    }
+
+    // Handle 400 errors on auth/change-password endpoint
+    if (error.config?.url?.includes('/auth/change-password') && (error.response?.status === 400 || error.response?.status === 401)) {
+      const passwordError = new Error(error.response?.data?.error || 'Contraseña actual incorrecta')
+      ;(passwordError as any).response = error.response
+      ;(passwordError as any).config = error.config
+      return Promise.reject(passwordError)
+    }
+
     // Handle 401 errors on protected endpoints (token expired or invalid)
     if (error.response?.status === 401 && !error.config?.url?.includes('/auth/') && !error.config._retry) {
       console.warn('🔐 Token inválido o expirado. Intentando refrescar sesión...')

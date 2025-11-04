@@ -67,8 +67,18 @@ export const createAuthRoutes = (): Router => {
       const result = await signInUseCase.execute({ email, password })
 
       if (result.error) {
+        // Translate common error messages to Spanish
+        let errorMessage = result.error
+        if (errorMessage.includes('Invalid login credentials')) {
+          errorMessage = 'Email o contraseña incorrectos'
+        } else if (errorMessage.includes('Email not confirmed')) {
+          errorMessage = 'Email no confirmado'
+        } else if (errorMessage.includes('User not found')) {
+          errorMessage = 'Usuario no encontrado'
+        }
+
         return res.status(401).json({
-          error: result.error
+          error: errorMessage
         })
       }
 
@@ -230,6 +240,40 @@ export const createAuthRoutes = (): Router => {
           name: pendingSignup.getName(),
           surname: pendingSignup.getSurname()
         }
+      })
+    } catch (error) {
+      next(error)
+    }
+  })
+
+  // POST /api/auth/change-password - Change user password
+  router.post('/change-password', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { currentPassword, newPassword } = req.body
+
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({
+          error: 'Contraseña actual y nueva contraseña son requeridas'
+        })
+      }
+
+      if (newPassword.length < 8) {
+        return res.status(400).json({
+          error: 'La nueva contraseña debe tener al menos 8 caracteres'
+        })
+      }
+
+      const authService = Container.getAuthService()
+      const result = await authService.changePassword(currentPassword, newPassword)
+
+      if (result.error) {
+        return res.status(400).json({
+          error: result.error.message
+        })
+      }
+
+      return res.status(200).json({
+        message: 'Contraseña cambiada exitosamente'
       })
     } catch (error) {
       next(error)
