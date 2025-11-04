@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { UserPlus, UserCheck, Eye } from 'lucide-react'
 import { useRequestConnectionMutation } from '@/app/features/network/hooks/mutations/useRequestConnectionMutation'
+import { useUpdateConnectionMutation } from '@/app/features/network/hooks/mutations/useUpdateConnectionMutation'
 import { useConnectionStatusQuery } from '@/app/features/network/hooks/queries/useConnectionStatusQuery'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 import { useToast } from '@/hooks/use-toast'
@@ -20,6 +21,7 @@ export function NewMemberCard({ user }: NewMemberCardProps) {
   const { user: currentUser } = useAuthContext()
   const { data: connectionStatus } = useConnectionStatusQuery(user.id)
   const { action: requestConnection, isLoading } = useRequestConnectionMutation()
+  const { action: updateConnection, isLoading: isUpdating } = useUpdateConnectionMutation()
   const { toast } = useToast()
   const navigate = useNavigate()
 
@@ -41,6 +43,30 @@ export function NewMemberCard({ user }: NewMemberCardProps) {
     }
   }
 
+  const handleAccept = async () => {
+    const connectionId = connectionStatus?.connection?.id
+    if (!connectionId) return
+
+    try {
+      await updateConnection({
+        connection_id: connectionId,
+        status: 'accepted'
+      })
+      toast({
+        title: 'Conexión aceptada',
+        description: `Ahora estás conectado con ${user.name}`,
+        duration: 3000
+      })
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'No se pudo aceptar la solicitud',
+        variant: 'destructive',
+        duration: 5000
+      })
+    }
+  }
+
   const handleViewProfile = () => {
     navigate(`/users/${user.id}`)
   }
@@ -50,6 +76,10 @@ export function NewMemberCard({ user }: NewMemberCardProps) {
 
   // Determine connection status
   const status = connectionStatus?.status || 'none'
+
+  // Determine if current user is the requester or addressee
+  const isRequester = connectionStatus?.connection?.requester_id === currentUser?.id
+  const isAddressee = connectionStatus?.connection?.addressee_id === currentUser?.id
 
   // Get user role label (default to "Miembro" if no roles)
   const roleLabel = user.role_ids && user.role_ids.length > 0 ? getRoleLabel(user.role_ids[0]) : 'Miembro'
@@ -99,7 +129,7 @@ export function NewMemberCard({ user }: NewMemberCardProps) {
               </Button>
             )}
 
-            {status === 'pending' && (
+            {status === 'pending' && isRequester && (
               <Button
                 size="sm"
                 variant="secondary"
@@ -107,6 +137,18 @@ export function NewMemberCard({ user }: NewMemberCardProps) {
                 className="cursor-not-allowed"
               >
                 Solicitud enviada
+              </Button>
+            )}
+
+            {status === 'pending' && isAddressee && (
+              <Button
+                size="sm"
+                onClick={handleAccept}
+                disabled={isUpdating}
+                className="flex items-center gap-2"
+              >
+                <UserCheck className="h-4 w-4" />
+                {isUpdating ? 'Aceptando...' : 'Aceptar'}
               </Button>
             )}
 

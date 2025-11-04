@@ -52,6 +52,10 @@ export function UserProfileViewPage() {
   const status = connectionStatus?.status
   const connectionId = connectionStatus?.connection?.id
 
+  // Determine if current user is the requester or addressee
+  const isRequester = connectionStatus?.connection?.requester_id === currentUser?.id
+  const isAddressee = connectionStatus?.connection?.addressee_id === currentUser?.id
+
   const handleConnect = () => {
     if (userId) {
       requestConnection({ addressee_id: userId })
@@ -163,7 +167,7 @@ export function UserProfileViewPage() {
                         </Button>
                       )}
 
-                      {status === 'pending' && (
+                      {status === 'pending' && isAddressee && (
                         <Button
                           className="w-full"
                           onClick={handleAccept}
@@ -181,6 +185,13 @@ export function UserProfileViewPage() {
                             </>
                           )}
                         </Button>
+                      )}
+
+                      {status === 'pending' && isRequester && (
+                        <Badge variant="secondary" className="w-full py-2 justify-center">
+                          <UserPlus className="h-4 w-4 mr-2" />
+                          Solicitud enviada
+                        </Badge>
                       )}
 
                       {status === 'accepted' && (

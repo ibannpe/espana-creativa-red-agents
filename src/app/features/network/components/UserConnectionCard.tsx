@@ -10,6 +10,7 @@ import { useRequestConnectionMutation } from '../hooks/mutations/useRequestConne
 import { useUpdateConnectionMutation } from '../hooks/mutations/useUpdateConnectionMutation'
 import { useDeleteConnectionMutation } from '../hooks/mutations/useDeleteConnectionMutation'
 import { useConnectionStatusQuery } from '../hooks/queries/useConnectionStatusQuery'
+import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 import { useNavigate } from 'react-router-dom'
 import type { UserProfile } from '@/app/features/profile/data/schemas/profile.schema'
 
@@ -27,6 +28,7 @@ export function UserConnectionCard({
   compact = false
 }: UserConnectionCardProps) {
   const navigate = useNavigate()
+  const { user: currentUser } = useAuthContext()
   const { data: connectionStatus } = useConnectionStatusQuery(user.id)
   const { action: requestConnection, isLoading: isRequesting } = useRequestConnectionMutation()
   const { action: updateConnection, isLoading: isUpdating } = useUpdateConnectionMutation()
@@ -66,6 +68,10 @@ export function UserConnectionCard({
 
   const status = connectionStatus?.status
   const isLoading = isRequesting || isUpdating || isDeleting
+
+  // Determine if current user is the requester or addressee
+  const isRequester = connectionStatus?.connection?.requester_id === currentUser?.id
+  const isAddressee = connectionStatus?.connection?.addressee_id === currentUser?.id
 
   return (
     <Card className={compact ? 'hover:shadow-md transition-shadow cursor-pointer' : 'cursor-pointer hover:shadow-md transition-shadow'}>
@@ -125,7 +131,14 @@ export function UserConnectionCard({
                   </Button>
                 )}
 
-                {status === 'pending' && (
+                {status === 'pending' && isRequester && (
+                  <Badge variant="secondary" className="flex items-center gap-1">
+                    <UserPlus className="h-3 w-3" />
+                    Solicitud enviada
+                  </Badge>
+                )}
+
+                {status === 'pending' && isAddressee && (
                   <>
                     <Button
                       size="sm"

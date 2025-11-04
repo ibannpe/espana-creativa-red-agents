@@ -41,6 +41,7 @@ export const createAuthRoutes = (): Router => {
           website_url: userPrimitives.websiteUrl,
           skills: userPrimitives.skills,
           interests: userPrimitives.interests,
+          role_ids: userPrimitives.roleIds,
           completed_pct: result.user!.calculateCompletionPercentage().getValue(),
           created_at: userPrimitives.createdAt,
           updated_at: userPrimitives.updatedAt
@@ -85,6 +86,7 @@ export const createAuthRoutes = (): Router => {
           website_url: userPrimitives.websiteUrl,
           skills: userPrimitives.skills,
           interests: userPrimitives.interests,
+          role_ids: userPrimitives.roleIds,
           completed_pct: result.user!.calculateCompletionPercentage().getValue(),
           created_at: userPrimitives.createdAt,
           updated_at: userPrimitives.updatedAt
@@ -151,6 +153,7 @@ export const createAuthRoutes = (): Router => {
           website_url: userPrimitives.websiteUrl,
           skills: userPrimitives.skills,
           interests: userPrimitives.interests,
+          role_ids: userPrimitives.roleIds,
           completed_pct: result.completionPercentage,
           created_at: userPrimitives.createdAt,
           updated_at: userPrimitives.updatedAt

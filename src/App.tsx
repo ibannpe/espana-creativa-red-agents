@@ -18,6 +18,7 @@ import { OpportunitiesPage } from '@/components/pages/OpportunitiesPage'
 import { ProgramsPage } from '@/components/pages/ProgramsPage'
 import { ProfilePage } from '@/components/pages/ProfilePage'
 import { UserProfileViewPage } from '@/components/pages/UserProfileViewPage'
+import { GestionPage } from '@/components/pages/GestionPage'
 import PrivacyPage from '@/components/pages/PrivacyPage'
 import { Toaster } from "@/components/ui/toaster"
 import { ErrorBoundary } from '@/components/ErrorBoundary'
@@ -152,6 +153,14 @@ function App() {
           element={
             <ProtectedRoute>
               <UserProfileViewPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/gestion"
+          element={
+            <ProtectedRoute>
+              <GestionPage />
             </ProtectedRoute>
           }
         />

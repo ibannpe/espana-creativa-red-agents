@@ -7,6 +7,7 @@ import { MapPin, Globe, Linkedin, MessageCircle, UserPlus, UserCheck, Clock, Eye
 import { Link, useNavigate } from 'react-router-dom'
 import { useConnectionStatusQuery } from '@/app/features/network/hooks/queries/useConnectionStatusQuery'
 import { useRequestConnectionMutation } from '@/app/features/network/hooks/mutations/useRequestConnectionMutation'
+import { useUpdateConnectionMutation } from '@/app/features/network/hooks/mutations/useUpdateConnectionMutation'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 import { useToast } from '@/hooks/use-toast'
 
@@ -24,6 +25,7 @@ export function ProfileCard({ user, showActions = true, onStartChat, showConnect
     enabled: showConnectButton && currentUser?.id !== user.id
   })
   const { action: requestConnection, isLoading } = useRequestConnectionMutation()
+  const { action: updateConnection, isLoading: isUpdating } = useUpdateConnectionMutation()
   const { toast } = useToast()
 
   const getInitials = (name: string | null) => {
@@ -62,12 +64,40 @@ export function ProfileCard({ user, showActions = true, onStartChat, showConnect
     }
   }
 
+  const handleAccept = async () => {
+    const connectionId = connectionStatus?.connection?.id
+    if (!connectionId) return
+
+    try {
+      await updateConnection({
+        connection_id: connectionId,
+        status: 'accepted'
+      })
+      toast({
+        title: 'Conexión aceptada',
+        description: `Ahora estás conectado con ${user.name || 'el usuario'}`,
+        duration: 3000
+      })
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'No se pudo aceptar la solicitud',
+        variant: 'destructive',
+        duration: 5000
+      })
+    }
+  }
+
   const handleViewProfile = () => {
     navigate(`/users/${user.id}`)
   }
 
   const isCurrentUser = currentUser?.id === user.id
   const status = connectionStatus?.status || 'none'
+
+  // Determine if current user is the requester or addressee
+  const isRequester = connectionStatus?.connection?.requester_id === currentUser?.id
+  const isAddressee = connectionStatus?.connection?.addressee_id === currentUser?.id
 
   return (
     <Card className="w-full">
@@ -175,7 +205,7 @@ export function ProfileCard({ user, showActions = true, onStartChat, showConnect
               </Button>
             )}
 
-            {status === 'pending' && (
+            {status === 'pending' && isRequester && (
               <Button
                 variant="secondary"
                 disabled
@@ -183,6 +213,18 @@ export function ProfileCard({ user, showActions = true, onStartChat, showConnect
               >
                 <Clock className="h-4 w-4 mr-2" />
                 Solicitud enviada
+              </Button>
+            )}
+
+            {status === 'pending' && isAddressee && (
+              <Button
+                onClick={handleAccept}
+                disabled={isUpdating}
+                className="w-full"
+                variant="default"
+              >
+                <UserCheck className="h-4 w-4 mr-2" />
+                {isUpdating ? 'Aceptando...' : 'Aceptar solicitud'}
               </Button>
             )}
 

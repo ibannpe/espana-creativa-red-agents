@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
+import { useUserRoles } from '@/app/features/auth/hooks/useUserRoles'
 import { useUnreadCountQuery } from '@/app/features/messages/hooks/queries/useUnreadCountQuery'
 import { useUnreadNotifications } from '@/app/features/messages/hooks/useUnreadNotifications'
 import { Badge } from '@/components/ui/badge'
@@ -21,11 +22,13 @@ import {
   User,
   Settings,
   LogOut,
-  Home
+  Home,
+  Shield
 } from 'lucide-react'
 
 export function Navigation() {
   const { user, signOut, isSigningOut } = useAuthContext()
+  const { isAdmin } = useUserRoles()
   const location = useLocation()
   const [loading, setLoading] = useState(false)
 
@@ -143,6 +146,17 @@ export function Navigation() {
                     <span className="font-medium">Configuración</span>
                   </Link>
                 </DropdownMenuItem>
+                {isAdmin && (
+                  <>
+                    <DropdownMenuSeparator className="my-2" />
+                    <DropdownMenuItem asChild>
+                      <Link to="/gestion" className="flex items-center rounded-md p-2 hover:bg-primary/10 bg-primary/5">
+                        <Shield className="mr-3 h-4 w-4 text-primary" />
+                        <span className="font-medium text-primary">Gestión</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
                 <DropdownMenuSeparator className="my-2" />
                 <DropdownMenuItem
                   onClick={handleSignOut}

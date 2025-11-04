@@ -32,6 +32,7 @@ export const userResponseSchema = z.object({
   website_url: z.string().nullable(),
   skills: z.array(z.string()),
   interests: z.array(z.string()),
+  role_ids: z.array(z.number()),
   completed_pct: z.number().min(0).max(100),
   created_at: z.string().datetime(),
   updated_at: z.string().datetime()
