@@ -16,6 +16,7 @@ import { MyNetworkPage } from '@/components/pages/MyNetworkPage'
 import { FollowersPage } from '@/components/pages/FollowersPage'
 import { MessagesPage } from '@/app/features/messages/pages/MessagesPage'
 import { OpportunitiesPage } from '@/components/pages/OpportunitiesPage'
+import { OpportunityDetailPage } from '@/components/pages/OpportunityDetailPage'
 import { ProgramsPage } from '@/components/pages/ProgramsPage'
 import { ProfilePage } from '@/components/pages/ProfilePage'
 import { UserProfileViewPage } from '@/components/pages/UserProfileViewPage'
@@ -133,6 +134,14 @@ function App() {
           element={
             <ProtectedRoute>
               <OpportunitiesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/opportunities/:opportunityId"
+          element={
+            <ProtectedRoute>
+              <OpportunityDetailPage />
             </ProtectedRoute>
           }
         />

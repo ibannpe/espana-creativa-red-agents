@@ -2,6 +2,7 @@
 // ABOUTME: Displays opportunities from API with real-time search and type filtering
 
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Navigation } from '@/components/layout/Navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -30,6 +31,7 @@ import { CreateOpportunityDialog } from '@/app/features/opportunities/components
 import type { OpportunityType } from '@/app/features/opportunities/data/schemas/opportunity.schema'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { useToast } from '@/hooks/use-toast'
 
 const opportunityTypeLabels: Record<OpportunityType, string> = {
   proyecto: 'Proyecto',
@@ -41,9 +43,12 @@ const opportunityTypeLabels: Record<OpportunityType, string> = {
 }
 
 export function OpportunitiesPage() {
+  const navigate = useNavigate()
+  const { toast } = useToast()
   const [filter, setFilter] = useState<OpportunityType | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [interestedOpportunities, setInterestedOpportunities] = useState<Set<string>>(new Set())
 
   // Build filter object for API
   const filters = {
@@ -54,6 +59,29 @@ export function OpportunitiesPage() {
   const { data, isLoading, error } = useOpportunitiesQuery(filters)
 
   const opportunities = data?.opportunities || []
+
+  const handleViewDetails = (opportunityId: string) => {
+    navigate(`/opportunities/${opportunityId}`)
+  }
+
+  const handleExpressInterest = async (opportunityId: string, creatorName: string) => {
+    try {
+      // TODO: Implementar endpoint API para registrar interés
+      await new Promise(resolve => setTimeout(resolve, 300))
+
+      setInterestedOpportunities(prev => new Set(prev).add(opportunityId))
+      toast({
+        title: '¡Interés registrado!',
+        description: `Hemos notificado a ${creatorName} sobre tu interés.`
+      })
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'No se pudo registrar tu interés. Inténtalo de nuevo.',
+        variant: 'destructive'
+      })
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
@@ -236,11 +264,19 @@ export function OpportunitiesPage() {
                         </span>
                       </div>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleViewDetails(opportunity.id)}
+                        >
                           Ver detalles
                         </Button>
-                        <Button size="sm">
-                          Me interesa
+                        <Button
+                          size="sm"
+                          onClick={() => handleExpressInterest(opportunity.id, opportunity.creator.name)}
+                          disabled={interestedOpportunities.has(opportunity.id)}
+                        >
+                          {interestedOpportunities.has(opportunity.id) ? '¡Te interesa!' : 'Me interesa'}
                         </Button>
                       </div>
                     </div>

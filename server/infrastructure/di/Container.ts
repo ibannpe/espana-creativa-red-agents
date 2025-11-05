@@ -10,11 +10,13 @@ import { SupabaseConnectionRepository } from '../adapters/repositories/SupabaseC
 import { SupabaseOpportunityRepository } from '../adapters/repositories/SupabaseOpportunityRepository'
 import { SupabaseMessageRepository } from '../adapters/repositories/SupabaseMessageRepository'
 import { SupabasePendingSignupRepository } from '../adapters/repositories/SupabasePendingSignupRepository'
+import { OpportunityInterestRepository } from '../adapters/repositories/OpportunityInterestRepository'
 import { IUserRepository } from '../../application/ports/repositories/IUserRepository'
 import { ConnectionRepository } from '../../application/ports/ConnectionRepository'
 import { OpportunityRepository } from '../../application/ports/OpportunityRepository'
 import { MessageRepository } from '../../application/ports/MessageRepository'
 import { IPendingSignupRepository } from '../../application/ports/IPendingSignupRepository'
+import { IOpportunityInterestRepository } from '../../application/ports/IOpportunityInterestRepository'
 
 // Services
 import { SupabaseAuthService } from '../adapters/services/SupabaseAuthService'
@@ -53,6 +55,12 @@ import { GetMyOpportunitiesUseCase } from '../../application/use-cases/opportuni
 import { UpdateOpportunityUseCase } from '../../application/use-cases/opportunities/UpdateOpportunityUseCase'
 import { DeleteOpportunityUseCase } from '../../application/use-cases/opportunities/DeleteOpportunityUseCase'
 
+// Use Cases - Opportunity Interests
+import { ExpressInterestUseCase } from '../../application/use-cases/opportunity-interests/ExpressInterestUseCase'
+import { GetOpportunityInterestsUseCase } from '../../application/use-cases/opportunity-interests/GetOpportunityInterestsUseCase'
+import { GetUserInterestsUseCase } from '../../application/use-cases/opportunity-interests/GetUserInterestsUseCase'
+import { WithdrawInterestUseCase } from '../../application/use-cases/opportunity-interests/WithdrawInterestUseCase'
+
 // Use Cases - Messages
 import { SendMessageUseCase } from '../../application/use-cases/messages/SendMessageUseCase'
 import { GetConversationsUseCase } from '../../application/use-cases/messages/GetConversationsUseCase'
@@ -75,6 +83,7 @@ export class Container {
   private static userRepository: IUserRepository
   private static connectionRepository: ConnectionRepository
   private static opportunityRepository: OpportunityRepository
+  private static opportunityInterestRepository: IOpportunityInterestRepository
   private static messageRepository: MessageRepository
   private static pendingSignupRepository: IPendingSignupRepository
   private static authService: IAuthService
@@ -108,6 +117,12 @@ export class Container {
   private static getMyOpportunitiesUseCase: GetMyOpportunitiesUseCase
   private static updateOpportunityUseCase: UpdateOpportunityUseCase
   private static deleteOpportunityUseCase: DeleteOpportunityUseCase
+
+  // Use Cases - Opportunity Interests
+  private static expressInterestUseCase: ExpressInterestUseCase
+  private static getOpportunityInterestsUseCase: GetOpportunityInterestsUseCase
+  private static getUserInterestsUseCase: GetUserInterestsUseCase
+  private static withdrawInterestUseCase: WithdrawInterestUseCase
 
   // Use Cases - Messages
   private static sendMessageUseCase: SendMessageUseCase
@@ -152,6 +167,7 @@ export class Container {
     this.userRepository = new SupabaseUserRepository(supabase)
     this.connectionRepository = new SupabaseConnectionRepository(supabase)
     this.opportunityRepository = new SupabaseOpportunityRepository(supabase)
+    this.opportunityInterestRepository = new OpportunityInterestRepository(supabase)
     this.messageRepository = new SupabaseMessageRepository(supabase)
     this.pendingSignupRepository = new SupabasePendingSignupRepository(supabase)
 
@@ -246,6 +262,24 @@ export class Container {
 
     this.deleteOpportunityUseCase = new DeleteOpportunityUseCase(
       this.opportunityRepository
+    )
+
+    // Initialize Opportunity Interests use cases
+    this.expressInterestUseCase = new ExpressInterestUseCase(
+      this.opportunityInterestRepository,
+      this.opportunityRepository
+    )
+
+    this.getOpportunityInterestsUseCase = new GetOpportunityInterestsUseCase(
+      this.opportunityInterestRepository
+    )
+
+    this.getUserInterestsUseCase = new GetUserInterestsUseCase(
+      this.opportunityInterestRepository
+    )
+
+    this.withdrawInterestUseCase = new WithdrawInterestUseCase(
+      this.opportunityInterestRepository
     )
 
     // Initialize Messages use cases
@@ -435,5 +469,22 @@ export class Container {
 
   static getGetPendingSignupsUseCase(): GetPendingSignupsUseCase {
     return this.getPendingSignupsUseCase
+  }
+
+  // Getters for use cases - Opportunity Interests
+  static getExpressInterestUseCase(): ExpressInterestUseCase {
+    return this.expressInterestUseCase
+  }
+
+  static getGetOpportunityInterestsUseCase(): GetOpportunityInterestsUseCase {
+    return this.getOpportunityInterestsUseCase
+  }
+
+  static getGetUserInterestsUseCase(): GetUserInterestsUseCase {
+    return this.getUserInterestsUseCase
+  }
+
+  static getWithdrawInterestUseCase(): WithdrawInterestUseCase {
+    return this.withdrawInterestUseCase
   }
 }
