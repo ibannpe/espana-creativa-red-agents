@@ -23,19 +23,19 @@ export const opportunityStatusSchema = z.enum([
 
 // Base opportunity schema
 export const opportunitySchema = z.object({
-  id: z.string().uuid(),
+  id: z.union([z.string(), z.number()]).transform(val => String(val)),
   title: z.string(),
   description: z.string(),
   type: opportunityTypeSchema,
   status: opportunityStatusSchema,
   skills_required: z.array(z.string()),
   created_by: z.string().uuid(),
-  location: z.string().nullable(),
+  location: z.string().nullish(),
   remote: z.boolean(),
-  duration: z.string().nullable(),
-  compensation: z.string().nullable(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime()
+  duration: z.string().nullish(),
+  compensation: z.string().nullish(),
+  created_at: z.string(),
+  updated_at: z.string()
 })
 
 // Opportunity with creator info
@@ -43,7 +43,8 @@ export const opportunityWithCreatorSchema = opportunitySchema.extend({
   creator: z.object({
     id: z.string().uuid(),
     name: z.string(),
-    avatar_url: z.string().url().nullable()
+    avatar_url: z.string().nullable().optional(),
+    professional_title: z.string().nullable().optional()
   })
 })
 

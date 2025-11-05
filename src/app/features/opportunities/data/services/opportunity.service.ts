@@ -1,7 +1,7 @@
 // ABOUTME: Opportunity service for managing opportunities with Axios and Zod validation
 // ABOUTME: Handles CRUD operations and filtering for opportunities
 
-import axios from 'axios'
+import { axiosInstance } from '@/lib/axios'
 import {
   type CreateOpportunityRequest,
   type UpdateOpportunityRequest,
@@ -16,14 +16,12 @@ import {
   updateOpportunityResponseSchema
 } from '../schemas/opportunity.schema'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-
 export const opportunityService = {
   /**
    * Get all opportunities with optional filters
    */
   async getOpportunities(filters?: FilterOpportunitiesRequest): Promise<GetOpportunitiesResponse> {
-    const response = await axios.get(`${API_BASE_URL}/api/opportunities`, {
+    const response = await axiosInstance.get('/opportunities', {
       params: {
         type: filters?.type,
         status: filters?.status,
@@ -39,7 +37,7 @@ export const opportunityService = {
    * Get a single opportunity by ID
    */
   async getOpportunity(id: string): Promise<GetOpportunityResponse> {
-    const response = await axios.get(`${API_BASE_URL}/api/opportunities/${id}`)
+    const response = await axiosInstance.get(`/opportunities/${id}`)
     return getOpportunityResponseSchema.parse(response.data)
   },
 
@@ -47,7 +45,7 @@ export const opportunityService = {
    * Get opportunities created by current user
    */
   async getMyOpportunities(): Promise<GetOpportunitiesResponse> {
-    const response = await axios.get(`${API_BASE_URL}/api/opportunities/my`)
+    const response = await axiosInstance.get('/opportunities/my')
     return getOpportunitiesResponseSchema.parse(response.data)
   },
 
@@ -55,7 +53,7 @@ export const opportunityService = {
    * Create a new opportunity
    */
   async createOpportunity(data: CreateOpportunityRequest): Promise<CreateOpportunityResponse> {
-    const response = await axios.post(`${API_BASE_URL}/api/opportunities`, data)
+    const response = await axiosInstance.post('/opportunities', data)
     return createOpportunityResponseSchema.parse(response.data)
   },
 
@@ -63,7 +61,7 @@ export const opportunityService = {
    * Update an existing opportunity
    */
   async updateOpportunity(id: string, data: UpdateOpportunityRequest): Promise<UpdateOpportunityResponse> {
-    const response = await axios.put(`${API_BASE_URL}/api/opportunities/${id}`, data)
+    const response = await axiosInstance.put(`/opportunities/${id}`, data)
     return updateOpportunityResponseSchema.parse(response.data)
   },
 
@@ -71,6 +69,6 @@ export const opportunityService = {
    * Delete an opportunity
    */
   async deleteOpportunity(id: string): Promise<void> {
-    await axios.delete(`${API_BASE_URL}/api/opportunities/${id}`)
+    await axiosInstance.delete(`/opportunities/${id}`)
   }
 }

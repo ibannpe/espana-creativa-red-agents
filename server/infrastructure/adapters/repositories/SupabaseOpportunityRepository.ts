@@ -60,7 +60,7 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
       .from('opportunities')
       .select(`
         *,
-        creator:users!opportunities_created_by_fkey(id, name, avatar_url, professional_title)
+        creator:users!opportunities_created_by_fkey(id, name, avatar_url)
       `)
       .eq('id', id)
       .single()
@@ -75,7 +75,7 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
         id: data.creator.id,
         name: data.creator.name,
         avatar_url: data.creator.avatar_url,
-        professional_title: data.creator.professional_title
+        professional_title: null
       }
     }
   }
@@ -85,7 +85,7 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
       .from('opportunities')
       .select(`
         *,
-        creator:users!opportunities_created_by_fkey(id, name, avatar_url, professional_title)
+        creator:users!opportunities_created_by_fkey(id, name, avatar_url)
       `)
 
     // Apply filters
@@ -120,7 +120,13 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
 
     const { data, error } = await query
 
-    if (error || !data) {
+    if (error) {
+      console.error('[SupabaseOpportunityRepository] Error fetching opportunities:', error)
+      return []
+    }
+
+    if (!data) {
+      console.log('[SupabaseOpportunityRepository] No data returned from query')
       return []
     }
 
@@ -130,7 +136,7 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
         id: row.creator.id,
         name: row.creator.name,
         avatar_url: row.creator.avatar_url,
-        professional_title: row.creator.professional_title
+        professional_title: null
       }
     }))
   }
@@ -142,9 +148,12 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
   async create(opportunity: Opportunity): Promise<Opportunity> {
     const row = this.toRow(opportunity)
 
+    // Omit id for insert - let database generate it
+    const { id, ...insertRow } = row
+
     const { data, error } = await this.supabase
       .from('opportunities')
-      .upsert(row)
+      .insert(insertRow)
       .select()
       .single()
 
@@ -228,7 +237,7 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
    */
   private toDomain(row: OpportunityRow): Opportunity {
     return Opportunity.create({
-      id: row.id,
+      id: String(row.id),
       title: row.title,
       description: row.description,
       type: row.type,

@@ -1,95 +1,64 @@
+// ABOUTME: Opportunities listing page with search and filters
+// ABOUTME: Displays opportunities from API with real-time search and type filtering
+
 import { useState } from 'react'
 import { Navigation } from '@/components/layout/Navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue 
+  SelectValue
 } from '@/components/ui/select'
-import { 
-  Briefcase, 
-  Search, 
-  Plus, 
-  MapPin, 
+import {
+  Briefcase,
+  Search,
+  Plus,
+  MapPin,
   Clock,
-  Users,
-  Star
+  Calendar,
+  DollarSign,
+  Loader2
 } from 'lucide-react'
+import { useOpportunitiesQuery } from '@/app/features/opportunities/hooks/queries/useOpportunitiesQuery'
+import { CreateOpportunityDialog } from '@/app/features/opportunities/components/CreateOpportunityDialog'
+import type { OpportunityType } from '@/app/features/opportunities/data/schemas/opportunity.schema'
+import { formatDistanceToNow } from 'date-fns'
+import { es } from 'date-fns/locale'
+
+const opportunityTypeLabels: Record<OpportunityType, string> = {
+  proyecto: 'Proyecto',
+  colaboracion: 'Colaboración',
+  empleo: 'Empleo',
+  mentoria: 'Mentoría',
+  evento: 'Evento',
+  otro: 'Otro'
+}
 
 export function OpportunitiesPage() {
-  const [filter, setFilter] = useState('all')
+  const [filter, setFilter] = useState<OpportunityType | 'all'>('all')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 
-  // Mock data para oportunidades
-  const opportunities = [
-    {
-      id: 1,
-      title: 'Desarrollador Frontend React',
-      company: 'StartupTech',
-      location: 'Madrid',
-      type: 'Colaboración',
-      description: 'Buscamos desarrollador frontend con experiencia en React para startup fintech. Proyecto innovador con gran potencial de crecimiento.',
-      skills: ['React', 'TypeScript', 'Tailwind'],
-      postedBy: 'María García',
-      postedTime: '2 días',
-      applicants: 12,
-      featured: true
-    },
-    {
-      id: 2,
-      title: 'Mentor para Ecommerce',
-      company: 'España Creativa',
-      location: 'Remoto',
-      type: 'Mentoría',
-      description: 'Emprendedor busca mentor con experiencia en ecommerce y marketing digital para guiar el lanzamiento de su plataforma.',
-      skills: ['Ecommerce', 'Marketing', 'SEO'],
-      postedBy: 'Carlos López',
-      postedTime: '1 semana',
-      applicants: 5,
-      featured: false
-    },
-    {
-      id: 3,
-      title: 'Co-fundador Tecnológico',
-      company: 'EcoSolutions',
-      location: 'Barcelona',
-      type: 'Sociedad',
-      description: 'Startup de sostenibilidad busca co-fundador técnico para liderar el desarrollo de plataforma de gestión ambiental.',
-      skills: ['Node.js', 'Python', 'DevOps'],
-      postedBy: 'Ana Martín',
-      postedTime: '3 días',
-      applicants: 8,
-      featured: true
-    },
-    {
-      id: 4,
-      title: 'Diseñador UX/UI',
-      company: 'HealthApp',
-      location: 'Valencia',
-      type: 'Proyecto',
-      description: 'Aplicación de salud digital necesita diseñador UX/UI para mejorar la experiencia de usuario y crear nuevas funcionalidades.',
-      skills: ['Figma', 'UX Design', 'Prototyping'],
-      postedBy: 'David Ruiz',
-      postedTime: '5 días',
-      applicants: 15,
-      featured: false
-    }
-  ]
+  // Build filter object for API
+  const filters = {
+    ...(filter !== 'all' && { type: filter }),
+    ...(searchQuery && { search: searchQuery })
+  }
 
-  const filteredOpportunities = opportunities.filter(opp => {
-    if (filter === 'all') return true
-    return opp.type.toLowerCase() === filter.toLowerCase()
-  })
+  const { data, isLoading, error } = useOpportunitiesQuery(filters)
+
+  const opportunities = data?.opportunities || []
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
       <Navigation />
-      
+
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -105,7 +74,7 @@ export function OpportunitiesPage() {
                 </p>
               </div>
             </div>
-            <Button>
+            <Button onClick={() => setIsCreateDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Publicar oportunidad
             </Button>
@@ -119,105 +88,175 @@ export function OpportunitiesPage() {
               <div className="flex-1">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input placeholder="Buscar oportunidades..." className="pl-10" />
+                  <Input
+                    placeholder="Buscar oportunidades..."
+                    className="pl-10"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
                 </div>
               </div>
-              <Select value={filter} onValueChange={setFilter}>
+              <Select value={filter} onValueChange={(value) => setFilter(value as OpportunityType | 'all')}>
                 <SelectTrigger className="w-full md:w-48">
                   <SelectValue placeholder="Tipo" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas</SelectItem>
-                  <SelectItem value="colaboración">Colaboración</SelectItem>
-                  <SelectItem value="mentoría">Mentoría</SelectItem>
-                  <SelectItem value="sociedad">Sociedad</SelectItem>
                   <SelectItem value="proyecto">Proyecto</SelectItem>
+                  <SelectItem value="colaboracion">Colaboración</SelectItem>
+                  <SelectItem value="empleo">Empleo</SelectItem>
+                  <SelectItem value="mentoria">Mentoría</SelectItem>
+                  <SelectItem value="evento">Evento</SelectItem>
+                  <SelectItem value="otro">Otro</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </CardContent>
         </Card>
 
+        {/* Loading state */}
+        {isLoading && (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        )}
+
+        {/* Error state */}
+        {error && (
+          <Card className="p-8 text-center">
+            <p className="text-destructive">Error al cargar las oportunidades</p>
+            <p className="text-muted-foreground text-sm mt-2">{error.message}</p>
+          </Card>
+        )}
+
+        {/* Empty state */}
+        {!isLoading && !error && opportunities.length === 0 && (
+          <Card className="p-12 text-center">
+            <Briefcase className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">No hay oportunidades</h3>
+            <p className="text-muted-foreground mb-4">
+              {searchQuery || filter !== 'all'
+                ? 'No se encontraron oportunidades con los filtros aplicados'
+                : 'Sé el primero en publicar una oportunidad'}
+            </p>
+            <Button onClick={() => setIsCreateDialogOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Publicar oportunidad
+            </Button>
+          </Card>
+        )}
+
         {/* Lista de oportunidades */}
-        <div className="space-y-6">
-          {filteredOpportunities.map((opportunity) => (
-            <Card key={opportunity.id} className={`hover:shadow-lg transition-shadow ${opportunity.featured ? 'ring-2 ring-primary/20' : ''}`}>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <CardTitle className="text-xl">{opportunity.title}</CardTitle>
-                      {opportunity.featured && (
-                        <Badge variant="default" className="bg-yellow-500 text-white">
-                          <Star className="h-3 w-3 mr-1" />
-                          Destacada
-                        </Badge>
+        {!isLoading && !error && opportunities.length > 0 && (
+          <div className="space-y-6">
+            {opportunities.map((opportunity) => {
+              const createdAt = new Date(opportunity.created_at)
+              const timeAgo = formatDistanceToNow(createdAt, {
+                addSuffix: true,
+                locale: es
+              })
+
+              return (
+                <Card key={opportunity.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <CardTitle className="text-xl">{opportunity.title}</CardTitle>
+                        </div>
+                        <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                          {opportunity.location && (
+                            <div className="flex items-center">
+                              <MapPin className="h-4 w-4 mr-1" />
+                              {opportunity.location}
+                            </div>
+                          )}
+                          {opportunity.remote && (
+                            <Badge variant="secondary" className="text-xs">
+                              Remoto
+                            </Badge>
+                          )}
+                          <div className="flex items-center">
+                            <Clock className="h-4 w-4 mr-1" />
+                            {timeAgo}
+                          </div>
+                        </div>
+                      </div>
+                      <Badge variant="secondary">
+                        {opportunityTypeLabels[opportunity.type]}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4">{opportunity.description}</p>
+
+                    {/* Skills */}
+                    {opportunity.skills_required && opportunity.skills_required.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {opportunity.skills_required.map((skill) => (
+                          <Badge key={skill} variant="outline" className="text-xs">
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Additional info */}
+                    <div className="flex flex-wrap gap-4 mb-4 text-sm text-muted-foreground">
+                      {opportunity.duration && (
+                        <div className="flex items-center">
+                          <Calendar className="h-4 w-4 mr-1" />
+                          Duración: {opportunity.duration}
+                        </div>
+                      )}
+                      {opportunity.compensation && (
+                        <div className="flex items-center">
+                          <DollarSign className="h-4 w-4 mr-1" />
+                          {opportunity.compensation}
+                        </div>
                       )}
                     </div>
-                    <CardDescription className="text-base">
-                      {opportunity.company}
-                    </CardDescription>
-                    <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                      <div className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        {opportunity.location}
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Avatar className="h-6 w-6">
+                          {opportunity.creator.avatar_url && (
+                            <AvatarImage src={opportunity.creator.avatar_url} />
+                          )}
+                          <AvatarFallback className="text-xs">
+                            {opportunity.creator.name
+                              .split(' ')
+                              .map(n => n[0])
+                              .join('')
+                              .toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm text-muted-foreground">
+                          Por {opportunity.creator.name}
+                        </span>
                       </div>
-                      <div className="flex items-center">
-                        <Clock className="h-4 w-4 mr-1" />
-                        Hace {opportunity.postedTime}
-                      </div>
-                      <div className="flex items-center">
-                        <Users className="h-4 w-4 mr-1" />
-                        {opportunity.applicants} interesados
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm">
+                          Ver detalles
+                        </Button>
+                        <Button size="sm">
+                          Me interesa
+                        </Button>
                       </div>
                     </div>
-                  </div>
-                  <Badge variant="secondary">{opportunity.type}</Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">{opportunity.description}</p>
-                
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {opportunity.skills.map((skill) => (
-                    <Badge key={skill} variant="outline" className="text-xs">
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Avatar className="h-6 w-6">
-                      <AvatarFallback className="text-xs">
-                        {opportunity.postedBy.split(' ').map(n => n[0]).join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm text-muted-foreground">
-                      Por {opportunity.postedBy}
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      Ver detalles
-                    </Button>
-                    <Button size="sm">
-                      Me interesa
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Mostrar más */}
-        <div className="text-center mt-8">
-          <Button variant="outline" size="lg">
-            Cargar más oportunidades
-          </Button>
-        </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+        )}
       </div>
+
+      {/* Create opportunity dialog */}
+      <CreateOpportunityDialog
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+      />
     </div>
   )
 }

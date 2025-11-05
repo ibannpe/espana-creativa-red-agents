@@ -43,7 +43,8 @@ export const createOpportunitiesRoutes = (): Router => {
           created_at: o.opportunity.createdAt.toISOString(),
           updated_at: o.opportunity.updatedAt.toISOString(),
           creator: o.creator
-        }))
+        })),
+        total: opportunities.length
       })
     } catch (error) {
       next(error)
@@ -79,7 +80,8 @@ export const createOpportunitiesRoutes = (): Router => {
           created_at: o.opportunity.createdAt.toISOString(),
           updated_at: o.opportunity.updatedAt.toISOString(),
           creator: o.creator
-        }))
+        })),
+        total: opportunities.length
       })
     } catch (error) {
       next(error)
@@ -170,10 +172,10 @@ export const createOpportunitiesRoutes = (): Router => {
           type: opportunity.type,
           status: opportunity.status,
           skills_required: opportunity.skillsRequired,
-          location: opportunity.location,
+          location: opportunity.location || null,
           remote: opportunity.remote,
-          duration: opportunity.duration,
-          compensation: opportunity.compensation,
+          duration: opportunity.duration || null,
+          compensation: opportunity.compensation || null,
           created_by: opportunity.createdBy,
           created_at: opportunity.createdAt.toISOString(),
           updated_at: opportunity.updatedAt.toISOString()
@@ -233,10 +235,10 @@ export const createOpportunitiesRoutes = (): Router => {
           type: opportunity.type,
           status: opportunity.status,
           skills_required: opportunity.skillsRequired,
-          location: opportunity.location,
+          location: opportunity.location || null,
           remote: opportunity.remote,
-          duration: opportunity.duration,
-          compensation: opportunity.compensation,
+          duration: opportunity.duration || null,
+          compensation: opportunity.compensation || null,
           created_by: opportunity.createdBy,
           created_at: opportunity.createdAt.toISOString(),
           updated_at: opportunity.updatedAt.toISOString()
