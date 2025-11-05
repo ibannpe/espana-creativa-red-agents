@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Select,
   SelectContent,
@@ -27,6 +28,7 @@ import {
   Loader2
 } from 'lucide-react'
 import { useOpportunitiesQuery } from '@/app/features/opportunities/hooks/queries/useOpportunitiesQuery'
+import { useMyOpportunitiesQuery } from '@/app/features/opportunities/hooks/queries/useMyOpportunitiesQuery'
 import { CreateOpportunityDialog } from '@/app/features/opportunities/components/CreateOpportunityDialog'
 import type { OpportunityType } from '@/app/features/opportunities/data/schemas/opportunity.schema'
 import { formatDistanceToNow } from 'date-fns'
@@ -45,6 +47,7 @@ const opportunityTypeLabels: Record<OpportunityType, string> = {
 export function OpportunitiesPage() {
   const navigate = useNavigate()
   const { toast } = useToast()
+  const [activeTab, setActiveTab] = useState<'all' | 'my'>('all')
   const [filter, setFilter] = useState<OpportunityType | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
@@ -56,9 +59,34 @@ export function OpportunitiesPage() {
     ...(searchQuery && { search: searchQuery })
   }
 
-  const { data, isLoading, error } = useOpportunitiesQuery(filters)
+  // Fetch all opportunities
+  const { data: allData, isLoading: isLoadingAll, error: errorAll } = useOpportunitiesQuery(filters, {
+    enabled: activeTab === 'all'
+  })
 
-  const opportunities = data?.opportunities || []
+  // Fetch user's opportunities
+  const { data: myData, isLoading: isLoadingMy, error: errorMy } = useMyOpportunitiesQuery({
+    enabled: activeTab === 'my'
+  })
+
+  // Determine which data to use based on active tab
+  const opportunities = activeTab === 'all'
+    ? (allData?.opportunities || [])
+    : (myData?.opportunities || [])
+
+  const isLoading = activeTab === 'all' ? isLoadingAll : isLoadingMy
+  const error = activeTab === 'all' ? errorAll : errorMy
+
+  // Apply client-side filtering for "my" tab (since backend doesn't support filters for my opportunities)
+  const filteredOpportunities = activeTab === 'my'
+    ? opportunities.filter(opp => {
+        const matchesType = filter === 'all' || opp.type === filter
+        const matchesSearch = !searchQuery ||
+          opp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          opp.description.toLowerCase().includes(searchQuery.toLowerCase())
+        return matchesType && matchesSearch
+      })
+    : opportunities
 
   const handleViewDetails = (opportunityId: string) => {
     navigate(`/opportunities/${opportunityId}`)
@@ -109,6 +137,14 @@ export function OpportunitiesPage() {
           </div>
         </div>
 
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'all' | 'my')} className="mb-6">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="all">Todas las oportunidades</TabsTrigger>
+            <TabsTrigger value="my">Mis oportunidades</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
         {/* Filtros y búsqueda */}
         <Card className="mb-8">
           <CardContent className="p-6">
@@ -158,12 +194,18 @@ export function OpportunitiesPage() {
         )}
 
         {/* Empty state */}
-        {!isLoading && !error && opportunities.length === 0 && (
+        {!isLoading && !error && filteredOpportunities.length === 0 && (
           <Card className="p-12 text-center">
             <Briefcase className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No hay oportunidades</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              {activeTab === 'my' ? 'No has publicado oportunidades' : 'No hay oportunidades'}
+            </h3>
             <p className="text-muted-foreground mb-4">
-              {searchQuery || filter !== 'all'
+              {activeTab === 'my'
+                ? searchQuery || filter !== 'all'
+                  ? 'No se encontraron oportunidades tuyas con los filtros aplicados'
+                  : 'Publica tu primera oportunidad para empezar a colaborar'
+                : searchQuery || filter !== 'all'
                 ? 'No se encontraron oportunidades con los filtros aplicados'
                 : 'Sé el primero en publicar una oportunidad'}
             </p>
@@ -175,9 +217,9 @@ export function OpportunitiesPage() {
         )}
 
         {/* Lista de oportunidades */}
-        {!isLoading && !error && opportunities.length > 0 && (
+        {!isLoading && !error && filteredOpportunities.length > 0 && (
           <div className="space-y-6">
-            {opportunities.map((opportunity) => {
+            {filteredOpportunities.map((opportunity) => {
               const createdAt = new Date(opportunity.created_at)
               const timeAgo = formatDistanceToNow(createdAt, {
                 addSuffix: true,
