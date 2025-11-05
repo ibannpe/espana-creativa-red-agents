@@ -55,7 +55,11 @@ export const authMiddleware = async (
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
     if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing Supabase configuration')
+      console.error('[Auth Middleware] Missing Supabase configuration:', {
+        hasUrl: !!supabaseUrl,
+        hasKey: !!supabaseKey,
+        urlEnvVar: process.env.VITE_SUPABASE_URL ? 'VITE_SUPABASE_URL' : process.env.SUPABASE_URL ? 'SUPABASE_URL' : 'none'
+      })
       res.status(500).json({ error: 'Server configuration error' })
       return
     }
@@ -66,7 +70,13 @@ export const authMiddleware = async (
     const { data: { user }, error } = await supabase.auth.getUser(token)
 
     if (error) {
-      console.error('Token verification error:', error.message)
+      console.error('[Auth Middleware] Token verification error:', {
+        message: error.message,
+        name: error.name,
+        status: error.status,
+        tokenPrefix: token.substring(0, 20) + '...',
+        supabaseUrl: supabaseUrl.substring(0, 30) + '...'
+      })
       res.status(401).json({ error: 'Invalid or expired token' })
       return
     }
