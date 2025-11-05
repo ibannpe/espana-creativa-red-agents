@@ -173,16 +173,26 @@ export class SupabaseAuthService implements IAuthService {
 
   async sendPasswordResetEmail(email: string): Promise<{ error: Error | null }> {
     try {
+      // Determine the correct app URL based on environment
+      // Priority: APP_URL env var > FRONTEND_URL env var > localhost fallback
+      const appUrl = process.env.APP_URL || process.env.FRONTEND_URL || 'http://localhost:8080'
+      const redirectUrl = `${appUrl}/auth/reset-password`
+
+      console.log('[SupabaseAuthService] Sending password reset email with redirectTo:', redirectUrl)
+
       const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${process.env.APP_URL || 'http://localhost:8080'}/auth/reset-password`
+        redirectTo: redirectUrl
       })
 
       if (error) {
+        console.error('[SupabaseAuthService] Error sending password reset email:', error)
         return { error }
       }
 
+      console.log('[SupabaseAuthService] Password reset email sent successfully')
       return { error: null }
     } catch (error) {
+      console.error('[SupabaseAuthService] Exception sending password reset email:', error)
       return { error: error as Error }
     }
   }
