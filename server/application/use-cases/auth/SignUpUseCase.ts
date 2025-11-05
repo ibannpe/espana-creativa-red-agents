@@ -82,33 +82,34 @@ export class SignUpUseCase {
       }
     }
 
-    // 7. Create domain user entity
-    const user = User.create({
-      id: userId,
-      email,
-      name: request.name,
-      avatarUrl: null,
-      bio: null,
-      location: null,
-      linkedinUrl: null,
-      websiteUrl: null,
-      skills: [],
-      interests: [],
-      roleIds: [3], // Default role: emprendedor (ID = 3)
-      createdAt: new Date(),
-      updatedAt: new Date()
-    })
+    // 7. Wait for database trigger to complete user profile creation
+    // The handle_new_user() trigger creates the user profile automatically
+    // We need to wait a moment and then verify it was created
+    await new Promise(resolve => setTimeout(resolve, 1000))
 
-    // 8. Save user to repository
+    // 8. Verify user was created by trigger and fetch it
+    let user: User | null = null
     try {
-      await this.userRepository.save(user)
+      user = await this.userRepository.findById(userId)
+
+      if (!user) {
+        console.error('[SignUpUseCase] User profile was not created by trigger')
+        // Rollback auth user if profile creation failed
+        await this.authService.deleteUser(userId)
+        return {
+          user: null,
+          error: 'Failed to create user profile'
+        }
+      }
+
+      console.log('[SignUpUseCase] User profile created successfully by trigger')
     } catch (error) {
-      console.error('[SignUpUseCase] Failed to save user to repository:', error)
-      // Rollback auth user if database save fails
+      console.error('[SignUpUseCase] Error fetching user after creation:', error)
+      // Rollback auth user if we can't verify profile creation
       await this.authService.deleteUser(userId)
       return {
         user: null,
-        error: 'Failed to create user profile'
+        error: 'Failed to verify user profile creation'
       }
     }
 
