@@ -31,7 +31,7 @@ import {
 import { useOpportunitiesQuery } from '@/app/features/opportunities/hooks/queries/useOpportunitiesQuery'
 import { useMyOpportunitiesQuery } from '@/app/features/opportunities/hooks/queries/useMyOpportunitiesQuery'
 import { CreateOpportunityDialog } from '@/app/features/opportunities/components/CreateOpportunityDialog'
-import type { OpportunityType, OpportunityWithCreator } from '@/app/features/opportunities/data/schemas/opportunity.schema'
+import type { OpportunityType, OpportunityWithCreator, OpportunityStatus } from '@/app/features/opportunities/data/schemas/opportunity.schema'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { useToast } from '@/hooks/use-toast'
@@ -48,10 +48,11 @@ const opportunityTypeLabels: Record<OpportunityType, string> = {
 
 export function OpportunitiesPage() {
   const navigate = useNavigate()
-  const { toast } = useToast()
+  const { toast} = useToast()
   const { user } = useAuthContext()
   const [activeTab, setActiveTab] = useState<'all' | 'my'>('all')
   const [filter, setFilter] = useState<OpportunityType | 'all'>('all')
+  const [statusFilter, setStatusFilter] = useState<OpportunityStatus | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [editingOpportunity, setEditingOpportunity] = useState<OpportunityWithCreator | null>(null)
@@ -81,16 +82,23 @@ export function OpportunitiesPage() {
   const isLoading = activeTab === 'all' ? isLoadingAll : isLoadingMy
   const error = activeTab === 'all' ? errorAll : errorMy
 
-  // Apply client-side filtering for "my" tab (since backend doesn't support filters for my opportunities)
-  const filteredOpportunities = activeTab === 'my'
-    ? opportunities.filter(opp => {
-        const matchesType = filter === 'all' || opp.type === filter
-        const matchesSearch = !searchQuery ||
-          opp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          opp.description.toLowerCase().includes(searchQuery.toLowerCase())
-        return matchesType && matchesSearch
-      })
-    : opportunities
+  // Apply client-side filtering
+  const filteredOpportunities = opportunities.filter(opp => {
+    // Type filter
+    const matchesType = filter === 'all' || opp.type === filter
+
+    // Search filter
+    const matchesSearch = !searchQuery ||
+      opp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      opp.description.toLowerCase().includes(searchQuery.toLowerCase())
+
+    // Status filter - by default exclude 'cerrada' unless explicitly filtered
+    const matchesStatus = statusFilter !== 'all'
+      ? opp.status === statusFilter
+      : opp.status !== 'cerrada'
+
+    return matchesType && matchesSearch && matchesStatus
+  })
 
   const handleViewDetails = (opportunityId: string) => {
     navigate(`/opportunities/${opportunityId}`)
@@ -181,6 +189,18 @@ export function OpportunitiesPage() {
                   <SelectItem value="mentoria">Mentoría</SelectItem>
                   <SelectItem value="evento">Evento</SelectItem>
                   <SelectItem value="otro">Otro</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as OpportunityStatus | 'all')}>
+                <SelectTrigger className="w-full md:w-48">
+                  <SelectValue placeholder="Estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Activas</SelectItem>
+                  <SelectItem value="abierta">Abiertas</SelectItem>
+                  <SelectItem value="en_progreso">En Progreso</SelectItem>
+                  <SelectItem value="cerrada">Cerradas</SelectItem>
+                  <SelectItem value="cancelada">Canceladas</SelectItem>
                 </SelectContent>
               </Select>
             </div>

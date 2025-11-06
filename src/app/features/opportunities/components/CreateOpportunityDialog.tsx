@@ -35,7 +35,16 @@ import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useCreateOpportunityMutation } from '../hooks/mutations/useCreateOpportunityMutation'
 import { useUpdateOpportunityMutation } from '../hooks/mutations/useUpdateOpportunityMutation'
-import { createOpportunityRequestSchema, type CreateOpportunityRequest, type OpportunityWithCreator } from '../data/schemas/opportunity.schema'
+import { createOpportunityRequestSchema, updateOpportunityRequestSchema, type CreateOpportunityRequest, type OpportunityWithCreator, type OpportunityStatus } from '../data/schemas/opportunity.schema'
+import { z } from 'zod'
+
+// Extended schema for edit mode that includes all fields including status
+const editOpportunityFormSchema = createOpportunityRequestSchema.extend({
+  status: z.enum(['abierta', 'en_progreso', 'cerrada', 'cancelada']).optional()
+})
+
+// Extended form type that includes status for edit mode
+type OpportunityFormData = z.infer<typeof editOpportunityFormSchema>
 
 interface CreateOpportunityDialogProps {
   open: boolean
@@ -52,6 +61,13 @@ const opportunityTypes = [
   { value: 'otro', label: 'Otro' },
 ]
 
+const opportunityStatuses = [
+  { value: 'abierta', label: 'Abierta' },
+  { value: 'en_progreso', label: 'En Progreso' },
+  { value: 'cerrada', label: 'Cerrada' },
+  { value: 'cancelada', label: 'Cancelada' },
+]
+
 export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: CreateOpportunityDialogProps) {
   const [skillInput, setSkillInput] = useState('')
   const { action: createOpportunity, isLoading: isCreating } = useCreateOpportunityMutation()
@@ -60,8 +76,8 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
   const isEditMode = !!opportunity
   const isLoading = isCreating || isUpdating
 
-  const form = useForm<CreateOpportunityRequest>({
-    resolver: zodResolver(createOpportunityRequestSchema),
+  const form = useForm<OpportunityFormData>({
+    resolver: zodResolver(isEditMode ? editOpportunityFormSchema : createOpportunityRequestSchema),
     defaultValues: {
       title: '',
       description: '',
@@ -71,6 +87,7 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
       remote: false,
       duration: null,
       compensation: null,
+      status: 'abierta',
     },
   })
 
@@ -86,6 +103,7 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
         remote: opportunity.remote,
         duration: opportunity.duration || null,
         compensation: opportunity.compensation || null,
+        status: opportunity.status,
       })
     } else {
       form.reset({
@@ -97,6 +115,7 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
         remote: false,
         duration: null,
         compensation: null,
+        status: 'abierta',
       })
     }
   }, [opportunity, form])
@@ -125,8 +144,9 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
     }
   }
 
-  const onSubmit = (data: CreateOpportunityRequest) => {
+  const onSubmit = (data: OpportunityFormData) => {
     if (isEditMode && opportunity) {
+      // For update, include status
       updateOpportunity({ id: opportunity.id, data }, {
         onSuccess: () => {
           form.reset()
@@ -137,7 +157,9 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
         }
       })
     } else {
-      createOpportunity(data, {
+      // For creation, remove status field (backend sets it to 'abierta' by default)
+      const { status, ...createData } = data
+      createOpportunity(createData, {
         onSuccess: () => {
           form.reset()
           onOpenChange(false)
@@ -214,6 +236,37 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
                 </FormItem>
               )}
             />
+
+            {/* Estado - Solo visible en modo edición */}
+            {isEditMode && (
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Estado</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecciona un estado" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {opportunityStatuses.map((status) => (
+                          <SelectItem key={status.value} value={status.value}>
+                            {status.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Las oportunidades cerradas no aparecerán en el listado principal
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             {/* Descripción */}
             <FormField
