@@ -11,6 +11,7 @@ export interface UpdateOpportunityDTO {
     title?: string
     description?: string
     type?: OpportunityType
+    status?: 'abierta' | 'en_progreso' | 'cerrada' | 'cancelada'
     skillsRequired?: string[]
     location?: string
     remote?: boolean

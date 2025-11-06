@@ -160,6 +160,7 @@ export class Opportunity {
     title?: string
     description?: string
     type?: OpportunityType
+    status?: OpportunityStatus
     skillsRequired?: string[]
     location?: string
     remote?: boolean
@@ -174,6 +175,9 @@ export class Opportunity {
     }
     if (updates.type !== undefined) {
       this._type = updates.type
+    }
+    if (updates.status !== undefined) {
+      this._status = updates.status
     }
     if (updates.skillsRequired !== undefined) {
       this._skillsRequired = updates.skillsRequired
