@@ -92,10 +92,10 @@ export function OpportunitiesPage() {
       opp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       opp.description.toLowerCase().includes(searchQuery.toLowerCase())
 
-    // Status filter - by default exclude 'cerrada' unless explicitly filtered
+    // Status filter - by default exclude 'cerrada' and 'cancelada' unless explicitly filtered
     const matchesStatus = statusFilter !== 'all'
       ? opp.status === statusFilter
-      : opp.status !== 'cerrada'
+      : opp.status !== 'cerrada' && opp.status !== 'cancelada'
 
     return matchesType && matchesSearch && matchesStatus
   })
