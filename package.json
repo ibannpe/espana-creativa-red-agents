@@ -16,6 +16,9 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:critical": "vitest run --config vitest.critical.config.ts",
+    "test:critical:watch": "vitest --config vitest.critical.config.ts",
+    "test:critical:coverage": "vitest run --config vitest.critical.config.ts --coverage",
     "test:admin-email": "node test-admin-email.mjs",
     "clean-db": "node scripts/clean-test-data.js",
     "clean-dev": "node scripts/clean-dev-environment.js"

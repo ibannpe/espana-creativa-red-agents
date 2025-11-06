@@ -58,7 +58,44 @@ yarn test:run
 
 # Cobertura de tests
 yarn test:coverage
+
+# 🔴 PATH CRÍTICO - Tests esenciales (ejecutar antes de merge/deploy)
+yarn test:critical
+
+# Path crítico en modo watch
+yarn test:critical:watch
+
+# Path crítico con cobertura
+yarn test:critical:coverage
 ```
+
+#### Path Crítico de Tests
+
+El comando `yarn test:critical` ejecuta **solo los tests esenciales** que deben pasar siempre:
+
+**🔴 Crítico (Backend Use Cases)**:
+- Autenticación (SignUpUseCase)
+- Mensajería (SendMessageUseCase)
+- Usuarios (GetRecentUsersUseCase)
+
+**🟠 Alta Prioridad (Domain Layer)**:
+- Email validation
+- UserId validation
+- User entity
+- Message entity
+
+**🟡 Media Prioridad (Frontend Schemas)**:
+- Auth schemas & service
+- Message schemas
+- Signup approval schemas
+
+**Cuándo ejecutar el path crítico**:
+- ✅ Antes de crear un commit importante
+- ✅ Antes de crear un Pull Request
+- ✅ Antes de hacer merge a main
+- ✅ Antes de deploy a producción
+- ✅ Después de cambios en lógica de negocio core
+- ✅ Después de cambios en schemas de validación
 
 ### Gestión de Base de Datos
 
