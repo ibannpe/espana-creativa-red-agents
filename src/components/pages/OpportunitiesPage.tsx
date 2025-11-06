@@ -25,15 +25,17 @@ import {
   Clock,
   Calendar,
   DollarSign,
-  Loader2
+  Loader2,
+  Edit
 } from 'lucide-react'
 import { useOpportunitiesQuery } from '@/app/features/opportunities/hooks/queries/useOpportunitiesQuery'
 import { useMyOpportunitiesQuery } from '@/app/features/opportunities/hooks/queries/useMyOpportunitiesQuery'
 import { CreateOpportunityDialog } from '@/app/features/opportunities/components/CreateOpportunityDialog'
-import type { OpportunityType } from '@/app/features/opportunities/data/schemas/opportunity.schema'
+import type { OpportunityType, OpportunityWithCreator } from '@/app/features/opportunities/data/schemas/opportunity.schema'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { useToast } from '@/hooks/use-toast'
+import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 
 const opportunityTypeLabels: Record<OpportunityType, string> = {
   proyecto: 'Proyecto',
@@ -47,10 +49,12 @@ const opportunityTypeLabels: Record<OpportunityType, string> = {
 export function OpportunitiesPage() {
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { user } = useAuthContext()
   const [activeTab, setActiveTab] = useState<'all' | 'my'>('all')
   const [filter, setFilter] = useState<OpportunityType | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [editingOpportunity, setEditingOpportunity] = useState<OpportunityWithCreator | null>(null)
   const [interestedOpportunities, setInterestedOpportunities] = useState<Set<string>>(new Set())
 
   // Build filter object for API
@@ -109,6 +113,11 @@ export function OpportunitiesPage() {
         variant: 'destructive'
       })
     }
+  }
+
+  const handleEditOpportunity = (opportunity: OpportunityWithCreator) => {
+    setEditingOpportunity(opportunity)
+    setIsCreateDialogOpen(true)
   }
 
   return (
@@ -313,13 +322,28 @@ export function OpportunitiesPage() {
                         >
                           Ver detalles
                         </Button>
-                        <Button
-                          size="sm"
-                          onClick={() => handleExpressInterest(opportunity.id, opportunity.creator.name)}
-                          disabled={interestedOpportunities.has(opportunity.id)}
-                        >
-                          {interestedOpportunities.has(opportunity.id) ? '¡Te interesa!' : 'Me interesa'}
-                        </Button>
+                        {/* Solo mostrar botón Editar si el usuario es el creador */}
+                        {user?.id === opportunity.created_by && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditOpportunity(opportunity)}
+                            className="flex items-center gap-2"
+                          >
+                            <Edit className="h-4 w-4" />
+                            Editar
+                          </Button>
+                        )}
+                        {/* Solo mostrar botón Me Interesa si el usuario NO es el creador */}
+                        {user?.id !== opportunity.created_by && (
+                          <Button
+                            size="sm"
+                            onClick={() => handleExpressInterest(opportunity.id, opportunity.creator.name)}
+                            disabled={interestedOpportunities.has(opportunity.id)}
+                          >
+                            {interestedOpportunities.has(opportunity.id) ? '¡Te interesa!' : 'Me interesa'}
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </CardContent>
@@ -330,10 +354,16 @@ export function OpportunitiesPage() {
         )}
       </div>
 
-      {/* Create opportunity dialog */}
+      {/* Create/Edit opportunity dialog */}
       <CreateOpportunityDialog
         open={isCreateDialogOpen}
-        onOpenChange={setIsCreateDialogOpen}
+        onOpenChange={(open) => {
+          setIsCreateDialogOpen(open)
+          if (!open) {
+            setEditingOpportunity(null)
+          }
+        }}
+        opportunity={editingOpportunity}
       />
     </div>
   )

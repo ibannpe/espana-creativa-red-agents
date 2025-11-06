@@ -17,10 +17,12 @@ import {
   ArrowLeft,
   MessageCircle,
   Loader2,
-  Heart
+  Heart,
+  Edit
 } from 'lucide-react'
 import { useOpportunityQuery } from '@/app/features/opportunities/hooks/queries/useOpportunityQuery'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
+import { CreateOpportunityDialog } from '@/app/features/opportunities/components/CreateOpportunityDialog'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { useState } from 'react'
@@ -57,6 +59,7 @@ export function OpportunityDetailPage() {
   const { toast } = useToast()
   const [isInterested, setIsInterested] = useState(false)
   const [isExpressingInterest, setIsExpressingInterest] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
   const { data: opportunity, isLoading, error } = useOpportunityQuery(opportunityId)
 
@@ -135,7 +138,7 @@ export function OpportunityDetailPage() {
     locale: es
   })
 
-  const isOwner = user?.id === opportunity.creator.id
+  const isOwner = user?.id === opportunity.created_by
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
@@ -300,15 +303,27 @@ export function OpportunityDetailPage() {
             )}
 
             {isOwner && (
-              <div className="bg-muted/50 p-4 rounded-lg">
-                <p className="text-sm text-muted-foreground text-center">
-                  Esta es tu oportunidad. Puedes editarla desde la sección "Mis Oportunidades"
-                </p>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  onClick={() => setIsEditDialogOpen(true)}
+                  className="flex-1"
+                  size="lg"
+                >
+                  <Edit className="h-5 w-5 mr-2" />
+                  Editar oportunidad
+                </Button>
               </div>
             )}
           </CardContent>
         </Card>
       </div>
+
+      {/* Edit opportunity dialog */}
+      <CreateOpportunityDialog
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        opportunity={opportunity}
+      />
     </div>
   )
 }

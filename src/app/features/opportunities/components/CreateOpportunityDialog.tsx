@@ -1,7 +1,7 @@
-// ABOUTME: Dialog component for creating new opportunities
+// ABOUTME: Dialog component for creating and editing opportunities
 // ABOUTME: Form with validation for opportunity details including title, description, type, skills, location, etc.
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { X, Loader2, MapPin, Calendar, DollarSign, Briefcase } from 'lucide-react'
@@ -34,11 +34,13 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useCreateOpportunityMutation } from '../hooks/mutations/useCreateOpportunityMutation'
-import { createOpportunityRequestSchema, type CreateOpportunityRequest } from '../data/schemas/opportunity.schema'
+import { useUpdateOpportunityMutation } from '../hooks/mutations/useUpdateOpportunityMutation'
+import { createOpportunityRequestSchema, type CreateOpportunityRequest, type OpportunityWithCreator } from '../data/schemas/opportunity.schema'
 
 interface CreateOpportunityDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  opportunity?: OpportunityWithCreator | null
 }
 
 const opportunityTypes = [
@@ -50,9 +52,13 @@ const opportunityTypes = [
   { value: 'otro', label: 'Otro' },
 ]
 
-export function CreateOpportunityDialog({ open, onOpenChange }: CreateOpportunityDialogProps) {
+export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: CreateOpportunityDialogProps) {
   const [skillInput, setSkillInput] = useState('')
-  const { action: createOpportunity, isLoading, isSuccess } = useCreateOpportunityMutation()
+  const { action: createOpportunity, isLoading: isCreating } = useCreateOpportunityMutation()
+  const { action: updateOpportunity, isLoading: isUpdating } = useUpdateOpportunityMutation()
+
+  const isEditMode = !!opportunity
+  const isLoading = isCreating || isUpdating
 
   const form = useForm<CreateOpportunityRequest>({
     resolver: zodResolver(createOpportunityRequestSchema),
@@ -67,6 +73,33 @@ export function CreateOpportunityDialog({ open, onOpenChange }: CreateOpportunit
       compensation: null,
     },
   })
+
+  // Update form values when opportunity prop changes
+  useEffect(() => {
+    if (opportunity) {
+      form.reset({
+        title: opportunity.title,
+        description: opportunity.description,
+        type: opportunity.type,
+        skills_required: opportunity.skills_required,
+        location: opportunity.location || null,
+        remote: opportunity.remote,
+        duration: opportunity.duration || null,
+        compensation: opportunity.compensation || null,
+      })
+    } else {
+      form.reset({
+        title: '',
+        description: '',
+        type: 'proyecto',
+        skills_required: [],
+        location: null,
+        remote: false,
+        duration: null,
+        compensation: null,
+      })
+    }
+  }, [opportunity, form])
 
   const skills = form.watch('skills_required')
 
@@ -93,15 +126,27 @@ export function CreateOpportunityDialog({ open, onOpenChange }: CreateOpportunit
   }
 
   const onSubmit = (data: CreateOpportunityRequest) => {
-    createOpportunity(data, {
-      onSuccess: () => {
-        form.reset()
-        onOpenChange(false)
-      },
-      onError: (error) => {
-        console.error('Error al crear oportunidad:', error)
-      }
-    })
+    if (isEditMode && opportunity) {
+      updateOpportunity({ id: opportunity.id, data }, {
+        onSuccess: () => {
+          form.reset()
+          onOpenChange(false)
+        },
+        onError: (error) => {
+          console.error('Error al actualizar oportunidad:', error)
+        }
+      })
+    } else {
+      createOpportunity(data, {
+        onSuccess: () => {
+          form.reset()
+          onOpenChange(false)
+        },
+        onError: (error) => {
+          console.error('Error al crear oportunidad:', error)
+        }
+      })
+    }
   }
 
   return (
@@ -112,10 +157,12 @@ export function CreateOpportunityDialog({ open, onOpenChange }: CreateOpportunit
             <div className="w-10 h-10 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center">
               <Briefcase className="h-5 w-5 text-white" />
             </div>
-            Publicar nueva oportunidad
+            {isEditMode ? 'Editar oportunidad' : 'Publicar nueva oportunidad'}
           </DialogTitle>
           <DialogDescription>
-            Completa los detalles de la oportunidad que quieres compartir con la comunidad
+            {isEditMode
+              ? 'Actualiza los detalles de tu oportunidad'
+              : 'Completa los detalles de la oportunidad que quieres compartir con la comunidad'}
           </DialogDescription>
         </DialogHeader>
 
@@ -352,7 +399,7 @@ export function CreateOpportunityDialog({ open, onOpenChange }: CreateOpportunit
                 {isLoading && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Publicar oportunidad
+                {isEditMode ? 'Guardar cambios' : 'Publicar oportunidad'}
               </Button>
             </div>
           </form>
