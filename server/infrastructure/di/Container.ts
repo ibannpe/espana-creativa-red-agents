@@ -75,6 +75,23 @@ import { ApproveSignupUseCase } from '../../application/use-cases/signup-approva
 import { RejectSignupUseCase } from '../../application/use-cases/signup-approval/RejectSignupUseCase'
 import { GetPendingSignupsUseCase } from '../../application/use-cases/signup-approval/GetPendingSignupsUseCase'
 
+// Use Cases - Programs
+import { CreateProgramUseCase } from '../../application/use-cases/programs/CreateProgramUseCase'
+import { GetProgramsUseCase } from '../../application/use-cases/programs/GetProgramsUseCase'
+import { GetProgramUseCase } from '../../application/use-cases/programs/GetProgramUseCase'
+import { UpdateProgramUseCase } from '../../application/use-cases/programs/UpdateProgramUseCase'
+import { DeleteProgramUseCase } from '../../application/use-cases/programs/DeleteProgramUseCase'
+
+// Use Cases - Program Enrollments
+import { EnrollInProgramUseCase } from '../../application/use-cases/program-enrollments/EnrollInProgramUseCase'
+import { GetUserEnrollmentsUseCase } from '../../application/use-cases/program-enrollments/GetUserEnrollmentsUseCase'
+
+// Repositories - Programs
+import { SupabaseProgramRepository } from '../adapters/repositories/SupabaseProgramRepository'
+import { SupabaseProgramEnrollmentRepository } from '../adapters/repositories/SupabaseProgramEnrollmentRepository'
+import { ProgramRepository } from '../../application/ports/ProgramRepository'
+import { ProgramEnrollmentRepository } from '../../application/ports/ProgramEnrollmentRepository'
+
 // Load environment variables (silent to avoid EPIPE errors)
 dotenv.config({ silent: true })
 
@@ -84,6 +101,8 @@ export class Container {
   private static connectionRepository: ConnectionRepository
   private static opportunityRepository: OpportunityRepository
   private static opportunityInterestRepository: IOpportunityInterestRepository
+  private static programRepository: ProgramRepository
+  private static programEnrollmentRepository: ProgramEnrollmentRepository
   private static messageRepository: MessageRepository
   private static pendingSignupRepository: IPendingSignupRepository
   private static authService: IAuthService
@@ -138,6 +157,17 @@ export class Container {
   private static rejectSignupUseCase: RejectSignupUseCase
   private static getPendingSignupsUseCase: GetPendingSignupsUseCase
 
+  // Use Cases - Programs
+  private static createProgramUseCase: CreateProgramUseCase
+  private static getProgramsUseCase: GetProgramsUseCase
+  private static getProgramUseCase: GetProgramUseCase
+  private static updateProgramUseCase: UpdateProgramUseCase
+  private static deleteProgramUseCase: DeleteProgramUseCase
+
+  // Use Cases - Program Enrollments
+  private static enrollInProgramUseCase: EnrollInProgramUseCase
+  private static getUserEnrollmentsUseCase: GetUserEnrollmentsUseCase
+
   // Initialize all dependencies
   static initialize() {
     // Create Supabase client
@@ -168,6 +198,8 @@ export class Container {
     this.connectionRepository = new SupabaseConnectionRepository(supabase)
     this.opportunityRepository = new SupabaseOpportunityRepository(supabase)
     this.opportunityInterestRepository = new OpportunityInterestRepository(supabase)
+    this.programRepository = new SupabaseProgramRepository(supabase)
+    this.programEnrollmentRepository = new SupabaseProgramEnrollmentRepository(supabase)
     this.messageRepository = new SupabaseMessageRepository(supabase)
     this.pendingSignupRepository = new SupabasePendingSignupRepository(supabase)
 
@@ -280,6 +312,37 @@ export class Container {
 
     this.withdrawInterestUseCase = new WithdrawInterestUseCase(
       this.opportunityInterestRepository
+    )
+
+    // Initialize Programs use cases
+    this.createProgramUseCase = new CreateProgramUseCase(
+      this.programRepository
+    )
+
+    this.getProgramsUseCase = new GetProgramsUseCase(
+      this.programRepository
+    )
+
+    this.getProgramUseCase = new GetProgramUseCase(
+      this.programRepository
+    )
+
+    this.updateProgramUseCase = new UpdateProgramUseCase(
+      this.programRepository
+    )
+
+    this.deleteProgramUseCase = new DeleteProgramUseCase(
+      this.programRepository
+    )
+
+    // Initialize Program Enrollments use cases
+    this.enrollInProgramUseCase = new EnrollInProgramUseCase(
+      this.programRepository,
+      this.programEnrollmentRepository
+    )
+
+    this.getUserEnrollmentsUseCase = new GetUserEnrollmentsUseCase(
+      this.programEnrollmentRepository
     )
 
     // Initialize Messages use cases
@@ -486,5 +549,35 @@ export class Container {
 
   static getWithdrawInterestUseCase(): WithdrawInterestUseCase {
     return this.withdrawInterestUseCase
+  }
+
+  // Getters for use cases - Programs
+  static getCreateProgramUseCase(): CreateProgramUseCase {
+    return this.createProgramUseCase
+  }
+
+  static getGetProgramsUseCase(): GetProgramsUseCase {
+    return this.getProgramsUseCase
+  }
+
+  static getGetProgramUseCase(): GetProgramUseCase {
+    return this.getProgramUseCase
+  }
+
+  static getUpdateProgramUseCase(): UpdateProgramUseCase {
+    return this.updateProgramUseCase
+  }
+
+  static getDeleteProgramUseCase(): DeleteProgramUseCase {
+    return this.deleteProgramUseCase
+  }
+
+  // Getters for use cases - Program Enrollments
+  static getEnrollInProgramUseCase(): EnrollInProgramUseCase {
+    return this.enrollInProgramUseCase
+  }
+
+  static getGetUserEnrollmentsUseCase(): GetUserEnrollmentsUseCase {
+    return this.getUserEnrollmentsUseCase
   }
 }

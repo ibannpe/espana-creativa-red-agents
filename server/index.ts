@@ -11,6 +11,7 @@ import { createEmailRoutes } from './infrastructure/api/routes/email.routes'
 import { createConnectionsRoutes } from './infrastructure/api/routes/connections.routes'
 import { createOpportunitiesRoutes } from './infrastructure/api/routes/opportunities.routes'
 import { createOpportunityInterestsRoutes } from './infrastructure/api/routes/opportunity-interests.routes'
+import { createProgramsRoutes } from './infrastructure/api/routes/programs.routes'
 import { createMessagesRoutes } from './infrastructure/api/routes/messages.routes'
 import { createSignupApprovalRoutes } from './infrastructure/api/routes/signup-approval.routes'
 import { createAdminRoutes } from './infrastructure/api/routes/admin.routes'
@@ -176,6 +177,7 @@ app.use('/api/users', authMiddleware, createUsersRoutes())
 app.use('/api/connections', authMiddleware, createConnectionsRoutes())
 app.use('/api/opportunities', authMiddleware, createOpportunitiesRoutes())
 app.use('/api/opportunity-interests', authMiddleware, createOpportunityInterestsRoutes(Container))
+app.use('/api/programs', authMiddleware, createProgramsRoutes())
 app.use('/api/messages', authMiddleware, createMessagesRoutes())
 app.use('/api/admin', authMiddleware, createAdminRoutes())
 
