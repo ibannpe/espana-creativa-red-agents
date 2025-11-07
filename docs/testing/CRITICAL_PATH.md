@@ -155,27 +155,36 @@ Tests  8 failed | 156 passed (164)
 
 ## Estado Actual
 
-**NOTA IMPORTANTE**: Actualmente hay **8 tests fallando** en el path crítico:
+**✅ PATH CRÍTICO AL 100%**: Todos los tests pasando exitosamente.
 
-### Tests Fallando (Requieren Atención)
+```bash
+Test Files  11 passed (11)
+Tests  171 passed (171)
+Duration  ~6 seconds
+```
 
-1. ❌ **SignUpUseCase** (3 fallos):
-   - User profile not created by trigger
-   - Welcome email not sent
-   - Error: "Failed to create user profile"
+### Historial de Correcciones
 
-2. ❌ **auth.schema.test.ts** (3 fallos):
-   - signUpRequestSchema validation
-   - Name length validation
-   - userResponseSchema validation
+**2025-11-06**: Arreglados todos los tests fallando
 
-3. ❌ **message.schema.test.ts** (1 fallo):
-   - markAsReadRequestSchema UUID validation
+1. ✅ **auth.service.test.ts** (1 test):
+   - Corregido mock de @/lib/axios
+   - Agregado mock de fetch y supabase
+   - Agregado role_ids a mocks
 
-4. ❌ **auth.service.test.ts** (1 fallo):
-   - Axios interceptors initialization
+2. ✅ **auth.schema.test.ts** (3 tests):
+   - Passwords actualizados a Password123 (cumple requisitos)
+   - Agregado role_ids a userResponseSchema
+   - Búsqueda correcta de errores específicos
 
-**Prioridad**: 🔴 ALTA - Estos tests deben arreglarse antes del próximo deploy.
+3. ✅ **message.schema.test.ts** (2 tests):
+   - Tests corregidos: message.id es BIGSERIAL, no UUID
+   - message_ids también son strings normales
+
+4. ✅ **SignUpUseCase** (3 tests):
+   - Mock de findById retorna User completo
+   - Simula correctamente el trigger de base de datos
+   - UserProps completo con todos los campos requeridos
 
 ## Configuración
 
@@ -195,7 +204,7 @@ Para agregar o quitar tests del path crítico, edita el array `include` en `vite
 
 ## Roadmap
 
-- [ ] Arreglar los 8 tests actualmente fallando
+- [x] Arreglar los 8 tests actualmente fallando ✅ **COMPLETADO 2025-11-06**
 - [ ] Agregar tests críticos para Opportunities
 - [ ] Agregar tests críticos para Connections
 - [ ] Configurar CI/CD para ejecutar path crítico automáticamente
@@ -205,5 +214,5 @@ Para agregar o quitar tests del path crítico, edita el array `include` en `vite
 ---
 
 **Última actualización**: 2025-11-06
-**Tests críticos**: 164 (8 fallando)
-**Cobertura objetivo**: 100% en path crítico
+**Tests críticos**: 171 ✅ **100% PASSING**
+**Cobertura objetivo**: ✅ **ALCANZADO**
