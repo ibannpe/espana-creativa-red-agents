@@ -64,8 +64,23 @@ describe('SignUpUseCase', () => {
         error: null
       })
 
-      // Mock successful repository save
-      vi.mocked(mockUserRepository.save).mockResolvedValue(undefined)
+      // Mock findById to simulate trigger creating the profile
+      const createdUser = User.create({
+        id: UserId.create(userId)!,
+        email: Email.create(request.email)!,
+        name: request.name,
+        avatarUrl: null,
+        bio: null,
+        location: null,
+        linkedinUrl: null,
+        websiteUrl: null,
+        skills: [],
+        interests: [],
+        roleIds: [3], // Emprendedor
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
+      vi.mocked(mockUserRepository.findById).mockResolvedValue(createdUser)
 
       // Mock email service (fire and forget)
       vi.mocked(mockEmailService.sendWelcomeEmail).mockResolvedValue(undefined)
@@ -86,12 +101,31 @@ describe('SignUpUseCase', () => {
         name: 'Test User'
       }
 
+      const userId = '550e8400-e29b-41d4-a716-446655440000'
+
       vi.mocked(mockUserRepository.findByEmail).mockResolvedValue(null)
       vi.mocked(mockAuthService.signUp).mockResolvedValue({
-        user: { id: '550e8400-e29b-41d4-a716-446655440000', email: request.email },
+        user: { id: userId, email: request.email },
         error: null
       })
-      vi.mocked(mockUserRepository.save).mockResolvedValue(undefined)
+
+      // Mock findById to simulate trigger creating the profile
+      const createdUser = User.create({
+        id: UserId.create(userId)!,
+        email: Email.create(request.email)!,
+        name: request.name,
+        avatarUrl: null,
+        bio: null,
+        location: null,
+        linkedinUrl: null,
+        websiteUrl: null,
+        skills: [],
+        interests: [],
+        roleIds: [3],
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
+      vi.mocked(mockUserRepository.findById).mockResolvedValue(createdUser)
       vi.mocked(mockEmailService.sendWelcomeEmail).mockResolvedValue(undefined)
 
       await useCase.execute(request)
@@ -286,12 +320,31 @@ describe('SignUpUseCase', () => {
         name: 'Test User'
       }
 
+      const userId = '550e8400-e29b-41d4-a716-446655440000'
+
       vi.mocked(mockUserRepository.findByEmail).mockResolvedValue(null)
       vi.mocked(mockAuthService.signUp).mockResolvedValue({
-        user: { id: '550e8400-e29b-41d4-a716-446655440000', email: request.email },
+        user: { id: userId, email: request.email },
         error: null
       })
-      vi.mocked(mockUserRepository.save).mockResolvedValue(undefined)
+
+      // Mock findById to simulate trigger creating the profile
+      const createdUser = User.create({
+        id: UserId.create(userId)!,
+        email: Email.create(request.email)!,
+        name: request.name,
+        avatarUrl: null,
+        bio: null,
+        location: null,
+        linkedinUrl: null,
+        websiteUrl: null,
+        skills: [],
+        interests: [],
+        roleIds: [3],
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
+      vi.mocked(mockUserRepository.findById).mockResolvedValue(createdUser)
 
       // Mock email failure (should be caught and not fail the signup)
       vi.mocked(mockEmailService.sendWelcomeEmail).mockRejectedValue(new Error('Email service down'))
