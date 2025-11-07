@@ -2,12 +2,27 @@
 // ABOUTME: Tests API communication and response validation with Zod schemas
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import axios from 'axios'
 import { authService } from './auth.service'
 
-// Mock axios
-vi.mock('axios')
-const mockedAxios = vi.mocked(axios)
+// Mock axios instance from @/lib/axios
+vi.mock('@/lib/axios', () => ({
+  default: {
+    post: vi.fn(),
+    get: vi.fn(),
+  }
+}))
+
+// Mock Supabase client
+vi.mock('@/lib/supabase', () => ({
+  supabase: {
+    auth: {
+      updateUser: vi.fn()
+    }
+  }
+}))
+
+import axiosInstance from '@/lib/axios'
+const mockedAxios = vi.mocked(axiosInstance)
 
 describe('Auth Service', () => {
   beforeEach(() => {
@@ -15,7 +30,7 @@ describe('Auth Service', () => {
   })
 
   describe('signUp', () => {
-    it('should call POST /api/auth/signup and return validated user', async () => {
+    it('should call POST /auth/signup and return validated user', async () => {
       const signUpData = {
         email: 'test@example.com',
         password: 'password123',
@@ -35,6 +50,7 @@ describe('Auth Service', () => {
             website_url: null,
             skills: [],
             interests: [],
+            role_ids: [2],
             completed_pct: 20,
             created_at: '2024-01-01T00:00:00Z',
             updated_at: '2024-01-01T00:00:00Z'
@@ -46,7 +62,7 @@ describe('Auth Service', () => {
 
       const result = await authService.signUp(signUpData)
 
-      expect(mockedAxios.post).toHaveBeenCalledWith('/api/auth/signup', signUpData)
+      expect(mockedAxios.post).toHaveBeenCalledWith('/auth/signup', signUpData)
       expect(result.user.email).toBe('test@example.com')
       expect(result.user.name).toBe('Test User')
     })
@@ -75,7 +91,7 @@ describe('Auth Service', () => {
   })
 
   describe('signIn', () => {
-    it('should call POST /api/auth/signin and return user with session', async () => {
+    it('should call POST /auth/signin and return user with session', async () => {
       const signInData = {
         email: 'test@example.com',
         password: 'password123'
@@ -94,6 +110,7 @@ describe('Auth Service', () => {
             website_url: null,
             skills: [],
             interests: [],
+            role_ids: [2],
             completed_pct: 50,
             created_at: '2024-01-01T00:00:00Z',
             updated_at: '2024-01-01T00:00:00Z'
@@ -106,7 +123,7 @@ describe('Auth Service', () => {
 
       const result = await authService.signIn(signInData)
 
-      expect(mockedAxios.post).toHaveBeenCalledWith('/api/auth/signin', signInData)
+      expect(mockedAxios.post).toHaveBeenCalledWith('/auth/signin', signInData)
       expect(result.user.email).toBe('test@example.com')
       expect(result.session).toBeDefined()
     })
@@ -124,50 +141,60 @@ describe('Auth Service', () => {
   })
 
   describe('signOut', () => {
-    it('should call POST /api/auth/signout', async () => {
+    it('should call POST /auth/signout', async () => {
       mockedAxios.post.mockResolvedValue({})
 
       await authService.signOut()
 
-      expect(mockedAxios.post).toHaveBeenCalledWith('/api/auth/signout')
+      expect(mockedAxios.post).toHaveBeenCalledWith('/auth/signout')
     })
   })
 
   describe('getCurrentUser', () => {
     it('should call GET /api/auth/me and return current user', async () => {
-      const mockResponse = {
-        data: {
-          user: {
-            id: '550e8400-e29b-41d4-a716-446655440000',
-            email: 'current@example.com',
-            name: 'Current User',
-            avatar_url: 'https://example.com/avatar.jpg',
-            bio: 'My bio',
-            location: 'Madrid',
-            linkedin_url: null,
-            website_url: null,
-            skills: ['JavaScript'],
-            interests: ['Coding'],
-            completed_pct: 80,
-            created_at: '2024-01-01T00:00:00Z',
-            updated_at: '2024-01-02T00:00:00Z'
-          }
+      const mockUserData = {
+        user: {
+          id: '550e8400-e29b-41d4-a716-446655440000',
+          email: 'current@example.com',
+          name: 'Current User',
+          avatar_url: 'https://example.com/avatar.jpg',
+          bio: 'My bio',
+          location: 'Madrid',
+          linkedin_url: null,
+          website_url: null,
+          skills: ['JavaScript'],
+          interests: ['Coding'],
+          role_ids: [2],
+          completed_pct: 80,
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-02T00:00:00Z'
         }
       }
 
-      mockedAxios.get.mockResolvedValue(mockResponse)
+      // Mock fetch since getCurrentUser uses fetch instead of axios
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => mockUserData
+      })
 
       const result = await authService.getCurrentUser()
 
-      expect(mockedAxios.get).toHaveBeenCalledWith('/api/auth/me')
+      expect(global.fetch).toHaveBeenCalledWith('/api/auth/me', expect.objectContaining({
+        credentials: 'include'
+      }))
       expect(result.user.email).toBe('current@example.com')
       expect(result.user.completed_pct).toBe(80)
     })
 
     it('should handle unauthorized error', async () => {
-      mockedAxios.get.mockRejectedValue(new Error('Unauthorized'))
+      // Mock 401 response
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 401
+      })
 
-      await expect(authService.getCurrentUser()).rejects.toThrow('Unauthorized')
+      await expect(authService.getCurrentUser()).rejects.toThrow('Not authenticated')
     })
   })
 })

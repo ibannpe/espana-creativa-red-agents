@@ -49,9 +49,9 @@ describe('Message Schemas', () => {
       expect(result.success).toBe(true)
     })
 
-    it('should reject invalid UUID for id', () => {
-      const invalidMessage = {
-        id: 'not-a-uuid',
+    it('should accept string id (BIGSERIAL from database)', () => {
+      const messageWithStringId = {
+        id: '12345', // BIGSERIAL, not UUID
         sender_id: '550e8400-e29b-41d4-a716-446655440001',
         recipient_id: '550e8400-e29b-41d4-a716-446655440002',
         content: 'Test',
@@ -60,8 +60,8 @@ describe('Message Schemas', () => {
         updated_at: '2024-01-01T00:00:00Z'
       }
 
-      const result = messageSchema.safeParse(invalidMessage)
-      expect(result.success).toBe(false)
+      const result = messageSchema.safeParse(messageWithStringId)
+      expect(result.success).toBe(true)
     })
   })
 
@@ -221,13 +221,13 @@ describe('Message Schemas', () => {
       }
     })
 
-    it('should reject invalid UUID in message_ids', () => {
-      const invalidRequest = {
-        message_ids: ['not-a-uuid']
+    it('should accept string message_ids (BIGSERIAL from database)', () => {
+      const validRequest = {
+        message_ids: ['123', '456', '789']
       }
 
-      const result = markAsReadRequestSchema.safeParse(invalidRequest)
-      expect(result.success).toBe(false)
+      const result = markAsReadRequestSchema.safeParse(validRequest)
+      expect(result.success).toBe(true)
     })
   })
 

@@ -14,7 +14,7 @@ describe('Auth Schemas', () => {
     it('should validate correct sign up data', () => {
       const validData = {
         email: 'test@example.com',
-        password: 'password123',
+        password: 'Password123',
         name: 'Test User'
       }
 
@@ -53,14 +53,18 @@ describe('Auth Schemas', () => {
     it('should reject name shorter than 2 characters', () => {
       const invalidData = {
         email: 'test@example.com',
-        password: 'password123',
+        password: 'Password123',
         name: 'A'
       }
 
       const result = signUpRequestSchema.safeParse(invalidData)
       expect(result.success).toBe(false)
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('al menos 2 caracteres')
+        // Find the error about name length
+        const nameError = result.error.issues.find(issue =>
+          issue.path.includes('name')
+        )
+        expect(nameError?.message).toContain('al menos 2 caracteres')
       }
     })
 
@@ -123,6 +127,7 @@ describe('Auth Schemas', () => {
         website_url: null,
         skills: ['JavaScript', 'TypeScript'],
         interests: ['Web Development'],
+        role_ids: [2],
         completed_pct: 75,
         created_at: '2024-01-01T00:00:00Z',
         updated_at: '2024-01-01T00:00:00Z'
@@ -144,6 +149,7 @@ describe('Auth Schemas', () => {
         website_url: null,
         skills: [],
         interests: [],
+        role_ids: [2],
         completed_pct: 0,
         created_at: '2024-01-01T00:00:00Z',
         updated_at: '2024-01-01T00:00:00Z'
@@ -165,6 +171,7 @@ describe('Auth Schemas', () => {
         website_url: null,
         skills: [],
         interests: [],
+        role_ids: [2],
         completed_pct: 150, // Invalid
         created_at: '2024-01-01T00:00:00Z',
         updated_at: '2024-01-01T00:00:00Z'
