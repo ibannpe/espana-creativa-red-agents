@@ -85,6 +85,7 @@ import { DeleteProgramUseCase } from '../../application/use-cases/programs/Delet
 // Use Cases - Program Enrollments
 import { EnrollInProgramUseCase } from '../../application/use-cases/program-enrollments/EnrollInProgramUseCase'
 import { GetUserEnrollmentsUseCase } from '../../application/use-cases/program-enrollments/GetUserEnrollmentsUseCase'
+import { CancelEnrollmentUseCase } from '../../application/use-cases/program-enrollment/CancelEnrollmentUseCase'
 
 // Repositories - Programs
 import { SupabaseProgramRepository } from '../adapters/repositories/SupabaseProgramRepository'
@@ -167,6 +168,7 @@ export class Container {
   // Use Cases - Program Enrollments
   private static enrollInProgramUseCase: EnrollInProgramUseCase
   private static getUserEnrollmentsUseCase: GetUserEnrollmentsUseCase
+  private static cancelEnrollmentUseCase: CancelEnrollmentUseCase
 
   // Initialize all dependencies
   static initialize() {
@@ -342,6 +344,10 @@ export class Container {
     )
 
     this.getUserEnrollmentsUseCase = new GetUserEnrollmentsUseCase(
+      this.programEnrollmentRepository
+    )
+
+    this.cancelEnrollmentUseCase = new CancelEnrollmentUseCase(
       this.programEnrollmentRepository
     )
 
@@ -579,5 +585,9 @@ export class Container {
 
   static getGetUserEnrollmentsUseCase(): GetUserEnrollmentsUseCase {
     return this.getUserEnrollmentsUseCase
+  }
+
+  static getCancelEnrollmentUseCase(): CancelEnrollmentUseCase {
+    return this.cancelEnrollmentUseCase
   }
 }

@@ -51,7 +51,11 @@ export const programWithCreatorSchema = programSchema.extend({
     name: z.string(),
     avatar_url: z.string().nullable().optional(),
     professional_title: z.string().nullable().optional()
-  })
+  }),
+  user_enrollment: z.object({
+    id: z.string().uuid(),
+    status: z.string()
+  }).nullable().optional()
 })
 
 // Create program request

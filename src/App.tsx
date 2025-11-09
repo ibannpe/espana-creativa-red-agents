@@ -18,6 +18,7 @@ import { MessagesPage } from '@/app/features/messages/pages/MessagesPage'
 import { OpportunitiesPage } from '@/components/pages/OpportunitiesPage'
 import { OpportunityDetailPage } from '@/components/pages/OpportunityDetailPage'
 import { ProgramsPage } from '@/components/pages/ProgramsPage'
+import { MyProgramsPage } from '@/components/pages/MyProgramsPage'
 import { ProfilePage } from '@/components/pages/ProfilePage'
 import { UserProfileViewPage } from '@/components/pages/UserProfileViewPage'
 import { GestionPage } from '@/components/pages/GestionPage'
@@ -150,6 +151,14 @@ function App() {
           element={
             <ProtectedRoute>
               <ProgramsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-programs"
+          element={
+            <ProtectedRoute>
+              <MyProgramsPage />
             </ProtectedRoute>
           }
         />

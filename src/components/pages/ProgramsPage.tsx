@@ -9,10 +9,13 @@ import { Calendar } from 'lucide-react'
 import { useProgramsQuery } from '@/app/features/programs/hooks/queries/useProgramsQuery'
 import { ProgramCard } from '@/app/features/programs/components/ProgramCard'
 import { CreateProgramDialog } from '@/app/features/programs/components/CreateProgramDialog'
-import type { ProgramStatus } from '@/app/features/programs/data/schemas/program.schema'
+import { ProgramDetailsDialog } from '@/app/features/programs/components/ProgramDetailsDialog'
+import type { ProgramStatus, ProgramWithCreator } from '@/app/features/programs/data/schemas/program.schema'
 
 export function ProgramsPage() {
   const [selectedTab, setSelectedTab] = useState<ProgramStatus | 'all'>('upcoming')
+  const [selectedProgram, setSelectedProgram] = useState<ProgramWithCreator | null>(null)
+  const [detailsOpen, setDetailsOpen] = useState(false)
 
   // Fetch programs with optional status filter
   const filters = selectedTab === 'all' ? {} : { status: selectedTab as ProgramStatus }
@@ -20,6 +23,11 @@ export function ProgramsPage() {
 
   const programs = data?.programs || []
   const total = data?.total || 0
+
+  const handleViewDetails = (program: ProgramWithCreator) => {
+    setSelectedProgram(program)
+    setDetailsOpen(true)
+  }
 
   // Calculate stats (you could also get these from separate API calls)
   const stats = {
@@ -137,10 +145,7 @@ export function ProgramsPage() {
                   <ProgramCard
                     key={program.id}
                     program={program}
-                    onViewDetails={(p) => {
-                      // TODO: Open modal or navigate to details page
-                      console.log('Ver detalles de:', p.title)
-                    }}
+                    onViewDetails={handleViewDetails}
                   />
                 ))}
               </div>
@@ -173,6 +178,13 @@ export function ProgramsPage() {
           </>
         )}
       </div>
+
+      {/* Program Details Dialog */}
+      <ProgramDetailsDialog
+        program={selectedProgram}
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+      />
     </div>
   )
 }

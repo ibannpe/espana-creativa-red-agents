@@ -59,7 +59,7 @@ export class SupabaseProgramRepository implements ProgramRepository {
       .from('programs')
       .select(`
         *,
-        creator:users!programs_created_by_fkey(id, name, avatar_url, professional_title)
+        creator:users!programs_created_by_fkey(id, name, avatar_url, bio)
       `)
       .eq('id', id)
       .single()
@@ -74,7 +74,7 @@ export class SupabaseProgramRepository implements ProgramRepository {
         id: data.creator.id,
         name: data.creator.name,
         avatar_url: data.creator.avatar_url,
-        professional_title: data.creator.professional_title
+        professional_title: data.creator.bio || null
       }
     }
   }
@@ -84,7 +84,7 @@ export class SupabaseProgramRepository implements ProgramRepository {
       .from('programs')
       .select(`
         *,
-        creator:users!programs_created_by_fkey(id, name, avatar_url, professional_title)
+        creator:users!programs_created_by_fkey(id, name, avatar_url, bio)
       `)
 
     // Apply filters
@@ -134,7 +134,7 @@ export class SupabaseProgramRepository implements ProgramRepository {
         id: row.creator.id,
         name: row.creator.name,
         avatar_url: row.creator.avatar_url,
-        professional_title: row.creator.professional_title
+        professional_title: row.creator.bio || null
       }
     }))
   }

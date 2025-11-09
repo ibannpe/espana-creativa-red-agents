@@ -7,9 +7,11 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, Users, MapPin } from 'lucide-react'
 import { useEnrollInProgramMutation } from '../hooks/mutations/useEnrollInProgramMutation'
+import { useCancelEnrollmentMutation } from '../hooks/mutations/useCancelEnrollmentMutation'
+import { useMyProgramsQuery } from '../hooks/queries/useMyProgramsQuery'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 import type { ProgramWithCreator } from '../data/schemas/program.schema'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 interface ProgramCardProps {
   program: ProgramWithCreator
@@ -48,15 +50,27 @@ const statusColors = {
 
 export function ProgramCard({ program, onViewDetails }: ProgramCardProps) {
   const { user } = useAuthContext()
-  const { action: enroll, isLoading: isEnrolling, isSuccess } = useEnrollInProgramMutation()
-  const [enrolled, setEnrolled] = useState(false)
+  const { enroll, isLoading: isEnrolling, isSuccess: enrollSuccess } = useEnrollInProgramMutation()
+  const { cancel, isLoading: isCancelling, isSuccess: cancelSuccess } = useCancelEnrollmentMutation()
+  const { data: myProgramsData } = useMyProgramsQuery({ enabled: !!user })
+
+  // Find if user is enrolled in this program
+  const userEnrollment = useMemo(() => {
+    if (!myProgramsData?.enrollments) return null
+    return myProgramsData.enrollments.find(e => e.program.id === program.id)
+  }, [myProgramsData, program.id])
+
+  const isEnrolled = !!userEnrollment && !cancelSuccess
+  const enrollmentId = userEnrollment?.id
 
   const handleEnroll = () => {
-    enroll(program.id, {
-      onSuccess: () => {
-        setEnrolled(true)
-      }
-    })
+    enroll(program.id)
+  }
+
+  const handleCancel = () => {
+    if (enrollmentId) {
+      cancel(enrollmentId)
+    }
   }
 
   const handleViewDetails = () => {
@@ -66,7 +80,8 @@ export function ProgramCard({ program, onViewDetails }: ProgramCardProps) {
   }
 
   const isFull = program.max_participants && program.participants >= program.max_participants
-  const canEnroll = program.status === 'upcoming' && !isFull && !enrolled && !isSuccess
+  const canEnroll = program.status === 'upcoming' && !isFull && !isEnrolled && !enrollSuccess
+  const canCancel = isEnrolled && program.status === 'upcoming'
 
   return (
     <Card className={`hover:shadow-lg transition-shadow ${program.featured ? 'ring-2 ring-primary/20' : ''}`}>
@@ -153,7 +168,7 @@ export function ProgramCard({ program, onViewDetails }: ProgramCardProps) {
             >
               Ver detalles
             </Button>
-            {canEnroll && (
+            {canEnroll && user && (
               <Button
                 size="sm"
                 onClick={handleEnroll}
@@ -162,12 +177,22 @@ export function ProgramCard({ program, onViewDetails }: ProgramCardProps) {
                 {isEnrolling ? 'Inscribiendo...' : 'Inscribirse'}
               </Button>
             )}
-            {(enrolled || isSuccess) && (
+            {canCancel && (
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={handleCancel}
+                disabled={isCancelling}
+              >
+                {isCancelling ? 'Cancelando...' : 'Cancelar'}
+              </Button>
+            )}
+            {isEnrolled && !canCancel && (
               <Badge variant="default" className="bg-green-500">
                 Inscrito ✓
               </Badge>
             )}
-            {isFull && program.status === 'upcoming' && (
+            {isFull && program.status === 'upcoming' && !isEnrolled && (
               <Badge variant="secondary">
                 Completo
               </Badge>

@@ -22,7 +22,8 @@ import {
   User,
   LogOut,
   Home,
-  Shield
+  Shield,
+  GraduationCap
 } from 'lucide-react'
 
 export function Navigation() {
@@ -137,6 +138,12 @@ export function Navigation() {
                   <Link to="/profile" className="flex items-center rounded-md p-2 hover:bg-gray-50">
                     <User className="mr-3 h-4 w-4 text-gray-500" />
                     <span className="font-medium">Mi Perfil</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/my-programs" className="flex items-center rounded-md p-2 hover:bg-gray-50">
+                    <GraduationCap className="mr-3 h-4 w-4 text-gray-500" />
+                    <span className="font-medium">Mis Programas</span>
                   </Link>
                 </DropdownMenuItem>
                 {isAdmin && (

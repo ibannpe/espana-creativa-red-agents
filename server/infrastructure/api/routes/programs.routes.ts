@@ -3,7 +3,7 @@
 
 import { Router, Response, NextFunction } from 'express'
 import { Container } from '../../di/Container'
-import { AuthenticatedRequest } from '../middleware/auth.middleware'
+import { AuthenticatedRequest, authMiddleware } from '../middleware/auth.middleware'
 
 export const createProgramsRoutes = (): Router => {
   const router = Router()
@@ -53,6 +53,57 @@ export const createProgramsRoutes = (): Router => {
     }
   })
 
+  // GET /api/programs/my/enrollments - Get user's enrollments (requires authentication)
+  router.get('/my/enrollments', authMiddleware, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user?.id
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthorized' })
+      }
+
+      const getUserEnrollmentsUseCase = Container.getGetUserEnrollmentsUseCase()
+      const enrollments = await getUserEnrollmentsUseCase.execute(userId)
+
+      return res.status(200).json({
+        enrollments: enrollments.map((e) => ({
+          id: e.enrollment.id,
+          program_id: e.enrollment.programId,
+          user_id: e.enrollment.userId,
+          status: e.enrollment.status,
+          enrolled_at: e.enrollment.enrolledAt.toISOString(),
+          completed_at: e.enrollment.completedAt?.toISOString(),
+          rating: e.enrollment.rating,
+          feedback: e.enrollment.feedback,
+          created_at: e.enrollment.createdAt.toISOString(),
+          updated_at: e.enrollment.updatedAt.toISOString(),
+          program: {
+            id: e.program.id,
+            title: e.program.title,
+            description: e.program.description,
+            type: e.program.type,
+            start_date: e.program.startDate.toISOString(),
+            end_date: e.program.endDate.toISOString(),
+            duration: e.program.duration,
+            location: e.program.location,
+            participants: e.program.participants,
+            max_participants: e.program.maxParticipants,
+            instructor: e.program.instructor,
+            status: e.program.status,
+            featured: e.program.featured,
+            skills: e.program.skills,
+            price: e.program.price,
+            image_url: e.program.imageUrl,
+            created_by: e.program.createdBy,
+            created_at: e.program.createdAt.toISOString(),
+            updated_at: e.program.updatedAt.toISOString()
+          }
+        }))
+      })
+    } catch (error) {
+      next(error)
+    }
+  })
+
   // GET /api/programs/:id - Get single program
   router.get('/:id', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
@@ -94,8 +145,8 @@ export const createProgramsRoutes = (): Router => {
     }
   })
 
-  // POST /api/programs - Create new program
-  router.post('/', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  // POST /api/programs - Create new program (requires authentication)
+  router.post('/', authMiddleware, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       const userId = req.user?.id
       if (!userId) {
@@ -139,8 +190,8 @@ export const createProgramsRoutes = (): Router => {
     }
   })
 
-  // PUT /api/programs/:id - Update program
-  router.put('/:id', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  // PUT /api/programs/:id - Update program (requires authentication)
+  router.put('/:id', authMiddleware, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       const userId = req.user?.id
       if (!userId) {
@@ -193,8 +244,8 @@ export const createProgramsRoutes = (): Router => {
     }
   })
 
-  // DELETE /api/programs/:id - Delete program
-  router.delete('/:id', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  // DELETE /api/programs/:id - Delete program (requires authentication)
+  router.delete('/:id', authMiddleware, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       const userId = req.user?.id
       if (!userId) {
@@ -212,8 +263,8 @@ export const createProgramsRoutes = (): Router => {
     }
   })
 
-  // POST /api/programs/:id/enroll - Enroll in program
-  router.post('/:id/enroll', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  // POST /api/programs/:id/enroll - Enroll in program (requires authentication)
+  router.post('/:id/enroll', authMiddleware, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       const userId = req.user?.id
       if (!userId) {
@@ -244,32 +295,23 @@ export const createProgramsRoutes = (): Router => {
     }
   })
 
-  // GET /api/programs/my/enrollments - Get user's enrollments
-  router.get('/my/enrollments', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  // DELETE /api/programs/enrollments/:id - Cancel enrollment (requires authentication)
+  router.delete('/enrollments/:id', authMiddleware, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       const userId = req.user?.id
       if (!userId) {
         return res.status(401).json({ error: 'Unauthorized' })
       }
 
-      const getUserEnrollmentsUseCase = Container.getGetUserEnrollmentsUseCase()
-      const enrollments = await getUserEnrollmentsUseCase.execute(userId)
+      const enrollmentId = req.params.id
+      const cancelEnrollmentUseCase = Container.getCancelEnrollmentUseCase()
 
-      return res.status(200).json({
-        enrollments: enrollments.map((e) => ({
-          id: e.enrollment.id,
-          program_id: e.enrollment.programId,
-          user_id: e.enrollment.userId,
-          status: e.enrollment.status,
-          enrolled_at: e.enrollment.enrolledAt.toISOString(),
-          completed_at: e.enrollment.completedAt?.toISOString(),
-          rating: e.enrollment.rating,
-          feedback: e.enrollment.feedback,
-          created_at: e.enrollment.createdAt.toISOString(),
-          updated_at: e.enrollment.updatedAt.toISOString(),
-          program: e.program
-        }))
+      await cancelEnrollmentUseCase.execute({
+        enrollmentId,
+        userId
       })
+
+      return res.status(204).send()
     } catch (error) {
       next(error)
     }

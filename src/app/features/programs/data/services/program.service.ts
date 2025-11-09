@@ -80,10 +80,18 @@ export const programService = {
   },
 
   /**
-   * Get user's enrollments
+   * Get user's enrollments with program details
    */
   async getMyEnrollments(): Promise<any> {
     const response = await axiosInstance.get('/programs/my/enrollments')
     return response.data
+  },
+
+  /**
+   * Cancel enrollment in a program
+   */
+  async cancelEnrollment(enrollmentId: string): Promise<void> {
+    await axiosInstance.delete(`/programs/enrollments/${enrollmentId}`)
   }
 }
+

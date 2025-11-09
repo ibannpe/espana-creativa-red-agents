@@ -444,9 +444,9 @@ export class Program {
       throw new Error('Duration cannot be empty')
     }
 
-    // Date validation
-    if (this._startDate >= this._endDate) {
-      throw new Error('Start date must be before end date')
+    // Date validation (allow same-day programs like 1-day workshops)
+    if (this._startDate > this._endDate) {
+      throw new Error('Start date cannot be after end date')
     }
 
     // Participants validation

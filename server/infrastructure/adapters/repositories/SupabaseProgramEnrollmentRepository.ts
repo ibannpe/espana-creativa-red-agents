@@ -49,7 +49,7 @@ export class SupabaseProgramEnrollmentRepository implements ProgramEnrollmentRep
       .select(`
         *,
         user:users!program_enrollments_user_id_fkey(id, name, avatar_url, email),
-        program:programs!program_enrollments_program_id_fkey(id, title, type)
+        program:programs!program_enrollments_program_id_fkey(*)
       `)
 
     if (filters?.programId) query = query.eq('program_id', filters.programId)
@@ -59,11 +59,37 @@ export class SupabaseProgramEnrollmentRepository implements ProgramEnrollmentRep
     const { data, error } = await query
     if (error || !data) return []
 
-    return data.map((row: any) => ({
-      enrollment: this.toDomain(row),
-      user: row.user,
-      program: row.program
-    }))
+    return data.map((row: any) => {
+      if (!row.program) {
+        throw new Error(`Program data missing for enrollment ${row.id}`)
+      }
+
+      return {
+        enrollment: this.toDomain(row),
+        user: row.user,
+        program: {
+          id: row.program.id,
+          title: row.program.title,
+          description: row.program.description,
+          type: row.program.type,
+          startDate: new Date(row.program.start_date),
+          endDate: new Date(row.program.end_date),
+          duration: row.program.duration,
+          location: row.program.location,
+          participants: row.program.participants,
+          maxParticipants: row.program.max_participants,
+          instructor: row.program.instructor,
+          status: row.program.status,
+          featured: row.program.featured,
+          skills: row.program.skills || [],
+          price: row.program.price,
+          imageUrl: row.program.image_url,
+          createdBy: row.program.created_by,
+          createdAt: new Date(row.program.created_at),
+          updatedAt: new Date(row.program.updated_at)
+        }
+      }
+    })
   }
 
   async findByProgram(programId: string): Promise<EnrollmentWithUserAndProgram[]> {
@@ -156,8 +182,8 @@ export class SupabaseProgramEnrollmentRepository implements ProgramEnrollmentRep
       status: row.status as EnrollmentStatus,
       enrolledAt: new Date(row.enrolled_at),
       completedAt: row.completed_at ? new Date(row.completed_at) : undefined,
-      rating: row.rating,
-      feedback: row.feedback,
+      rating: row.rating !== null ? row.rating : undefined,
+      feedback: row.feedback !== null ? row.feedback : undefined,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at)
     })
