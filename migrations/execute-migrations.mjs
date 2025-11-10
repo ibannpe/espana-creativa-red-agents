@@ -105,6 +105,10 @@ async function main() {
       {
         name: '005_update_opportunities_table',
         sql: readFileSync('migrations/005_update_opportunities_table.sql', 'utf8')
+      },
+      {
+        name: '007_create_programs_table',
+        sql: readFileSync('migrations/007_create_programs_table.sql', 'utf8')
       }
     ]
 

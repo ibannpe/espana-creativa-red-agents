@@ -50,26 +50,35 @@ const statusColors = {
 
 export function ProgramCard({ program, onViewDetails }: ProgramCardProps) {
   const { user } = useAuthContext()
-  const { enroll, isLoading: isEnrolling, isSuccess: enrollSuccess } = useEnrollInProgramMutation()
-  const { cancel, isLoading: isCancelling, isSuccess: cancelSuccess } = useCancelEnrollmentMutation()
+  const { enroll, isLoading: isEnrolling } = useEnrollInProgramMutation()
+  const { cancel, isLoading: isCancelling } = useCancelEnrollmentMutation()
   const { data: myProgramsData } = useMyProgramsQuery({ enabled: !!user })
 
   // Find if user is enrolled in this program
   const userEnrollment = useMemo(() => {
-    if (!myProgramsData?.enrollments) return null
-    return myProgramsData.enrollments.find(e => e.program.id === program.id)
-  }, [myProgramsData, program.id])
+    if (!myProgramsData?.enrollments) {
+      return null
+    }
 
-  const isEnrolled = !!userEnrollment && !cancelSuccess
+    // Use strict comparison and convert to string to ensure type consistency
+    const found = myProgramsData.enrollments.find(e => {
+      // Compare both as strings to handle type mismatches
+      return String(e.program.id) === String(program.id)
+    })
+
+    return found
+  }, [myProgramsData?.enrollments, program.id])
+
+  const isEnrolled = !!userEnrollment
   const enrollmentId = userEnrollment?.id
 
   const handleEnroll = () => {
-    enroll(program.id)
+    enroll(String(program.id))
   }
 
   const handleCancel = () => {
     if (enrollmentId) {
-      cancel(enrollmentId)
+      cancel(String(enrollmentId))
     }
   }
 
@@ -80,7 +89,7 @@ export function ProgramCard({ program, onViewDetails }: ProgramCardProps) {
   }
 
   const isFull = program.max_participants && program.participants >= program.max_participants
-  const canEnroll = program.status === 'upcoming' && !isFull && !isEnrolled && !enrollSuccess
+  const canEnroll = program.status === 'upcoming' && !isFull && !isEnrolled
   const canCancel = isEnrolled && program.status === 'upcoming'
 
   return (

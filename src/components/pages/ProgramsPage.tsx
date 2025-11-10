@@ -5,24 +5,61 @@ import { useState } from 'react'
 import { Navigation } from '@/components/layout/Navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Calendar } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Calendar, Clock, MapPin, BookOpen } from 'lucide-react'
 import { useProgramsQuery } from '@/app/features/programs/hooks/queries/useProgramsQuery'
+import { useMyProgramsQuery } from '@/app/features/programs/hooks/queries/useMyProgramsQuery'
 import { ProgramCard } from '@/app/features/programs/components/ProgramCard'
 import { CreateProgramDialog } from '@/app/features/programs/components/CreateProgramDialog'
 import { ProgramDetailsDialog } from '@/app/features/programs/components/ProgramDetailsDialog'
 import type { ProgramStatus, ProgramWithCreator } from '@/app/features/programs/data/schemas/program.schema'
+import type { EnrollmentStatus } from '@/app/features/programs/data/schemas/enrollment.schema'
+
+const enrollmentStatusLabels: Record<EnrollmentStatus, string> = {
+  enrolled: 'Inscrito',
+  completed: 'Completado',
+  dropped: 'Abandonado',
+  rejected: 'Rechazado'
+}
+
+const enrollmentStatusColors: Record<EnrollmentStatus, string> = {
+  enrolled: 'bg-green-500',
+  completed: 'bg-blue-500',
+  dropped: 'bg-gray-500',
+  rejected: 'bg-red-500'
+}
+
+const typeLabels: Record<string, string> = {
+  aceleracion: 'Aceleración',
+  workshop: 'Workshop',
+  bootcamp: 'Bootcamp',
+  mentoria: 'Mentoría',
+  curso: 'Curso',
+  otro: 'Otro'
+}
 
 export function ProgramsPage() {
-  const [selectedTab, setSelectedTab] = useState<ProgramStatus | 'all'>('upcoming')
+  const [selectedTab, setSelectedTab] = useState<ProgramStatus | 'all' | 'my-programs'>('upcoming')
   const [selectedProgram, setSelectedProgram] = useState<ProgramWithCreator | null>(null)
   const [detailsOpen, setDetailsOpen] = useState(false)
 
-  // Fetch programs with optional status filter
-  const filters = selectedTab === 'all' ? {} : { status: selectedTab as ProgramStatus }
+  // Fetch all programs with optional status filter
+  const filters = selectedTab === 'all' || selectedTab === 'my-programs' ? {} : { status: selectedTab as ProgramStatus }
   const { data, isLoading, isError } = useProgramsQuery(filters)
 
-  const programs = data?.programs || []
-  const total = data?.total || 0
+  // Fetch user's enrolled programs
+  const { data: myProgramsData, isLoading: isLoadingMy, isError: isErrorMy } = useMyProgramsQuery()
+
+  const programs = selectedTab === 'my-programs'
+    ? (myProgramsData?.enrollments || []).map(e => e.program)
+    : (data?.programs || [])
+  const total = selectedTab === 'my-programs'
+    ? (myProgramsData?.enrollments || []).length
+    : (data?.total || 0)
+
+  const enrollments = myProgramsData?.enrollments || []
+  const isLoadingData = selectedTab === 'my-programs' ? isLoadingMy : isLoading
+  const isErrorData = selectedTab === 'my-programs' ? isErrorMy : isError
 
   const handleViewDetails = (program: ProgramWithCreator) => {
     setSelectedProgram(program)
@@ -83,6 +120,13 @@ export function ProgramsPage() {
               Completados
             </Button>
             <Button
+              variant={selectedTab === 'my-programs' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setSelectedTab('my-programs')}
+            >
+              Mis Programas
+            </Button>
+            <Button
               variant={selectedTab === 'all' ? 'default' : 'ghost'}
               size="sm"
               onClick={() => setSelectedTab('all')}
@@ -121,14 +165,14 @@ export function ProgramsPage() {
         </div>
 
         {/* Loading State */}
-        {isLoading && (
+        {isLoadingData && (
           <div className="text-center py-12">
             <p className="text-muted-foreground">Cargando programas...</p>
           </div>
         )}
 
         {/* Error State */}
-        {isError && (
+        {isErrorData && (
           <Card className="text-center py-12">
             <CardContent>
               <p className="text-destructive">Error al cargar los programas. Por favor, intenta de nuevo.</p>
@@ -137,7 +181,7 @@ export function ProgramsPage() {
         )}
 
         {/* Programs List */}
-        {!isLoading && !isError && (
+        {!isLoadingData && !isErrorData && (
           <>
             {programs.length > 0 ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

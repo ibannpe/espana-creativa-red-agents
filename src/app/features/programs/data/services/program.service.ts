@@ -75,8 +75,9 @@ export const programService = {
   /**
    * Enroll in a program
    */
-  async enrollInProgram(programId: string): Promise<void> {
-    await axiosInstance.post(`/programs/${programId}/enroll`)
+  async enrollInProgram(programId: string): Promise<any> {
+    const response = await axiosInstance.post(`/programs/${programId}/enroll`)
+    return response.data
   },
 
   /**
@@ -90,8 +91,9 @@ export const programService = {
   /**
    * Cancel enrollment in a program
    */
-  async cancelEnrollment(enrollmentId: string): Promise<void> {
-    await axiosInstance.delete(`/programs/enrollments/${enrollmentId}`)
+  async cancelEnrollment(enrollmentId: string): Promise<any> {
+    const response = await axiosInstance.delete(`/programs/enrollments/${enrollmentId}`)
+    return response.data
   }
 }
 

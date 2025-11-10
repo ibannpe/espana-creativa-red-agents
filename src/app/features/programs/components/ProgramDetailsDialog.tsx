@@ -50,19 +50,20 @@ const statusColors = {
 
 export function ProgramDetailsDialog({ program, open, onOpenChange }: ProgramDetailsDialogProps) {
   const { user } = useAuthContext()
-  const { enroll, isLoading: isEnrolling, isSuccess: enrollSuccess } = useEnrollInProgramMutation()
-  const { cancel, isLoading: isCancelling, isSuccess: cancelSuccess } = useCancelEnrollmentMutation()
+  const { enroll, isLoading: isEnrolling } = useEnrollInProgramMutation()
+  const { cancel, isLoading: isCancelling } = useCancelEnrollmentMutation()
   const { data: myProgramsData } = useMyProgramsQuery({ enabled: !!user })
 
   // Find if user is enrolled in this program
   const userEnrollment = useMemo(() => {
     if (!myProgramsData?.enrollments || !program) return null
-    return myProgramsData.enrollments.find(e => e.program.id === program.id)
+    // Use string comparison to ensure type consistency
+    return myProgramsData.enrollments.find(e => String(e.program.id) === String(program.id))
   }, [myProgramsData, program])
 
   if (!program) return null
 
-  const isEnrolled = !!userEnrollment && !cancelSuccess
+  const isEnrolled = !!userEnrollment
   const enrollmentId = userEnrollment?.id
 
   const handleEnroll = () => {
@@ -71,17 +72,17 @@ export function ProgramDetailsDialog({ program, open, onOpenChange }: ProgramDet
       return
     }
 
-    enroll(program.id)
+    enroll(String(program.id))
   }
 
   const handleCancel = () => {
     if (enrollmentId) {
-      cancel(enrollmentId)
+      cancel(String(enrollmentId))
     }
   }
 
   const isFull = program.max_participants && program.participants >= program.max_participants
-  const canEnroll = program.status === 'upcoming' && !isFull && !isEnrolled && !enrollSuccess
+  const canEnroll = program.status === 'upcoming' && !isFull && !isEnrolled
   const canCancel = isEnrolled && program.status === 'upcoming'
 
   const formatDate = (dateString: string) => {

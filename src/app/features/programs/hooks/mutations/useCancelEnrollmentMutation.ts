@@ -10,8 +10,13 @@ export function useCancelEnrollmentMutation() {
   const mutation = useMutation({
     mutationFn: (enrollmentId: string) => programService.cancelEnrollment(enrollmentId),
     onSuccess: () => {
+      // Invalidate and refetch in parallel, not sequentially
       queryClient.invalidateQueries({ queryKey: ['programs'] })
+      queryClient.invalidateQueries({ queryKey: ['my-programs'] })
       queryClient.invalidateQueries({ queryKey: ['enrollments'] })
+    },
+    onError: (error) => {
+      console.error('[useCancelEnrollmentMutation] Error canceling:', error)
     }
   })
 
@@ -21,6 +26,7 @@ export function useCancelEnrollmentMutation() {
     isLoading: mutation.isPending,
     isError: mutation.isError,
     error: mutation.error,
-    isSuccess: mutation.isSuccess
+    isSuccess: mutation.isSuccess,
+    reset: mutation.reset
   }
 }

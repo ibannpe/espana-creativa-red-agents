@@ -64,6 +64,11 @@ export const createProgramsRoutes = (): Router => {
       const getUserEnrollmentsUseCase = Container.getGetUserEnrollmentsUseCase()
       const enrollments = await getUserEnrollmentsUseCase.execute(userId)
 
+      // Disable HTTP caching for enrollment data
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private')
+      res.setHeader('Pragma', 'no-cache')
+      res.setHeader('Expires', '0')
+
       return res.status(200).json({
         enrollments: enrollments.map((e) => ({
           id: e.enrollment.id,
@@ -266,18 +271,25 @@ export const createProgramsRoutes = (): Router => {
   // POST /api/programs/:id/enroll - Enroll in program (requires authentication)
   router.post('/:id/enroll', authMiddleware, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
+      console.log('[ENROLL] Starting enrollment process...')
       const userId = req.user?.id
       if (!userId) {
+        console.log('[ENROLL] ERROR: No userId found')
         return res.status(401).json({ error: 'Unauthorized' })
       }
 
       const programId = req.params.id
-      const enrollInProgramUseCase = Container.getEnrollInProgramUseCase()
+      console.log('[ENROLL] userId:', userId, 'programId:', programId)
 
+      const enrollInProgramUseCase = Container.getEnrollInProgramUseCase()
+      console.log('[ENROLL] Use case obtained:', !!enrollInProgramUseCase)
+
+      console.log('[ENROLL] Executing enrollment...')
       const enrollment = await enrollInProgramUseCase.execute({
         programId,
         userId
       })
+      console.log('[ENROLL] Enrollment successful:', enrollment.id)
 
       return res.status(201).json({
         enrollment: {
@@ -291,6 +303,8 @@ export const createProgramsRoutes = (): Router => {
         }
       })
     } catch (error) {
+      console.log('[ENROLL] ERROR:', error)
+      console.log('[ENROLL] Error stack:', error instanceof Error ? error.stack : 'No stack')
       next(error)
     }
   })
@@ -298,21 +312,30 @@ export const createProgramsRoutes = (): Router => {
   // DELETE /api/programs/enrollments/:id - Cancel enrollment (requires authentication)
   router.delete('/enrollments/:id', authMiddleware, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
+      console.log('[CANCEL] Starting cancellation process...')
       const userId = req.user?.id
       if (!userId) {
+        console.log('[CANCEL] ERROR: No userId found')
         return res.status(401).json({ error: 'Unauthorized' })
       }
 
       const enrollmentId = req.params.id
-      const cancelEnrollmentUseCase = Container.getCancelEnrollmentUseCase()
+      console.log('[CANCEL] userId:', userId, 'enrollmentId:', enrollmentId)
 
+      const cancelEnrollmentUseCase = Container.getCancelEnrollmentUseCase()
+      console.log('[CANCEL] Use case obtained:', !!cancelEnrollmentUseCase)
+
+      console.log('[CANCEL] Executing cancellation...')
       await cancelEnrollmentUseCase.execute({
         enrollmentId,
         userId
       })
+      console.log('[CANCEL] Cancellation successful')
 
       return res.status(204).send()
     } catch (error) {
+      console.log('[CANCEL] ERROR:', error)
+      console.log('[CANCEL] Error stack:', error instanceof Error ? error.stack : 'No stack')
       next(error)
     }
   })

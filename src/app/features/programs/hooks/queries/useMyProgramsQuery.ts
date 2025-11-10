@@ -18,7 +18,7 @@ export const useMyProgramsQuery = (options?: { enabled?: boolean }) => {
       return await programService.getMyEnrollments()
     },
     enabled: options?.enabled !== false,
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 0, // Always consider data stale to ensure UI updates immediately
     gcTime: 5 * 60 * 1000 // 5 minutes
   })
 }

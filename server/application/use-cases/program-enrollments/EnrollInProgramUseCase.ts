@@ -48,7 +48,9 @@ export class EnrollInProgramUseCase {
     )
     if (existingEnrollment) {
       if (existingEnrollment.isActive()) {
-        throw new Error('Already enrolled in this program')
+        // Return existing enrollment instead of throwing error
+        // This makes the operation idempotent
+        return existingEnrollment
       }
       if (existingEnrollment.isCompleted()) {
         throw new Error('Already completed this program')

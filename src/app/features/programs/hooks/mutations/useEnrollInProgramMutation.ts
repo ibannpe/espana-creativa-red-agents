@@ -10,8 +10,13 @@ export function useEnrollInProgramMutation() {
   const mutation = useMutation({
     mutationFn: (programId: string) => programService.enrollInProgram(programId),
     onSuccess: () => {
+      // Invalidate and refetch in parallel, not sequentially
       queryClient.invalidateQueries({ queryKey: ['programs'] })
+      queryClient.invalidateQueries({ queryKey: ['my-programs'] })
       queryClient.invalidateQueries({ queryKey: ['enrollments'] })
+    },
+    onError: (error) => {
+      console.error('[useEnrollInProgramMutation] Error enrolling:', error)
     }
   })
 
@@ -21,6 +26,7 @@ export function useEnrollInProgramMutation() {
     isLoading: mutation.isPending,
     isError: mutation.isError,
     error: mutation.error,
-    isSuccess: mutation.isSuccess
+    isSuccess: mutation.isSuccess,
+    reset: mutation.reset
   }
 }

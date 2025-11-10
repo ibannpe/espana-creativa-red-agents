@@ -18,7 +18,6 @@ import { MessagesPage } from '@/app/features/messages/pages/MessagesPage'
 import { OpportunitiesPage } from '@/components/pages/OpportunitiesPage'
 import { OpportunityDetailPage } from '@/components/pages/OpportunityDetailPage'
 import { ProgramsPage } from '@/components/pages/ProgramsPage'
-import { MyProgramsPage } from '@/components/pages/MyProgramsPage'
 import { ProfilePage } from '@/components/pages/ProfilePage'
 import { UserProfileViewPage } from '@/components/pages/UserProfileViewPage'
 import { GestionPage } from '@/components/pages/GestionPage'
@@ -154,22 +153,9 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/my-programs"
-          element={
-            <ProtectedRoute>
-              <MyProgramsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/projects"
-          element={
-            <ProtectedRoute>
-              <ProgramsPage />
-            </ProtectedRoute>
-          }
-        />
+        {/* Redirects for backwards compatibility */}
+        <Route path="/projects" element={<Navigate to="/programs" replace />} />
+        <Route path="/my-programs" element={<Navigate to="/programs" replace />} />
         <Route
           path="/profile"
           element={
