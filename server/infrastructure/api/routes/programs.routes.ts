@@ -1,5 +1,5 @@
-// ABOUTME: Programs HTTP routes for managing educational programs
-// ABOUTME: Thin adapter layer delegating to program use cases with authentication middleware
+// ABOUTME: Projects HTTP routes for managing educational projects
+// ABOUTME: Thin adapter layer delegating to project use cases with authentication middleware
 
 import { Router, Response, NextFunction } from 'express'
 import { Container } from '../../di/Container'
@@ -8,7 +8,7 @@ import { AuthenticatedRequest, authMiddleware } from '../middleware/auth.middlew
 export const createProgramsRoutes = (): Router => {
   const router = Router()
 
-  // GET /api/programs - Get all programs with optional filters
+  // GET /api/projects - Get all projects with optional filters
   router.get('/', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       const { type, status, skills, featured, search } = req.query
@@ -24,7 +24,7 @@ export const createProgramsRoutes = (): Router => {
       })
 
       return res.status(200).json({
-        programs: result.programs.map((p) => ({
+        projects: result.programs.map((p) => ({
           id: p.program.id,
           title: p.program.title,
           description: p.program.description,
@@ -53,7 +53,7 @@ export const createProgramsRoutes = (): Router => {
     }
   })
 
-  // GET /api/programs/my/enrollments - Get user's enrollments (requires authentication)
+  // GET /api/projects/my/enrollments - Get user's enrollments (requires authentication)
   router.get('/my/enrollments', authMiddleware, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       const userId = req.user?.id
@@ -72,7 +72,7 @@ export const createProgramsRoutes = (): Router => {
       return res.status(200).json({
         enrollments: enrollments.map((e) => ({
           id: e.enrollment.id,
-          program_id: e.enrollment.programId,
+          project_id: e.enrollment.programId,
           user_id: e.enrollment.userId,
           status: e.enrollment.status,
           enrolled_at: e.enrollment.enrolledAt.toISOString(),
@@ -81,7 +81,7 @@ export const createProgramsRoutes = (): Router => {
           feedback: e.enrollment.feedback,
           created_at: e.enrollment.createdAt.toISOString(),
           updated_at: e.enrollment.updatedAt.toISOString(),
-          program: {
+          project: {
             id: e.program.id,
             title: e.program.title,
             description: e.program.description,
@@ -122,7 +122,7 @@ export const createProgramsRoutes = (): Router => {
       }
 
       return res.status(200).json({
-        program: {
+        project: {
           id: result.program.id,
           title: result.program.title,
           description: result.program.description,
@@ -168,7 +168,7 @@ export const createProgramsRoutes = (): Router => {
       })
 
       return res.status(201).json({
-        program: {
+        project: {
           id: program.id,
           title: program.title,
           description: program.description,
@@ -222,7 +222,7 @@ export const createProgramsRoutes = (): Router => {
       const program = await updateProgramUseCase.execute(updateData)
 
       return res.status(200).json({
-        program: {
+        project: {
           id: program.id,
           title: program.title,
           description: program.description,
@@ -273,16 +273,49 @@ export const createProgramsRoutes = (): Router => {
     try {
       console.log('[ENROLL] Starting enrollment process...')
       const userId = req.user?.id
-      if (!userId) {
-        console.log('[ENROLL] ERROR: No userId found')
+      const token = req.token
+
+      if (!userId || !token) {
+        console.log('[ENROLL] ERROR: No userId or token found')
         return res.status(401).json({ error: 'Unauthorized' })
       }
 
       const programId = req.params.id
       console.log('[ENROLL] userId:', userId, 'programId:', programId)
 
-      const enrollInProgramUseCase = Container.getEnrollInProgramUseCase()
-      console.log('[ENROLL] Use case obtained:', !!enrollInProgramUseCase)
+      // Import dependencies
+      const { createClient } = await import('@supabase/supabase-js')
+      const { SupabaseProgramRepository } = await import('../../adapters/repositories/SupabaseProgramRepository')
+      const { SupabaseProgramEnrollmentRepository } = await import('../../adapters/repositories/SupabaseProgramEnrollmentRepository')
+      const { EnrollInProgramUseCase } = await import('../../../application/use-cases/program-enrollments/EnrollInProgramUseCase')
+
+      // Create user-authenticated Supabase client
+      const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL
+      const anonKey = process.env.VITE_SUPABASE_ANON_KEY
+
+      if (!supabaseUrl || !anonKey) {
+        console.error('[ENROLL] Missing Supabase configuration')
+        return res.status(500).json({ error: 'Server configuration error' })
+      }
+
+      const userClient = createClient(supabaseUrl, anonKey, {
+        global: {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        },
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false
+        }
+      })
+
+      // Create repositories with user-authenticated client
+      const programRepository = new SupabaseProgramRepository(userClient)
+      const enrollmentRepository = new SupabaseProgramEnrollmentRepository(userClient)
+      const enrollInProgramUseCase = new EnrollInProgramUseCase(programRepository, enrollmentRepository)
+
+      console.log('[ENROLL] Use case created with user client')
 
       console.log('[ENROLL] Executing enrollment...')
       const enrollment = await enrollInProgramUseCase.execute({
@@ -294,7 +327,7 @@ export const createProgramsRoutes = (): Router => {
       return res.status(201).json({
         enrollment: {
           id: enrollment.id,
-          program_id: enrollment.programId,
+          project_id: enrollment.programId,
           user_id: enrollment.userId,
           status: enrollment.status,
           enrolled_at: enrollment.enrolledAt.toISOString(),

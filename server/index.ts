@@ -173,7 +173,7 @@ app.get('/api/users/recent', async (req, res, next) => {
 })
 
 // Public routes (no authentication required)
-app.use('/api/programs', createProgramsRoutes())
+app.use('/api/projects', createProgramsRoutes())
 
 // Protected routes (require authentication)
 app.use('/api/users', authMiddleware, createUsersRoutes())

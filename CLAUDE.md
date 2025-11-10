@@ -107,6 +107,40 @@ yarn clean-db
 yarn clean-dev
 ```
 
+#### Conexión a PostgreSQL con psql
+
+**Ruta del binario psql**: `/opt/homebrew/opt/postgresql@16/bin/psql`
+
+**Importante**: Siempre usar el connection string completo con `gssencmode=disable` para evitar errores de negociación GSSAPI.
+
+```bash
+# Ejecutar migración SQL
+PGPASSWORD='OMDYZAy9kgHVYabG' /opt/homebrew/opt/postgresql@16/bin/psql "postgresql://postgres.jbkzymvswvnkrxriyzdx@aws-0-eu-central-1.pooler.supabase.com:5432/postgres?gssencmode=disable" -f migrations/nombre_archivo.sql
+
+# Conectarse a la consola interactiva de PostgreSQL
+PGPASSWORD='OMDYZAy9kgHVYabG' /opt/homebrew/opt/postgresql@16/bin/psql "postgresql://postgres.jbkzymvswvnkrxriyzdx@aws-0-eu-central-1.pooler.supabase.com:5432/postgres?gssencmode=disable"
+
+# Ejecutar comando SQL directo
+PGPASSWORD='OMDYZAy9kgHVYabG' /opt/homebrew/opt/postgresql@16/bin/psql "postgresql://postgres.jbkzymvswvnkrxriyzdx@aws-0-eu-central-1.pooler.supabase.com:5432/postgres?gssencmode=disable" -c "SELECT * FROM projects;"
+
+# Ver estructura de una tabla
+PGPASSWORD='OMDYZAy9kgHVYabG' /opt/homebrew/opt/postgresql@16/bin/psql "postgresql://postgres.jbkzymvswvnkrxriyzdx@aws-0-eu-central-1.pooler.supabase.com:5432/postgres?gssencmode=disable" -c "\d projects"
+```
+
+**Parámetros importantes**:
+- `PGPASSWORD`: Variable de entorno con la contraseña (valor de `SUPABASE_DB_PASSWORD` del `.env`)
+- `gssencmode=disable`: **OBLIGATORIO** - Desactiva GSSAPI para evitar errores de negociación
+- Connection string format: `postgresql://USER@HOST:PORT/DATABASE?gssencmode=disable`
+- Usuario: `postgres.jbkzymvswvnkrxriyzdx`
+- Host: `aws-0-eu-central-1.pooler.supabase.com`
+- Puerto: `5432`
+- Base de datos: `postgres`
+
+**Errores comunes**:
+- ❌ `received invalid response to GSSAPI negotiation` → Falta `?gssencmode=disable` en el connection string
+- ❌ `Tenant or user not found` → Host o usuario incorrectos, verificar el `.env`
+- ❌ `command not found: psql` → Usar la ruta completa `/opt/homebrew/opt/postgresql@16/bin/psql`
+
 ## Arquitectura del Proyecto
 
 ### Arquitectura de Dual-Server

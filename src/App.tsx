@@ -17,7 +17,7 @@ import { FollowersPage } from '@/components/pages/FollowersPage'
 import { MessagesPage } from '@/app/features/messages/pages/MessagesPage'
 import { OpportunitiesPage } from '@/components/pages/OpportunitiesPage'
 import { OpportunityDetailPage } from '@/components/pages/OpportunityDetailPage'
-import { ProgramsPage } from '@/components/pages/ProgramsPage'
+import { ProjectsPage } from '@/components/pages/ProjectsPage'
 import { ProfilePage } from '@/components/pages/ProfilePage'
 import { UserProfileViewPage } from '@/components/pages/UserProfileViewPage'
 import { GestionPage } from '@/components/pages/GestionPage'
@@ -146,16 +146,17 @@ function App() {
           }
         />
         <Route
-          path="/programs"
+          path="/proyectos"
           element={
             <ProtectedRoute>
-              <ProgramsPage />
+              <ProjectsPage />
             </ProtectedRoute>
           }
         />
         {/* Redirects for backwards compatibility */}
-        <Route path="/projects" element={<Navigate to="/programs" replace />} />
-        <Route path="/my-programs" element={<Navigate to="/programs" replace />} />
+        <Route path="/programs" element={<Navigate to="/proyectos" replace />} />
+        <Route path="/projects" element={<Navigate to="/proyectos" replace />} />
+        <Route path="/my-programs" element={<Navigate to="/proyectos" replace />} />
         <Route
           path="/profile"
           element={

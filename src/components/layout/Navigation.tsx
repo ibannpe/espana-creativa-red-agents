@@ -51,7 +51,7 @@ export function Navigation() {
     { href: '/network', label: 'Mi Red', icon: Users },
     { href: '/opportunities', label: 'Oportunidades', icon: Briefcase },
     { href: '/messages', label: 'Mensajes', icon: MessageSquare },
-    { href: '/programs', label: 'Programas', icon: Calendar },
+    { href: '/proyectos', label: 'Proyectos', icon: Calendar },
   ]
 
   const isActive = (href: string) => {

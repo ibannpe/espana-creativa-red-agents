@@ -41,8 +41,8 @@ export class SupabaseProgramRepository implements ProgramRepository {
   constructor(private supabase: SupabaseClient) {}
 
   async findById(id: string): Promise<Program | null> {
-    const { data, error } = await this.supabase
-      .from('programs')
+    const { data, error} = await this.supabase
+      .from('projects')
       .select('*')
       .eq('id', id)
       .single()
@@ -56,7 +56,7 @@ export class SupabaseProgramRepository implements ProgramRepository {
 
   async findByIdWithCreator(id: string): Promise<ProgramWithCreator | null> {
     const { data, error } = await this.supabase
-      .from('programs')
+      .from('projects')
       .select(`
         *,
         creator:users!programs_created_by_fkey(id, name, avatar_url, bio)
@@ -81,7 +81,7 @@ export class SupabaseProgramRepository implements ProgramRepository {
 
   async findAll(filters?: FilterProgramsParams): Promise<ProgramWithCreator[]> {
     let query = this.supabase
-      .from('programs')
+      .from('projects')
       .select(`
         *,
         creator:users!programs_created_by_fkey(id, name, avatar_url, bio)
@@ -147,7 +147,7 @@ export class SupabaseProgramRepository implements ProgramRepository {
     const row = this.toRow(program)
 
     const { data, error } = await this.supabase
-      .from('programs')
+      .from('projects')
       .insert(row)
       .select()
       .single()
@@ -164,7 +164,7 @@ export class SupabaseProgramRepository implements ProgramRepository {
     const row = this.toRow(program)
 
     const { data, error } = await this.supabase
-      .from('programs')
+      .from('projects')
       .update(row)
       .eq('id', program.id)
       .select()
@@ -180,7 +180,7 @@ export class SupabaseProgramRepository implements ProgramRepository {
 
   async delete(id: string): Promise<void> {
     const { error } = await this.supabase
-      .from('programs')
+      .from('projects')
       .delete()
       .eq('id', id)
 
@@ -192,7 +192,7 @@ export class SupabaseProgramRepository implements ProgramRepository {
 
   async exists(id: string): Promise<boolean> {
     const { data, error } = await this.supabase
-      .from('programs')
+      .from('projects')
       .select('id')
       .eq('id', id)
       .single()
@@ -202,7 +202,7 @@ export class SupabaseProgramRepository implements ProgramRepository {
 
   async count(filters?: FilterProgramsParams): Promise<number> {
     let query = this.supabase
-      .from('programs')
+      .from('projects')
       .select('id', { count: 'exact', head: true })
 
     // Apply same filters as findAll

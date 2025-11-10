@@ -14,7 +14,7 @@ export class SupabaseProgramEnrollmentRepository implements ProgramEnrollmentRep
 
   async findById(id: string): Promise<ProgramEnrollment | null> {
     const { data, error } = await this.supabase
-      .from('program_enrollments')
+      .from('project_enrollments')
       .select('*')
       .eq('id', id)
       .single()
@@ -25,11 +25,11 @@ export class SupabaseProgramEnrollmentRepository implements ProgramEnrollmentRep
 
   async findByIdWithDetails(id: string): Promise<EnrollmentWithUserAndProgram | null> {
     const { data, error } = await this.supabase
-      .from('program_enrollments')
+      .from('project_enrollments')
       .select(`
         *,
-        user:users!program_enrollments_user_id_fkey(id, name, avatar_url, email),
-        program:programs!program_enrollments_program_id_fkey(id, title, type)
+        user:users!project_enrollments_user_id_fkey(id, name, avatar_url, email),
+        program:projects!project_enrollments_project_id_fkey(id, title, type)
       `)
       .eq('id', id)
       .single()
@@ -45,14 +45,14 @@ export class SupabaseProgramEnrollmentRepository implements ProgramEnrollmentRep
 
   async findAll(filters?: FilterEnrollmentsParams): Promise<EnrollmentWithUserAndProgram[]> {
     let query = this.supabase
-      .from('program_enrollments')
+      .from('project_enrollments')
       .select(`
         *,
-        user:users!program_enrollments_user_id_fkey(id, name, avatar_url, email),
-        program:programs!program_enrollments_program_id_fkey(*)
+        user:users!project_enrollments_user_id_fkey(id, name, avatar_url, email),
+        program:projects!project_enrollments_project_id_fkey(*)
       `)
 
-    if (filters?.programId) query = query.eq('program_id', filters.programId)
+    if (filters?.programId) query = query.eq('project_id', filters.programId)
     if (filters?.userId) query = query.eq('user_id', filters.userId)
     if (filters?.status) query = query.eq('status', filters.status)
 
@@ -102,9 +102,9 @@ export class SupabaseProgramEnrollmentRepository implements ProgramEnrollmentRep
 
   async findByProgramAndUser(programId: string, userId: string): Promise<ProgramEnrollment | null> {
     const { data, error } = await this.supabase
-      .from('program_enrollments')
+      .from('project_enrollments')
       .select('*')
-      .eq('program_id', programId)
+      .eq('project_id', programId)
       .eq('user_id', userId)
       .single()
 
@@ -115,7 +115,7 @@ export class SupabaseProgramEnrollmentRepository implements ProgramEnrollmentRep
   async create(enrollment: ProgramEnrollment): Promise<ProgramEnrollment> {
     const row = this.toRow(enrollment)
     const { data, error } = await this.supabase
-      .from('program_enrollments')
+      .from('project_enrollments')
       .insert(row)
       .select()
       .single()
@@ -127,7 +127,7 @@ export class SupabaseProgramEnrollmentRepository implements ProgramEnrollmentRep
   async update(enrollment: ProgramEnrollment): Promise<ProgramEnrollment> {
     const row = this.toRow(enrollment)
     const { data, error } = await this.supabase
-      .from('program_enrollments')
+      .from('project_enrollments')
       .update(row)
       .eq('id', enrollment.id)
       .select()
@@ -139,7 +139,7 @@ export class SupabaseProgramEnrollmentRepository implements ProgramEnrollmentRep
 
   async delete(id: string): Promise<void> {
     const { error } = await this.supabase
-      .from('program_enrollments')
+      .from('project_enrollments')
       .delete()
       .eq('id', id)
 
@@ -148,7 +148,7 @@ export class SupabaseProgramEnrollmentRepository implements ProgramEnrollmentRep
 
   async exists(id: string): Promise<boolean> {
     const { data, error } = await this.supabase
-      .from('program_enrollments')
+      .from('project_enrollments')
       .select('id')
       .eq('id', id)
       .single()
@@ -163,10 +163,10 @@ export class SupabaseProgramEnrollmentRepository implements ProgramEnrollmentRep
 
   async count(filters?: FilterEnrollmentsParams): Promise<number> {
     let query = this.supabase
-      .from('program_enrollments')
+      .from('project_enrollments')
       .select('id', { count: 'exact', head: true })
 
-    if (filters?.programId) query = query.eq('program_id', filters.programId)
+    if (filters?.programId) query = query.eq('project_id', filters.programId)
     if (filters?.userId) query = query.eq('user_id', filters.userId)
     if (filters?.status) query = query.eq('status', filters.status)
 
@@ -177,7 +177,7 @@ export class SupabaseProgramEnrollmentRepository implements ProgramEnrollmentRep
   private toDomain(row: any): ProgramEnrollment {
     return ProgramEnrollment.create({
       id: row.id,
-      programId: String(row.program_id),
+      programId: String(row.project_id),
       userId: row.user_id,
       status: row.status as EnrollmentStatus,
       enrolledAt: new Date(row.enrolled_at),
@@ -193,7 +193,7 @@ export class SupabaseProgramEnrollmentRepository implements ProgramEnrollmentRep
     const props = enrollment.toObject()
     return {
       id: props.id,
-      program_id: props.programId,
+      project_id: props.programId,
       user_id: props.userId,
       status: props.status,
       enrolled_at: props.enrolledAt.toISOString(),

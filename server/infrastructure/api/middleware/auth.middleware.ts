@@ -2,14 +2,15 @@
 // ABOUTME: Validates bearer tokens and injects authenticated user into request with type safety
 
 import { Request, Response, NextFunction } from 'express'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-// Extend Express Request with authenticated user
+// Extend Express Request with authenticated user and token
 export interface AuthenticatedRequest extends Request {
   user: {
     id: string
     email: string
   }
+  token: string
 }
 
 /**
@@ -64,10 +65,11 @@ export const authMiddleware = async (
       return
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey)
+    // Create admin client for token verification
+    const adminClient = createClient(supabaseUrl, supabaseKey)
 
     // Verify token and get user
-    const { data: { user }, error } = await supabase.auth.getUser(token)
+    const { data: { user }, error } = await adminClient.auth.getUser(token)
 
     if (error) {
       console.error('[Auth Middleware] Token verification error:', {
@@ -86,11 +88,12 @@ export const authMiddleware = async (
       return
     }
 
-    // Inject user into request
+    // Inject user and token into request
     (req as AuthenticatedRequest).user = {
       id: user.id,
       email: user.email || ''
     }
+    ;(req as AuthenticatedRequest).token = token
 
     // Continue to next middleware/handler
     next()
