@@ -79,7 +79,8 @@ export const filterOpportunitiesRequestSchema = z.object({
   status: opportunityStatusSchema.optional(),
   skills: z.array(z.string()).optional(),
   remote: z.boolean().optional(),
-  search: z.string().optional()
+  search: z.string().optional(),
+  limit: z.number().optional()
 })
 
 // Get opportunity response

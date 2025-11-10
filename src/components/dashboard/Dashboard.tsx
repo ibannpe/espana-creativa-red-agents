@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useOpportunitiesQuery } from '@/app/features/opportunities/hooks/queries/useOpportunitiesQuery';
 // import { useLogger } from '@/lib/logger';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,6 +25,11 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
   // const logger = useLogger('Dashboard');
+
+  // Fetch recent opportunities (limit to 3)
+  const { data: opportunitiesData, isLoading: opportunitiesLoading } = useOpportunitiesQuery({
+    limit: 3
+  });
 
   const handlePhotoUpdated = (_newAvatarUrl: string) => {
     // logger.userAction('photo-updated', { userId: user?.id });
@@ -234,23 +240,40 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="space-y-2">
-                    <h4 className="text-sm font-medium">Proyecto {i}</h4>
-                    <p className="text-xs text-muted-foreground">
-                      Buscamos desarrollador frontend para startup fintech...
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex space-x-1">
-                        <Badge variant="secondary" className="text-xs">React</Badge>
-                        <Badge variant="secondary" className="text-xs">Frontend</Badge>
-                      </div>
-                      <Button size="sm" variant="outline">
-                        Ver más
-                      </Button>
-                    </div>
+                {opportunitiesLoading ? (
+                  <div className="text-center py-4 text-sm text-muted-foreground">
+                    Cargando oportunidades...
                   </div>
-                ))}
+                ) : opportunitiesData?.opportunities && opportunitiesData.opportunities.length > 0 ? (
+                  opportunitiesData.opportunities.map((opportunity) => (
+                    <div key={opportunity.id} className="space-y-2">
+                      <h4 className="text-sm font-medium">{opportunity.title}</h4>
+                      <p className="text-xs text-muted-foreground line-clamp-2">
+                        {opportunity.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex flex-wrap gap-1">
+                          {opportunity.required_skills?.slice(0, 3).map((skill) => (
+                            <Badge key={skill} variant="secondary" className="text-xs">
+                              {skill}
+                            </Badge>
+                          ))}
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/opportunities/${opportunity.id}`)}
+                        >
+                          Ver más
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-4 text-sm text-muted-foreground">
+                    No hay oportunidades disponibles aún
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

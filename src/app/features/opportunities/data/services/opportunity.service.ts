@@ -27,7 +27,8 @@ export const opportunityService = {
         status: filters?.status,
         skills: filters?.skills?.join(','),
         remote: filters?.remote,
-        search: filters?.search
+        search: filters?.search,
+        limit: filters?.limit
       }
     })
     return getOpportunitiesResponseSchema.parse(response.data)

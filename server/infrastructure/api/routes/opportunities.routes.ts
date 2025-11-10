@@ -13,11 +13,11 @@ export const createOpportunitiesRoutes = (): Router => {
   // GET /api/opportunities - Get all opportunities with optional filters
   router.get('/', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
-      const { type, status, skills, remote, search } = req.query
+      const { type, status, skills, remote, search, limit } = req.query
 
       const getOpportunitiesUseCase = Container.getGetOpportunitiesUseCase()
 
-      const opportunities = await getOpportunitiesUseCase.execute({
+      let opportunities = await getOpportunitiesUseCase.execute({
         filters: {
           type: type as any,
           status: status as any,
@@ -26,6 +26,12 @@ export const createOpportunitiesRoutes = (): Router => {
           search: search as string
         }
       })
+
+      // Apply limit if provided
+      const limitNum = limit ? parseInt(limit as string, 10) : undefined
+      if (limitNum && limitNum > 0) {
+        opportunities = opportunities.slice(0, limitNum)
+      }
 
       return res.status(200).json({
         opportunities: opportunities.map((o) => ({
