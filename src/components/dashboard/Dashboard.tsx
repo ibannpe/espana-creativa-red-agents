@@ -199,7 +199,7 @@ const Dashboard = () => {
           <Card className="hover:shadow-brand transition-shadow cursor-pointer">
             <CardContent className="p-6 text-center">
               <Calendar className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">Programas</h3>
+              <h3 className="font-semibold mb-2">Proyectos</h3>
               <p className="text-sm text-muted-foreground mb-4">
                 Próximas iniciativas
               </p>

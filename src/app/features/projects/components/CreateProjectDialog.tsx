@@ -76,12 +76,12 @@ export function CreateProjectDialog() {
       <DialogTrigger asChild>
         <Button className="gap-2">
           <Plus className="h-4 w-4" />
-          Crear Projecta
+          Crear Proyecto
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Crear Nuevo Projecta</DialogTitle>
+          <DialogTitle>Crear Nuevo Proyecto</DialogTitle>
           <DialogDescription>
             Crea un nuevo programa educativo para la comunidad
           </DialogDescription>
@@ -291,7 +291,7 @@ export function CreateProjectDialog() {
               Cancelar
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Creando...' : 'Crear Projecta'}
+              {isLoading ? 'Creando...' : 'Crear Proyecto'}
             </Button>
           </div>
         </form>
