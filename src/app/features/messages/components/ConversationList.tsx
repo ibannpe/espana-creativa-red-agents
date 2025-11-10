@@ -83,8 +83,8 @@ export function ConversationList({ onSelectConversation, selectedUserId }: Conve
         return (
           <Card
             key={conversation.user.id}
-            className={`cursor-pointer transition-colors hover:bg-accent ${
-              isSelected ? 'bg-accent border-primary' : ''
+            className={`cursor-pointer transition-colors hover:bg-green-50 ${
+              isSelected ? 'bg-green-50 border-green-500' : ''
             }`}
             onClick={() => onSelectConversation?.(conversation.user.id)}
           >
@@ -104,7 +104,9 @@ export function ConversationList({ onSelectConversation, selectedUserId }: Conve
                 {/* Conversation Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2 mb-1">
-                    <h4 className="font-semibold text-sm truncate">
+                    <h4 className={`font-semibold text-sm truncate ${
+                      isSelected ? 'text-green-900' : ''
+                    }`}>
                       {conversation.user.name}
                     </h4>
                     {conversation.unread_count > 0 && (
@@ -114,11 +116,15 @@ export function ConversationList({ onSelectConversation, selectedUserId }: Conve
                     )}
                   </div>
 
-                  <p className="text-xs text-muted-foreground line-clamp-2 mb-1">
+                  <p className={`text-xs line-clamp-2 mb-1 ${
+                    isSelected ? 'text-green-700' : 'text-muted-foreground'
+                  }`}>
                     {conversation.last_message.content}
                   </p>
 
-                  <p className="text-xs text-muted-foreground">
+                  <p className={`text-xs ${
+                    isSelected ? 'text-green-600' : 'text-muted-foreground'
+                  }`}>
                     {lastMessageTime}
                   </p>
                 </div>
