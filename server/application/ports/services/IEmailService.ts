@@ -2,6 +2,7 @@
 // ABOUTME: Abstracts email provider (Resend) from business logic
 
 import { Email } from '../../../domain/value-objects/Email'
+import { PendingSignup } from '../../../domain/entities/PendingSignup'
 
 export interface EmailOptions {
   to: Email
@@ -45,7 +46,7 @@ export interface IEmailService {
   /**
    * Send admin notification when new signup request submitted
    */
-  sendAdminSignupNotification(email: Email, signup: any): Promise<EmailResult>
+  sendAdminSignupNotification(email: Email, signup: PendingSignup): Promise<EmailResult>
 
   /**
    * Send approval email to user with magic link

@@ -8,6 +8,7 @@ import {
   EmailResult
 } from '../../../application/ports/services/IEmailService'
 import { Email } from '../../../domain/value-objects/Email'
+import { PendingSignup } from '../../../domain/entities/PendingSignup'
 
 export class ResendEmailService implements IEmailService {
   private readonly resend: Resend
@@ -163,10 +164,11 @@ export class ResendEmailService implements IEmailService {
     })
   }
 
-  async sendAdminSignupNotification(email: Email, signup: any): Promise<EmailResult> {
+  async sendAdminSignupNotification(email: Email, signup: PendingSignup): Promise<EmailResult> {
     const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').filter(e => e.trim())
-    const approveUrl = `${process.env.APP_URL || 'http://localhost:8080'}/admin/signup-approval/approve/${signup.approvalToken}`
-    const rejectUrl = `${process.env.APP_URL || 'http://localhost:8080'}/admin/signup-approval/reject/${signup.approvalToken}`
+    const approvalToken = signup.getApprovalToken().getValue()
+    const approveUrl = `${process.env.APP_URL || 'http://localhost:8080'}/admin/signup-approval/approve/${approvalToken}`
+    const rejectUrl = `${process.env.APP_URL || 'http://localhost:8080'}/admin/signup-approval/reject/${approvalToken}`
 
     const html = `
       <!DOCTYPE html>
@@ -176,7 +178,7 @@ export class ResendEmailService implements IEmailService {
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
             <h1 style="color: #dc2626;">Nueva solicitud de registro</h1>
             <p><strong>Email:</strong> ${email.getValue()}</p>
-            <p><strong>Nombre:</strong> ${signup.name} ${signup.surname || ''}</p>
+            <p><strong>Nombre:</strong> ${signup.getName()} ${signup.getSurname() || ''}</p>
             <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-ES')}</p>
             <div style="margin: 30px 0; text-align: center;">
               <a href="${approveUrl}" style="display: inline-block; margin: 0 10px; padding: 12px 24px; background-color: #3b82f6; color: white; text-decoration: none; border-radius: 6px;">Aprobar</a>

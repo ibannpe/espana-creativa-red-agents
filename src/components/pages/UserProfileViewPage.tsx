@@ -1,6 +1,7 @@
 // ABOUTME: User profile view page - displays public profile of any user
 // ABOUTME: Shows user info with action buttons (Connect, Follow, Chat)
 
+import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Navigation } from '@/components/layout/Navigation'
 import { Card, CardContent } from '@/components/ui/card'
@@ -8,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { AvatarViewModal } from '@/components/ui/AvatarViewModal'
 import {
   MapPin,
   Briefcase,
@@ -32,6 +34,7 @@ export function UserProfileViewPage() {
   const { userId } = useParams<{ userId: string }>()
   const navigate = useNavigate()
   const { user: currentUser } = useAuthContext()
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false)
 
   // Fetch user profile
   const { data: user, isLoading } = useQuery<UserProfile>({
@@ -133,7 +136,10 @@ export function UserProfileViewPage() {
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center">
                   {/* Avatar */}
-                  <Avatar className="h-32 w-32 mb-4">
+                  <Avatar
+                    className="h-32 w-32 mb-4 cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => setIsAvatarModalOpen(true)}
+                  >
                     <AvatarImage src={user.avatar_url || undefined} alt={user.name} />
                     <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-white text-3xl">
                       {user.name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase()}
@@ -296,6 +302,14 @@ export function UserProfileViewPage() {
           </div>
         </div>
       </div>
+
+      {/* Avatar View Modal */}
+      <AvatarViewModal
+        open={isAvatarModalOpen}
+        onClose={() => setIsAvatarModalOpen(false)}
+        avatarUrl={user.avatar_url}
+        userName={user.name}
+      />
     </div>
   )
 }
