@@ -12,12 +12,7 @@ const router = Router()
  */
 router.get('/', async (req, res) => {
   try {
-    console.log('[DEBUG] Container type:', typeof Container)
-    console.log('[DEBUG] Container.getGetCitiesUseCase type:', typeof Container.getGetCitiesUseCase)
-
     const getCitiesUseCase = Container.getGetCitiesUseCase()
-    console.log('[DEBUG] getCitiesUseCase value:', getCitiesUseCase)
-    console.log('[DEBUG] getCitiesUseCase type:', typeof getCitiesUseCase)
 
     if (!getCitiesUseCase) {
       throw new Error('GetCitiesUseCase is undefined - Container not properly initialized')
@@ -27,7 +22,24 @@ router.get('/', async (req, res) => {
       activeOnly: req.query.active !== 'false'
     })
 
-    res.json(cities)
+    // Transform backend format to match frontend schema
+    const response = {
+      cities: cities.map(item => ({
+        id: item.city.id,
+        name: item.city.name,
+        slug: item.city.slug.value,
+        image_url: item.city.imageUrl,
+        description: item.city.description,
+        active: item.city.active,
+        display_order: item.city.displayOrder,
+        created_at: item.city.createdAt.toISOString(),
+        updated_at: item.city.updatedAt.toISOString(),
+        opportunities_count: 0, // TODO: implement when we have total count
+        active_opportunities_count: item.activeOpportunitiesCount
+      }))
+    }
+
+    res.json(response)
   } catch (error) {
     console.error('Error fetching cities:', error)
     res.status(500).json({ error: 'Failed to fetch cities' })
