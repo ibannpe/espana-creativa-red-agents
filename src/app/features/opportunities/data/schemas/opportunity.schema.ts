@@ -30,7 +30,13 @@ export const opportunitySchema = z.object({
   status: opportunityStatusSchema,
   skills_required: z.array(z.string()),
   created_by: z.string().uuid(),
-  location: z.string().nullish(),
+
+  // City relation (REQUIRED)
+  city_id: z.number().positive('La oportunidad debe estar asignada a una ciudad'),
+
+  // DEPRECATED - Mantener para retrocompatibilidad
+  location: z.string().nullish().optional(),
+
   remote: z.boolean(),
   duration: z.string().nullish(),
   compensation: z.string().nullish(),
@@ -48,13 +54,33 @@ export const opportunityWithCreatorSchema = opportunitySchema.extend({
   })
 })
 
+// Opportunity with city info populated
+export const opportunityWithCitySchema = opportunitySchema.extend({
+  city: z.object({
+    id: z.number(),
+    name: z.string(),
+    slug: z.string(),
+    image_url: z.string().url()
+  }),
+  creator: z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+    avatar_url: z.string().nullable().optional(),
+    professional_title: z.string().nullable().optional()
+  })
+})
+
 // Create opportunity request
 export const createOpportunityRequestSchema = z.object({
   title: z.string().min(5, 'El título debe tener al menos 5 caracteres').max(100, 'El título no puede superar 100 caracteres'),
   description: z.string().min(20, 'La descripción debe tener al menos 20 caracteres').max(2000, 'La descripción no puede superar 2000 caracteres'),
   type: opportunityTypeSchema,
   skills_required: z.array(z.string()).min(1, 'Debes especificar al menos una habilidad'),
-  location: z.string().max(100).nullable().optional(),
+
+  // Ciudad obligatoria
+  city_id: z.number().positive('Debes seleccionar una ciudad'),
+
+  // location ya no se usa en creación (deprecado)
   remote: z.boolean().default(false),
   duration: z.string().max(100).nullable().optional(),
   compensation: z.string().max(200).nullable().optional()
@@ -80,6 +106,7 @@ export const filterOpportunitiesRequestSchema = z.object({
   skills: z.array(z.string()).optional(),
   remote: z.boolean().optional(),
   search: z.string().optional(),
+  city_id: z.number().optional(), // Filtrar por ciudad
   limit: z.number().optional()
 })
 
@@ -109,6 +136,7 @@ export type OpportunityType = z.infer<typeof opportunityTypeSchema>
 export type OpportunityStatus = z.infer<typeof opportunityStatusSchema>
 export type Opportunity = z.infer<typeof opportunitySchema>
 export type OpportunityWithCreator = z.infer<typeof opportunityWithCreatorSchema>
+export type OpportunityWithCity = z.infer<typeof opportunityWithCitySchema>
 export type CreateOpportunityRequest = z.infer<typeof createOpportunityRequestSchema>
 export type UpdateOpportunityRequest = z.infer<typeof updateOpportunityRequestSchema>
 export type FilterOpportunitiesRequest = z.infer<typeof filterOpportunitiesRequestSchema>

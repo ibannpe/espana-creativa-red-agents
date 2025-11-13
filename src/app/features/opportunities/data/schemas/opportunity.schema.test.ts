@@ -59,6 +59,7 @@ describe('Opportunity Schemas', () => {
         status: 'abierta',
         skills_required: ['JavaScript', 'TypeScript', 'React'],
         created_by: '550e8400-e29b-41d4-a716-446655440001',
+        city_id: 1,
         location: 'Madrid',
         remote: true,
         duration: '3 months',
@@ -71,6 +72,56 @@ describe('Opportunity Schemas', () => {
       expect(result.success).toBe(true)
     })
 
+    it('should require city_id field', () => {
+      const invalidOpportunity = {
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        title: 'Test Opportunity',
+        description: 'This is a test opportunity',
+        type: 'proyecto',
+        status: 'abierta',
+        skills_required: ['JavaScript'],
+        created_by: '550e8400-e29b-41d4-a716-446655440001',
+        // Missing city_id
+        location: null,
+        remote: false,
+        duration: null,
+        compensation: null,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z'
+      }
+
+      const result = opportunitySchema.safeParse(invalidOpportunity)
+      expect(result.success).toBe(false)
+      if (!result.success) {
+        expect(result.error.issues[0].message).toContain('ciudad')
+      }
+    })
+
+    it('should reject non-positive city_id', () => {
+      const invalidOpportunity = {
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        title: 'Test Opportunity',
+        description: 'This is a test opportunity',
+        type: 'proyecto',
+        status: 'abierta',
+        skills_required: ['JavaScript'],
+        created_by: '550e8400-e29b-41d4-a716-446655440001',
+        city_id: 0, // Invalid
+        location: null,
+        remote: false,
+        duration: null,
+        compensation: null,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z'
+      }
+
+      const result = opportunitySchema.safeParse(invalidOpportunity)
+      expect(result.success).toBe(false)
+      if (!result.success) {
+        expect(result.error.issues[0].message).toContain('ciudad')
+      }
+    })
+
     it('should validate opportunity with null optional fields', () => {
       const validOpportunity = {
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -80,6 +131,7 @@ describe('Opportunity Schemas', () => {
         status: 'abierta',
         skills_required: ['JavaScript'],
         created_by: '550e8400-e29b-41d4-a716-446655440001',
+        city_id: 1,
         location: null,
         remote: false,
         duration: null,
@@ -101,6 +153,7 @@ describe('Opportunity Schemas', () => {
         status: 'abierta',
         skills_required: ['JavaScript'],
         created_by: '550e8400-e29b-41d4-a716-446655440001',
+        city_id: 1,
         location: null,
         remote: false,
         duration: null,
@@ -121,7 +174,7 @@ describe('Opportunity Schemas', () => {
         description: 'This is a detailed description of the opportunity',
         type: 'colaboracion',
         skills_required: ['React', 'Node.js'],
-        location: 'Barcelona',
+        city_id: 1,
         remote: true,
         duration: '6 months',
         compensation: 'Equity'
@@ -131,12 +184,32 @@ describe('Opportunity Schemas', () => {
       expect(result.success).toBe(true)
     })
 
+    it('should require city_id in create request', () => {
+      const invalidRequest = {
+        title: 'New Opportunity',
+        description: 'This is a detailed description of the opportunity',
+        type: 'colaboracion',
+        skills_required: ['React', 'Node.js'],
+        // Missing city_id
+        remote: true,
+        duration: '6 months',
+        compensation: 'Equity'
+      }
+
+      const result = createOpportunityRequestSchema.safeParse(invalidRequest)
+      expect(result.success).toBe(false)
+      if (!result.success) {
+        expect(result.error.issues[0].message).toContain('ciudad')
+      }
+    })
+
     it('should validate request with minimal required fields', () => {
       const validRequest = {
         title: 'Minimal Opportunity',
         description: 'Minimum viable description here',
         type: 'proyecto',
-        skills_required: ['JavaScript']
+        skills_required: ['JavaScript'],
+        city_id: 1
       }
 
       const result = createOpportunityRequestSchema.safeParse(validRequest)
@@ -148,7 +221,8 @@ describe('Opportunity Schemas', () => {
         title: 'Test Opportunity',
         description: 'Test description here',
         type: 'proyecto',
-        skills_required: ['JavaScript']
+        skills_required: ['JavaScript'],
+        city_id: 1
       }
 
       const result = createOpportunityRequestSchema.safeParse(request)
@@ -163,7 +237,8 @@ describe('Opportunity Schemas', () => {
         title: 'Test',
         description: 'Valid description here',
         type: 'proyecto',
-        skills_required: ['JavaScript']
+        skills_required: ['JavaScript'],
+        city_id: 1
       }
 
       const result = createOpportunityRequestSchema.safeParse(invalidRequest)
@@ -178,7 +253,8 @@ describe('Opportunity Schemas', () => {
         title: 'a'.repeat(101),
         description: 'Valid description',
         type: 'proyecto',
-        skills_required: ['JavaScript']
+        skills_required: ['JavaScript'],
+        city_id: 1
       }
 
       const result = createOpportunityRequestSchema.safeParse(invalidRequest)
@@ -193,7 +269,8 @@ describe('Opportunity Schemas', () => {
         title: 'Valid Title',
         description: 'Too short',
         type: 'proyecto',
-        skills_required: ['JavaScript']
+        skills_required: ['JavaScript'],
+        city_id: 1
       }
 
       const result = createOpportunityRequestSchema.safeParse(invalidRequest)
@@ -208,7 +285,8 @@ describe('Opportunity Schemas', () => {
         title: 'Valid Title',
         description: 'a'.repeat(2001),
         type: 'proyecto',
-        skills_required: ['JavaScript']
+        skills_required: ['JavaScript'],
+        city_id: 1
       }
 
       const result = createOpportunityRequestSchema.safeParse(invalidRequest)
@@ -223,7 +301,8 @@ describe('Opportunity Schemas', () => {
         title: 'Valid Title',
         description: 'Valid description here',
         type: 'proyecto',
-        skills_required: []
+        skills_required: [],
+        city_id: 1
       }
 
       const result = createOpportunityRequestSchema.safeParse(invalidRequest)
@@ -231,19 +310,6 @@ describe('Opportunity Schemas', () => {
       if (!result.success) {
         expect(result.error.issues[0].message).toContain('al menos una habilidad')
       }
-    })
-
-    it('should reject location longer than 100 characters', () => {
-      const invalidRequest = {
-        title: 'Valid Title',
-        description: 'Valid description here',
-        type: 'proyecto',
-        skills_required: ['JavaScript'],
-        location: 'a'.repeat(101)
-      }
-
-      const result = createOpportunityRequestSchema.safeParse(invalidRequest)
-      expect(result.success).toBe(false)
     })
   })
 
@@ -290,7 +356,17 @@ describe('Opportunity Schemas', () => {
         status: 'abierta',
         skills: ['JavaScript', 'React'],
         remote: true,
-        search: 'developer'
+        search: 'developer',
+        city_id: 1
+      }
+
+      const result = filterOpportunitiesRequestSchema.safeParse(validFilters)
+      expect(result.success).toBe(true)
+    })
+
+    it('should validate filter by city_id', () => {
+      const validFilters = {
+        city_id: 1
       }
 
       const result = filterOpportunitiesRequestSchema.safeParse(validFilters)
@@ -312,6 +388,81 @@ describe('Opportunity Schemas', () => {
 
       const result = filterOpportunitiesRequestSchema.safeParse(validFilters)
       expect(result.success).toBe(true)
+    })
+  })
+
+  describe('opportunityWithCitySchema', () => {
+    it('should validate opportunity with city info', () => {
+      const validOpportunity = {
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        title: 'Test Opportunity',
+        description: 'This is a test opportunity',
+        type: 'proyecto',
+        status: 'abierta',
+        skills_required: ['JavaScript'],
+        created_by: '550e8400-e29b-41d4-a716-446655440001',
+        city_id: 1,
+        location: null,
+        remote: false,
+        duration: null,
+        compensation: null,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z',
+        city: {
+          id: 1,
+          name: 'Madrid',
+          slug: 'madrid',
+          image_url: 'https://example.com/madrid.jpg'
+        },
+        creator: {
+          id: '550e8400-e29b-41d4-a716-446655440001',
+          name: 'Test Creator',
+          avatar_url: null,
+          professional_title: null
+        }
+      }
+
+      const result = opportunityWithCitySchema.safeParse(validOpportunity)
+      expect(result.success).toBe(true)
+      if (result.success) {
+        expect(result.data.city.name).toBe('Madrid')
+        expect(result.data.city.slug).toBe('madrid')
+        expect(result.data.creator.name).toBe('Test Creator')
+      }
+    })
+
+    it('should reject opportunity with invalid city URL', () => {
+      const invalidOpportunity = {
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        title: 'Test Opportunity',
+        description: 'This is a test opportunity',
+        type: 'proyecto',
+        status: 'abierta',
+        skills_required: ['JavaScript'],
+        created_by: '550e8400-e29b-41d4-a716-446655440001',
+        city_id: 1,
+        location: null,
+        remote: false,
+        duration: null,
+        compensation: null,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z',
+        city: {
+          id: 1,
+          name: 'Madrid',
+          slug: 'madrid',
+          image_url: 'not-a-url'
+        },
+        creator: {
+          id: '550e8400-e29b-41d4-a716-446655440001',
+          name: 'Test Creator',
+          avatar_url: null,
+          professional_title: null
+        }
+      }
+
+      const result = opportunityWithCitySchema.safeParse(invalidOpportunity)
+      expect(result.success).toBe(false)
     })
   })
 

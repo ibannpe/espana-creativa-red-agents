@@ -71,5 +71,26 @@ export const opportunityService = {
    */
   async deleteOpportunity(id: string): Promise<void> {
     await axiosInstance.delete(`/opportunities/${id}`)
+  },
+
+  /**
+   * Get opportunities for a specific city
+   */
+  async getOpportunitiesByCity(
+    cityId: number,
+    filters?: Omit<FilterOpportunitiesRequest, 'city_id'>
+  ): Promise<GetOpportunitiesResponse> {
+    const response = await axiosInstance.get('/opportunities', {
+      params: {
+        city_id: cityId, // Forzar filtro por ciudad
+        type: filters?.type,
+        status: filters?.status,
+        skills: filters?.skills?.join(','),
+        remote: filters?.remote,
+        search: filters?.search,
+        limit: filters?.limit
+      }
+    })
+    return getOpportunitiesResponseSchema.parse(response.data)
   }
 }

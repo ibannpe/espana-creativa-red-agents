@@ -20,6 +20,7 @@ interface OpportunityRow {
   remote: boolean
   duration: string | null
   compensation: string | null
+  city_id: number
   created_by: string
   created_at: string
   updated_at: string
@@ -108,6 +109,11 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
     // Skills filter (array contains)
     if (filters?.skills && filters.skills.length > 0) {
       query = query.contains('skills_required', filters.skills)
+    }
+
+    // City filter
+    if (filters?.cityId) {
+      query = query.eq('city_id', filters.cityId)
     }
 
     // Text search (title or description)
@@ -233,6 +239,29 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
   }
 
   /**
+   * Get all opportunities for a specific city
+   */
+  async findByCity(
+    cityId: number,
+    filters?: FilterOpportunitiesParams
+  ): Promise<OpportunityWithCreator[]> {
+    return this.findAll({ ...filters, cityId })
+  }
+
+  /**
+   * Count active opportunities for a city
+   */
+  async countActiveByCity(cityId: number): Promise<number> {
+    const { count } = await this.supabase
+      .from('opportunities')
+      .select('*', { count: 'exact', head: true })
+      .eq('city_id', cityId)
+      .in('status', ['abierta', 'en_progreso'])
+
+    return count || 0
+  }
+
+  /**
    * Convert database row to domain entity
    */
   private toDomain(row: OpportunityRow): Opportunity {
@@ -247,6 +276,7 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
       remote: row.remote,
       duration: row.duration || undefined,
       compensation: row.compensation || undefined,
+      cityId: row.city_id,
       createdBy: row.created_by,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at)
@@ -271,6 +301,7 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
       remote: opportunity.remote,
       duration: opportunity.duration || null,
       compensation: opportunity.compensation || null,
+      city_id: opportunity.cityId,
       created_by: opportunity.createdBy,
       created_at: opportunity.createdAt.toISOString(),
       updated_at: opportunity.updatedAt.toISOString()

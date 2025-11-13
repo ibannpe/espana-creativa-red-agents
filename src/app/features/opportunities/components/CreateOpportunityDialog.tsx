@@ -36,6 +36,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { useCreateOpportunityMutation } from '../hooks/mutations/useCreateOpportunityMutation'
 import { useUpdateOpportunityMutation } from '../hooks/mutations/useUpdateOpportunityMutation'
 import { createOpportunityRequestSchema, updateOpportunityRequestSchema, type CreateOpportunityRequest, type OpportunityWithCreator, type OpportunityStatus } from '../data/schemas/opportunity.schema'
+import { useMyCitiesQuery } from '@/app/features/cities/hooks/queries/useMyCitiesQuery'
+import { useUserRoles } from '@/app/features/auth/hooks/useUserRoles'
 import { z } from 'zod'
 
 // Extended schema for edit mode that includes all fields including status
@@ -72,9 +74,14 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
   const [skillInput, setSkillInput] = useState('')
   const { action: createOpportunity, isLoading: isCreating } = useCreateOpportunityMutation()
   const { action: updateOpportunity, isLoading: isUpdating } = useUpdateOpportunityMutation()
+  const { data: managedCities, isLoading: isLoadingCities, isCityManager } = useMyCitiesQuery()
+  const { isAdmin } = useUserRoles()
 
   const isEditMode = !!opportunity
   const isLoading = isCreating || isUpdating
+
+  // Show city selector only for city managers (including admins)
+  const canManageCities = isAdmin || isCityManager
 
   const form = useForm<OpportunityFormData>({
     resolver: zodResolver(isEditMode ? editOpportunityFormSchema : createOpportunityRequestSchema),
@@ -82,6 +89,7 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
       title: '',
       description: '',
       type: 'proyecto',
+      city_id: managedCities.length > 0 ? managedCities[0].id : undefined,
       skills_required: [],
       location: null,
       remote: false,
@@ -98,6 +106,7 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
         title: opportunity.title,
         description: opportunity.description,
         type: opportunity.type,
+        city_id: opportunity.city_id,
         skills_required: opportunity.skills_required,
         location: opportunity.location || null,
         remote: opportunity.remote,
@@ -110,6 +119,7 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
         title: '',
         description: '',
         type: 'proyecto',
+        city_id: managedCities.length > 0 ? managedCities[0].id : undefined,
         skills_required: [],
         location: null,
         remote: false,
@@ -118,7 +128,7 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
         status: 'abierta',
       })
     }
-  }, [opportunity, form])
+  }, [opportunity, form, managedCities])
 
   const skills = form.watch('skills_required')
 
@@ -236,6 +246,46 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
                 </FormItem>
               )}
             />
+
+            {/* Ciudad - Solo visible para gestores de ciudad */}
+            {canManageCities && (
+              <FormField
+                control={form.control}
+                name="city_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      <MapPin className="inline h-4 w-4 mr-1" />
+                      Ciudad *
+                    </FormLabel>
+                    <Select
+                      onValueChange={(value) => field.onChange(parseInt(value))}
+                      value={field.value?.toString()}
+                      disabled={isLoadingCities || managedCities.length === 0}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecciona una ciudad" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {managedCities.map((city) => (
+                          <SelectItem key={city.id} value={city.id.toString()}>
+                            {city.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      {managedCities.length === 0
+                        ? 'No tienes ciudades asignadas'
+                        : 'Selecciona la ciudad donde se publicará la oportunidad'}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             {/* Estado - Solo visible en modo edición */}
             {isEditMode && (
