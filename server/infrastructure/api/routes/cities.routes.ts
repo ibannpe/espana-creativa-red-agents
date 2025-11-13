@@ -2,7 +2,7 @@
 // ABOUTME: Handles city listing, detail view, and manager operations
 
 import { Router } from 'express'
-import { Container } from '../../di/container'
+import { Container } from '../../di/Container'
 
 const router = Router()
 
@@ -12,7 +12,17 @@ const router = Router()
  */
 router.get('/', async (req, res) => {
   try {
+    console.log('[DEBUG] Container type:', typeof Container)
+    console.log('[DEBUG] Container.getGetCitiesUseCase type:', typeof Container.getGetCitiesUseCase)
+
     const getCitiesUseCase = Container.getGetCitiesUseCase()
+    console.log('[DEBUG] getCitiesUseCase value:', getCitiesUseCase)
+    console.log('[DEBUG] getCitiesUseCase type:', typeof getCitiesUseCase)
+
+    if (!getCitiesUseCase) {
+      throw new Error('GetCitiesUseCase is undefined - Container not properly initialized')
+    }
+
     const cities = await getCitiesUseCase.execute({
       activeOnly: req.query.active !== 'false'
     })
