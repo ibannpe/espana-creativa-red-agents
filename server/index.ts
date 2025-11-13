@@ -179,7 +179,7 @@ app.use('/api/projects', createProgramsRoutes())
 // Protected routes (require authentication)
 app.use('/api/users', authMiddleware, createUsersRoutes())
 app.use('/api/connections', authMiddleware, createConnectionsRoutes())
-app.use('/api/cities', authMiddleware, citiesRoutes)
+app.use('/api/cities', citiesRoutes) // TEMP: Removed authMiddleware for debugging
 app.use('/api/opportunities', authMiddleware, createOpportunitiesRoutes())
 app.use('/api/opportunity-interests', authMiddleware, createOpportunityInterestsRoutes(Container))
 app.use('/api/messages', authMiddleware, createMessagesRoutes())

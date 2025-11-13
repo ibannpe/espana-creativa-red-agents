@@ -410,28 +410,32 @@ export class Container {
     )
 
     // Initialize Cities use cases
-    Container.getCitiesUseCase = new GetCitiesUseCase(
-      Container.cityRepository
+    console.log('[DEBUG INIT] cityRepository:', !!this.cityRepository)
+    console.log('[DEBUG INIT] cityManagerRepository:', !!this.cityManagerRepository)
+
+    this.getCitiesUseCase = new GetCitiesUseCase(
+      this.cityRepository
+    )
+    console.log('[DEBUG INIT] getCitiesUseCase created:', !!this.getCitiesUseCase)
+
+    this.getCityBySlugUseCase = new GetCityBySlugUseCase(
+      this.cityRepository
     )
 
-    Container.getCityBySlugUseCase = new GetCityBySlugUseCase(
-      Container.cityRepository
+    this.checkUserIsCityManagerUseCase = new CheckUserIsCityManagerUseCase(
+      this.cityManagerRepository,
+      this.userRepository
     )
 
-    Container.checkUserIsCityManagerUseCase = new CheckUserIsCityManagerUseCase(
-      Container.cityManagerRepository,
-      Container.userRepository
+    this.assignCityManagerUseCase = new AssignCityManagerUseCase(
+      this.cityManagerRepository,
+      this.cityRepository,
+      this.userRepository
     )
 
-    Container.assignCityManagerUseCase = new AssignCityManagerUseCase(
-      Container.cityManagerRepository,
-      Container.cityRepository,
-      Container.userRepository
-    )
-
-    Container.getOpportunitiesByCityUseCase = new GetOpportunitiesByCityUseCase(
-      Container.opportunityRepository,
-      Container.cityRepository
+    this.getOpportunitiesByCityUseCase = new GetOpportunitiesByCityUseCase(
+      this.opportunityRepository,
+      this.cityRepository
     )
 
     // Initialize Signup Approval use cases
@@ -649,22 +653,25 @@ export class Container {
 
   // Getters for use cases - Cities
   static getGetCitiesUseCase(): GetCitiesUseCase {
-    return Container.getCitiesUseCase
+    console.log('[DEBUG GETTER] this:', this)
+    console.log('[DEBUG GETTER] this.getCitiesUseCase:', this.getCitiesUseCase)
+    console.log('[DEBUG GETTER] Container.getCitiesUseCase:', Container.getCitiesUseCase)
+    return this.getCitiesUseCase
   }
 
   static getGetCityBySlugUseCase(): GetCityBySlugUseCase {
-    return Container.getCityBySlugUseCase
+    return this.getCityBySlugUseCase
   }
 
   static getCheckUserIsCityManagerUseCase(): CheckUserIsCityManagerUseCase {
-    return Container.checkUserIsCityManagerUseCase
+    return this.checkUserIsCityManagerUseCase
   }
 
   static getAssignCityManagerUseCase(): AssignCityManagerUseCase {
-    return Container.assignCityManagerUseCase
+    return this.assignCityManagerUseCase
   }
 
   static getGetOpportunitiesByCityUseCase(): GetOpportunitiesByCityUseCase {
-    return Container.getOpportunitiesByCityUseCase
+    return this.getOpportunitiesByCityUseCase
   }
 }

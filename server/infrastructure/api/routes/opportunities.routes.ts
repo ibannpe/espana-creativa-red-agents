@@ -13,8 +13,59 @@ export const createOpportunitiesRoutes = (): Router => {
   // GET /api/opportunities - Get all opportunities with optional filters
   router.get('/', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
-      const { type, status, skills, remote, search, limit } = req.query
+      const { type, status, skills, remote, search, limit, city_id } = req.query
 
+      // If city_id is provided, use GetOpportunitiesByCityUseCase
+      if (city_id) {
+        const cityId = parseInt(city_id as string, 10)
+        const getOpportunitiesByCityUseCase = Container.getGetOpportunitiesByCityUseCase()
+
+        const result = await getOpportunitiesByCityUseCase.execute({
+          cityId,
+          filters: {
+            type: type as any,
+            status: status as any,
+            skills: skills ? (skills as string).split(',') : undefined,
+            remote: remote === 'true' ? true : remote === 'false' ? false : undefined,
+            search: search as string
+          }
+        })
+
+        let opportunities = result.opportunities
+
+        // Apply limit if provided
+        const limitNum = limit ? parseInt(limit as string, 10) : undefined
+        if (limitNum && limitNum > 0) {
+          opportunities = opportunities.slice(0, limitNum)
+        }
+
+        return res.status(200).json({
+          opportunities: opportunities.map((o) => ({
+            id: o.opportunity.id,
+            title: o.opportunity.title,
+            description: o.opportunity.description,
+            type: o.opportunity.type,
+            status: o.opportunity.status,
+            skills_required: o.opportunity.skillsRequired,
+            location: o.opportunity.location,
+            remote: o.opportunity.remote,
+            duration: o.opportunity.duration,
+            compensation: o.opportunity.compensation,
+            city_id: o.opportunity.cityId,
+            created_by: o.opportunity.createdBy,
+            created_at: o.opportunity.createdAt.toISOString(),
+            updated_at: o.opportunity.updatedAt.toISOString(),
+            creator: {
+              id: o.creator.id.value,
+              name: o.creator.name,
+              avatar_url: o.creator.avatarUrl
+            }
+          })),
+          total: opportunities.length
+        })
+      }
+
+      // Otherwise, get all opportunities
       const getOpportunitiesUseCase = Container.getGetOpportunitiesUseCase()
 
       let opportunities = await getOpportunitiesUseCase.execute({

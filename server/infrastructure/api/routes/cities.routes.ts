@@ -61,7 +61,24 @@ router.get('/:slug', async (req, res) => {
       return res.status(404).json({ error: result.error })
     }
 
-    res.json(result.city)
+    // Transform backend format to match frontend schema
+    const response = {
+      city: {
+        id: result.city.id,
+        name: result.city.name,
+        slug: result.city.slug.value,
+        image_url: result.city.imageUrl,
+        description: result.city.description,
+        active: result.city.active,
+        display_order: result.city.displayOrder,
+        created_at: result.city.createdAt.toISOString(),
+        updated_at: result.city.updatedAt.toISOString(),
+        opportunities_count: 0, // TODO: implement when we have total count
+        active_opportunities_count: result.activeOpportunitiesCount || 0
+      }
+    }
+
+    res.json(response)
   } catch (error) {
     console.error('Error fetching city:', error)
     res.status(500).json({ error: 'Failed to fetch city' })
