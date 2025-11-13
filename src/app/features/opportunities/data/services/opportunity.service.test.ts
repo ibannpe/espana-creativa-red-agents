@@ -312,4 +312,175 @@ describe('Opportunity Service', () => {
       await expect(opportunityService.deleteOpportunity(opportunityId)).rejects.toThrow('Not found')
     })
   })
+
+  describe('getOpportunitiesByCity', () => {
+    it('should call GET /api/opportunities with city_id filter', async () => {
+      const cityId = 1
+      const mockResponse = {
+        data: {
+          opportunities: [
+            {
+              id: '550e8400-e29b-41d4-a716-446655440000',
+              title: 'Opportunity in Madrid',
+              description: 'Description of opportunity in Madrid',
+              type: 'proyecto',
+              status: 'abierta',
+              skills_required: ['JavaScript'],
+              created_by: '550e8400-e29b-41d4-a716-446655440001',
+              city_id: 1,
+              location: null,
+              remote: false,
+              duration: null,
+              compensation: null,
+              created_at: '2024-01-01T00:00:00Z',
+              updated_at: '2024-01-01T00:00:00Z',
+              creator: {
+                id: '550e8400-e29b-41d4-a716-446655440001',
+                name: 'John Doe',
+                avatar_url: null
+              }
+            }
+          ],
+          total: 1
+        }
+      }
+
+      mockedAxios.get.mockResolvedValue(mockResponse)
+
+      const result = await opportunityService.getOpportunitiesByCity(cityId)
+
+      expect(mockedAxios.get).toHaveBeenCalledWith('http://localhost:3001/api/opportunities', {
+        params: {
+          city_id: 1,
+          type: undefined,
+          status: undefined,
+          skills: undefined,
+          remote: undefined,
+          search: undefined,
+          limit: undefined
+        }
+      })
+      expect(result.opportunities).toHaveLength(1)
+      expect(result.total).toBe(1)
+    })
+
+    it('should call GET /api/opportunities with city_id and additional filters', async () => {
+      const cityId = 1
+      const filters = {
+        type: 'proyecto' as const,
+        status: 'abierta' as const,
+        skills: ['JavaScript', 'React'],
+        remote: true,
+        search: 'developer'
+      }
+
+      const mockResponse = {
+        data: {
+          opportunities: [],
+          total: 0
+        }
+      }
+
+      mockedAxios.get.mockResolvedValue(mockResponse)
+
+      await opportunityService.getOpportunitiesByCity(cityId, filters)
+
+      expect(mockedAxios.get).toHaveBeenCalledWith('http://localhost:3001/api/opportunities', {
+        params: {
+          city_id: 1,
+          type: 'proyecto',
+          status: 'abierta',
+          skills: 'JavaScript,React',
+          remote: true,
+          search: 'developer',
+          limit: undefined
+        }
+      })
+    })
+
+    it('should return validated opportunities for city', async () => {
+      const cityId = 2
+      const mockResponse = {
+        data: {
+          opportunities: [
+            {
+              id: '550e8400-e29b-41d4-a716-446655440000',
+              title: 'Barcelona Opportunity',
+              description: 'Description here',
+              type: 'empleo',
+              status: 'abierta',
+              skills_required: ['Python'],
+              created_by: '550e8400-e29b-41d4-a716-446655440001',
+              city_id: 2,
+              location: null,
+              remote: false,
+              duration: null,
+              compensation: null,
+              created_at: '2024-01-01T00:00:00Z',
+              updated_at: '2024-01-01T00:00:00Z',
+              creator: {
+                id: '550e8400-e29b-41d4-a716-446655440001',
+                name: 'Jane Doe',
+                avatar_url: null
+              }
+            },
+            {
+              id: '660e8400-e29b-41d4-a716-446655440000',
+              title: 'Another Barcelona Opportunity',
+              description: 'Another description',
+              type: 'colaboracion',
+              status: 'abierta',
+              skills_required: ['TypeScript'],
+              created_by: '550e8400-e29b-41d4-a716-446655440001',
+              city_id: 2,
+              location: null,
+              remote: true,
+              duration: null,
+              compensation: null,
+              created_at: '2024-01-02T00:00:00Z',
+              updated_at: '2024-01-02T00:00:00Z',
+              creator: {
+                id: '550e8400-e29b-41d4-a716-446655440001',
+                name: 'Jane Doe',
+                avatar_url: null
+              }
+            }
+          ],
+          total: 2
+        }
+      }
+
+      mockedAxios.get.mockResolvedValue(mockResponse)
+
+      const result = await opportunityService.getOpportunitiesByCity(cityId)
+
+      expect(result.opportunities).toHaveLength(2)
+      expect(result.total).toBe(2)
+    })
+
+    it('should handle empty opportunities for city', async () => {
+      const cityId = 3
+      const mockResponse = {
+        data: {
+          opportunities: [],
+          total: 0
+        }
+      }
+
+      mockedAxios.get.mockResolvedValue(mockResponse)
+
+      const result = await opportunityService.getOpportunitiesByCity(cityId)
+
+      expect(result.opportunities).toHaveLength(0)
+      expect(result.total).toBe(0)
+    })
+
+    it('should handle API errors', async () => {
+      const cityId = 1
+
+      mockedAxios.get.mockRejectedValue(new Error('City not found'))
+
+      await expect(opportunityService.getOpportunitiesByCity(cityId)).rejects.toThrow('City not found')
+    })
+  })
 })

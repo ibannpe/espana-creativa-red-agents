@@ -5,15 +5,16 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { MapPin, Briefcase, Clock, DollarSign, Trash2, Edit } from 'lucide-react'
+import { MapPin, Briefcase, Clock, DollarSign, Trash2, Edit, Navigation } from 'lucide-react'
 import { useDeleteOpportunityMutation } from '../hooks/mutations/useDeleteOpportunityMutation'
-import type { OpportunityWithCreator } from '../data/schemas/opportunity.schema'
+import type { OpportunityWithCreator, OpportunityWithCity } from '../data/schemas/opportunity.schema'
 
 interface OpportunityCardProps {
-  opportunity: OpportunityWithCreator
+  opportunity: OpportunityWithCreator | OpportunityWithCity
   onEdit?: (opportunity: OpportunityWithCreator) => void
   showActions?: boolean
   isOwner?: boolean
+  showCityBadge?: boolean
 }
 
 const typeLabels = {
@@ -43,9 +44,13 @@ export function OpportunityCard({
   opportunity,
   onEdit,
   showActions = false,
-  isOwner = false
+  isOwner = false,
+  showCityBadge = false
 }: OpportunityCardProps) {
   const { action: deleteOpportunity, isLoading: isDeleting } = useDeleteOpportunityMutation()
+
+  // Type guard to check if opportunity has city data
+  const hasCity = 'city' in opportunity && opportunity.city !== undefined
 
   const handleDelete = () => {
     if (confirm('¿Estás seguro de que quieres eliminar esta oportunidad?')) {
@@ -55,7 +60,7 @@ export function OpportunityCard({
 
   const handleEdit = () => {
     if (onEdit) {
-      onEdit(opportunity)
+      onEdit(opportunity as OpportunityWithCreator)
     }
   }
 
@@ -64,7 +69,7 @@ export function OpportunityCard({
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
               <Badge variant={statusVariants[opportunity.status]}>
                 {statusLabels[opportunity.status]}
               </Badge>
@@ -72,6 +77,13 @@ export function OpportunityCard({
                 <Briefcase className="h-3 w-3 mr-1" />
                 {typeLabels[opportunity.type]}
               </Badge>
+              {/* City Badge - Optional */}
+              {showCityBadge && hasCity && (
+                <Badge variant="secondary" className="bg-primary/10 text-primary">
+                  <Navigation className="h-3 w-3 mr-1" />
+                  {opportunity.city.name}
+                </Badge>
+              )}
             </div>
             <h3 className="text-xl font-semibold mb-2">{opportunity.title}</h3>
           </div>

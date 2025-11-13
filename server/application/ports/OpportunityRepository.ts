@@ -20,6 +20,7 @@ export interface FilterOpportunitiesParams {
   remote?: boolean
   search?: string
   createdBy?: string
+  cityId?: number
 }
 
 /**
@@ -73,4 +74,14 @@ export interface OpportunityRepository {
    * Count opportunities matching filters
    */
   count(filters?: FilterOpportunitiesParams): Promise<number>
+
+  /**
+   * Get all opportunities for a specific city
+   */
+  findByCity(cityId: number, filters?: FilterOpportunitiesParams): Promise<OpportunityWithCreator[]>
+
+  /**
+   * Count active opportunities for a city
+   */
+  countActiveByCity(cityId: number): Promise<number>
 }

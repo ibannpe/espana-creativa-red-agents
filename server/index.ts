@@ -15,6 +15,7 @@ import { createProgramsRoutes } from './infrastructure/api/routes/programs.route
 import { createMessagesRoutes } from './infrastructure/api/routes/messages.routes'
 import { createSignupApprovalRoutes } from './infrastructure/api/routes/signup-approval.routes'
 import { createAdminRoutes } from './infrastructure/api/routes/admin.routes'
+import citiesRoutes from './infrastructure/api/routes/cities.routes'
 import { errorHandler } from './infrastructure/api/middleware/errorHandler'
 import { loggerMiddleware } from './infrastructure/api/middleware/logger.middleware'
 import { authMiddleware } from './infrastructure/api/middleware/auth.middleware'
@@ -178,6 +179,7 @@ app.use('/api/projects', createProgramsRoutes())
 // Protected routes (require authentication)
 app.use('/api/users', authMiddleware, createUsersRoutes())
 app.use('/api/connections', authMiddleware, createConnectionsRoutes())
+app.use('/api/cities', authMiddleware, citiesRoutes)
 app.use('/api/opportunities', authMiddleware, createOpportunitiesRoutes())
 app.use('/api/opportunity-interests', authMiddleware, createOpportunityInterestsRoutes(Container))
 app.use('/api/messages', authMiddleware, createMessagesRoutes())

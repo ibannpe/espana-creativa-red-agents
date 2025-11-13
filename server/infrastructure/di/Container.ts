@@ -93,6 +93,19 @@ import { SupabaseProgramEnrollmentRepository } from '../adapters/repositories/Su
 import { ProgramRepository } from '../../application/ports/ProgramRepository'
 import { ProgramEnrollmentRepository } from '../../application/ports/ProgramEnrollmentRepository'
 
+// Repositories - Cities
+import { SupabaseCityRepository } from '../adapters/repositories/SupabaseCityRepository'
+import { SupabaseCityManagerRepository } from '../adapters/repositories/SupabaseCityManagerRepository'
+import { CityRepository } from '../../application/ports/CityRepository'
+import { CityManagerRepository } from '../../application/ports/CityManagerRepository'
+
+// Use Cases - Cities
+import { GetCitiesUseCase } from '../../application/use-cases/cities/GetCitiesUseCase'
+import { GetCityBySlugUseCase } from '../../application/use-cases/cities/GetCityBySlugUseCase'
+import { CheckUserIsCityManagerUseCase } from '../../application/use-cases/cities/CheckUserIsCityManagerUseCase'
+import { AssignCityManagerUseCase } from '../../application/use-cases/cities/AssignCityManagerUseCase'
+import { GetOpportunitiesByCityUseCase } from '../../application/use-cases/opportunities/GetOpportunitiesByCityUseCase'
+
 // Load environment variables (silent to avoid EPIPE errors)
 dotenv.config({ silent: true })
 
@@ -106,6 +119,8 @@ export class Container {
   private static programEnrollmentRepository: ProgramEnrollmentRepository
   private static messageRepository: MessageRepository
   private static pendingSignupRepository: IPendingSignupRepository
+  private static cityRepository: CityRepository
+  private static cityManagerRepository: CityManagerRepository
   private static authService: IAuthService
   private static emailService: IEmailService
   private static rateLimitService: IRateLimitService
@@ -170,6 +185,13 @@ export class Container {
   private static getUserEnrollmentsUseCase: GetUserEnrollmentsUseCase
   private static cancelEnrollmentUseCase: CancelEnrollmentUseCase
 
+  // Use Cases - Cities
+  private static getCitiesUseCase: GetCitiesUseCase
+  private static getCityBySlugUseCase: GetCityBySlugUseCase
+  private static checkUserIsCityManagerUseCase: CheckUserIsCityManagerUseCase
+  private static assignCityManagerUseCase: AssignCityManagerUseCase
+  private static getOpportunitiesByCityUseCase: GetOpportunitiesByCityUseCase
+
   // Initialize all dependencies
   static initialize() {
     // Create Supabase client
@@ -204,6 +226,8 @@ export class Container {
     this.programEnrollmentRepository = new SupabaseProgramEnrollmentRepository(supabase)
     this.messageRepository = new SupabaseMessageRepository(supabase)
     this.pendingSignupRepository = new SupabasePendingSignupRepository(supabase)
+    this.cityRepository = new SupabaseCityRepository(supabase)
+    this.cityManagerRepository = new SupabaseCityManagerRepository(supabase)
 
     // Initialize services
     this.authService = new SupabaseAuthService(supabase)
@@ -275,7 +299,10 @@ export class Container {
 
     // Initialize Opportunities use cases
     this.createOpportunityUseCase = new CreateOpportunityUseCase(
-      this.opportunityRepository
+      this.opportunityRepository,
+      this.cityRepository,
+      this.cityManagerRepository,
+      this.userRepository
     )
 
     this.getOpportunitiesUseCase = new GetOpportunitiesUseCase(
@@ -291,11 +318,15 @@ export class Container {
     )
 
     this.updateOpportunityUseCase = new UpdateOpportunityUseCase(
-      this.opportunityRepository
+      this.opportunityRepository,
+      this.cityManagerRepository,
+      this.userRepository
     )
 
     this.deleteOpportunityUseCase = new DeleteOpportunityUseCase(
-      this.opportunityRepository
+      this.opportunityRepository,
+      this.cityManagerRepository,
+      this.userRepository
     )
 
     // Initialize Opportunity Interests use cases
@@ -376,6 +407,31 @@ export class Container {
 
     this.getUnreadCountUseCase = new GetUnreadCountUseCase(
       this.messageRepository
+    )
+
+    // Initialize Cities use cases
+    Container.getCitiesUseCase = new GetCitiesUseCase(
+      Container.cityRepository
+    )
+
+    Container.getCityBySlugUseCase = new GetCityBySlugUseCase(
+      Container.cityRepository
+    )
+
+    Container.checkUserIsCityManagerUseCase = new CheckUserIsCityManagerUseCase(
+      Container.cityManagerRepository,
+      Container.userRepository
+    )
+
+    Container.assignCityManagerUseCase = new AssignCityManagerUseCase(
+      Container.cityManagerRepository,
+      Container.cityRepository,
+      Container.userRepository
+    )
+
+    Container.getOpportunitiesByCityUseCase = new GetOpportunitiesByCityUseCase(
+      Container.opportunityRepository,
+      Container.cityRepository
     )
 
     // Initialize Signup Approval use cases
@@ -589,5 +645,26 @@ export class Container {
 
   static getCancelEnrollmentUseCase(): CancelEnrollmentUseCase {
     return this.cancelEnrollmentUseCase
+  }
+
+  // Getters for use cases - Cities
+  static getGetCitiesUseCase(): GetCitiesUseCase {
+    return Container.getCitiesUseCase
+  }
+
+  static getGetCityBySlugUseCase(): GetCityBySlugUseCase {
+    return Container.getCityBySlugUseCase
+  }
+
+  static getCheckUserIsCityManagerUseCase(): CheckUserIsCityManagerUseCase {
+    return Container.checkUserIsCityManagerUseCase
+  }
+
+  static getAssignCityManagerUseCase(): AssignCityManagerUseCase {
+    return Container.assignCityManagerUseCase
+  }
+
+  static getGetOpportunitiesByCityUseCase(): GetOpportunitiesByCityUseCase {
+    return Container.getOpportunitiesByCityUseCase
   }
 }

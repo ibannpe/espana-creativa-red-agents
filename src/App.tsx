@@ -15,8 +15,9 @@ import { NetworkPage } from '@/components/pages/NetworkPage'
 import { MyNetworkPage } from '@/components/pages/MyNetworkPage'
 import { FollowersPage } from '@/components/pages/FollowersPage'
 import { MessagesPage } from '@/app/features/messages/pages/MessagesPage'
-import { OpportunitiesPage } from '@/components/pages/OpportunitiesPage'
 import { OpportunityDetailPage } from '@/components/pages/OpportunityDetailPage'
+import { CitiesGridPage } from '@/app/features/cities/pages/CitiesGridPage'
+import { CityOpportunitiesPage } from '@/app/features/opportunities/pages/CityOpportunitiesPage'
 import { ProjectsPage } from '@/components/pages/ProjectsPage'
 import { ProfilePage } from '@/components/pages/ProfilePage'
 import { UserProfileViewPage } from '@/components/pages/UserProfileViewPage'
@@ -133,12 +134,20 @@ function App() {
           path="/opportunities"
           element={
             <ProtectedRoute>
-              <OpportunitiesPage />
+              <CitiesGridPage />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/opportunities/:opportunityId"
+          path="/opportunities/:citySlug"
+          element={
+            <ProtectedRoute>
+              <CityOpportunitiesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/opportunity/:opportunityId"
           element={
             <ProtectedRoute>
               <OpportunityDetailPage />

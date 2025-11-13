@@ -26,6 +26,7 @@ export interface OpportunityProps {
   remote: boolean
   duration?: string
   compensation?: string
+  cityId: number
   createdBy: string
   createdAt: Date
   updatedAt: Date
@@ -49,6 +50,7 @@ export class Opportunity {
     private _remote: boolean,
     private _duration: string | undefined,
     private _compensation: string | undefined,
+    private _cityId: number,
     public readonly createdBy: string,
     public readonly createdAt: Date,
     private _updatedAt: Date
@@ -71,6 +73,7 @@ export class Opportunity {
       props.remote,
       props.duration,
       props.compensation,
+      props.cityId,
       props.createdBy,
       props.createdAt,
       props.updatedAt
@@ -86,6 +89,7 @@ export class Opportunity {
     description: string,
     type: OpportunityType,
     skillsRequired: string[],
+    cityId: number,
     createdBy: string,
     options?: {
       location?: string
@@ -106,6 +110,7 @@ export class Opportunity {
       options?.remote ?? false,
       options?.duration,
       options?.compensation,
+      cityId,
       createdBy,
       now,
       now
@@ -147,6 +152,10 @@ export class Opportunity {
 
   get compensation(): string | undefined {
     return this._compensation
+  }
+
+  get cityId(): number {
+    return this._cityId
   }
 
   get updatedAt(): Date {
@@ -271,6 +280,13 @@ export class Opportunity {
   }
 
   /**
+   * Check if opportunity belongs to a specific city
+   */
+  belongsToCity(cityId: number): boolean {
+    return this._cityId === cityId
+  }
+
+  /**
    * Validate opportunity business rules
    */
   private validate(): void {
@@ -335,6 +351,11 @@ export class Opportunity {
       throw new Error('Creator ID cannot be empty')
     }
 
+    // City ID validation
+    if (!this._cityId || this._cityId <= 0) {
+      throw new Error('City ID must be a positive number')
+    }
+
     // Date validation
     if (this.createdAt > this._updatedAt) {
       throw new Error('Created date cannot be after updated date')
@@ -356,6 +377,7 @@ export class Opportunity {
       remote: this._remote,
       duration: this._duration,
       compensation: this._compensation,
+      cityId: this._cityId,
       createdBy: this.createdBy,
       createdAt: this.createdAt,
       updatedAt: this._updatedAt

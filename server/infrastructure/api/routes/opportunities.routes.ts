@@ -45,6 +45,7 @@ export const createOpportunitiesRoutes = (): Router => {
           remote: o.opportunity.remote,
           duration: o.opportunity.duration,
           compensation: o.opportunity.compensation,
+          city_id: o.opportunity.cityId,
           created_by: o.opportunity.createdBy,
           created_at: o.opportunity.createdAt.toISOString(),
           updated_at: o.opportunity.updatedAt.toISOString(),
@@ -82,6 +83,7 @@ export const createOpportunitiesRoutes = (): Router => {
           remote: o.opportunity.remote,
           duration: o.opportunity.duration,
           compensation: o.opportunity.compensation,
+          city_id: o.opportunity.cityId,
           created_by: o.opportunity.createdBy,
           created_at: o.opportunity.createdAt.toISOString(),
           updated_at: o.opportunity.updatedAt.toISOString(),
@@ -119,6 +121,7 @@ export const createOpportunitiesRoutes = (): Router => {
           remote: result.opportunity.remote,
           duration: result.opportunity.duration,
           compensation: result.opportunity.compensation,
+          city_id: result.opportunity.cityId,
           created_by: result.opportunity.createdBy,
           created_at: result.opportunity.createdAt.toISOString(),
           updated_at: result.opportunity.updatedAt.toISOString(),
@@ -144,25 +147,27 @@ export const createOpportunitiesRoutes = (): Router => {
         description,
         type,
         skills_required,
+        city_id,
         location,
         remote,
         duration,
         compensation
       } = req.body
 
-      if (!title || !description || !type || !skills_required) {
+      if (!title || !description || !type || !skills_required || !city_id) {
         return res.status(400).json({
-          error: 'Missing required fields: title, description, type, skills_required'
+          error: 'Missing required fields: title, description, type, skills_required, city_id'
         })
       }
 
       const createOpportunityUseCase = Container.getCreateOpportunityUseCase()
 
-      const opportunity = await createOpportunityUseCase.execute({
+      const result = await createOpportunityUseCase.execute({
         title,
         description,
         type,
         skillsRequired: skills_required,
+        cityId: parseInt(city_id),
         location,
         remote: remote || false,
         duration,
@@ -170,21 +175,30 @@ export const createOpportunitiesRoutes = (): Router => {
         createdBy: userId
       })
 
+      if (result.error) {
+        return res.status(403).json({ error: result.error })
+      }
+
+      if (!result.opportunity) {
+        return res.status(500).json({ error: 'Failed to create opportunity' })
+      }
+
       return res.status(201).json({
         opportunity: {
-          id: opportunity.id,
-          title: opportunity.title,
-          description: opportunity.description,
-          type: opportunity.type,
-          status: opportunity.status,
-          skills_required: opportunity.skillsRequired,
-          location: opportunity.location || null,
-          remote: opportunity.remote,
-          duration: opportunity.duration || null,
-          compensation: opportunity.compensation || null,
-          created_by: opportunity.createdBy,
-          created_at: opportunity.createdAt.toISOString(),
-          updated_at: opportunity.updatedAt.toISOString()
+          id: result.opportunity.id,
+          title: result.opportunity.title,
+          description: result.opportunity.description,
+          type: result.opportunity.type,
+          status: result.opportunity.status,
+          skills_required: result.opportunity.skillsRequired,
+          location: result.opportunity.location || null,
+          remote: result.opportunity.remote,
+          duration: result.opportunity.duration || null,
+          compensation: result.opportunity.compensation || null,
+          city_id: result.opportunity.cityId,
+          created_by: result.opportunity.createdBy,
+          created_at: result.opportunity.createdAt.toISOString(),
+          updated_at: result.opportunity.updatedAt.toISOString()
         }
       })
     } catch (error: any) {
