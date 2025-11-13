@@ -99,8 +99,11 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
     },
   })
 
-  // Update form values when opportunity prop changes
+  // Update form values when opportunity prop changes or when dialog opens
   useEffect(() => {
+    // Only reset when dialog is open
+    if (!open) return
+
     if (opportunity) {
       form.reset({
         title: opportunity.title,
@@ -115,11 +118,14 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
         status: opportunity.status,
       })
     } else {
+      // Get default city only once when creating new opportunity
+      const defaultCityId = managedCities.length > 0 ? managedCities[0].id : undefined
+
       form.reset({
         title: '',
         description: '',
         type: 'proyecto',
-        city_id: managedCities.length > 0 ? managedCities[0].id : undefined,
+        city_id: defaultCityId,
         skills_required: [],
         location: null,
         remote: false,
@@ -128,7 +134,8 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
         status: 'abierta',
       })
     }
-  }, [opportunity, form, managedCities])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, opportunity?.id, managedCities.length])
 
   const skills = form.watch('skills_required')
 
