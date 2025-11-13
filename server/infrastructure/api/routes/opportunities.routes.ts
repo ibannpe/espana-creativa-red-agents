@@ -56,9 +56,10 @@ export const createOpportunitiesRoutes = (): Router => {
             created_at: o.opportunity.createdAt.toISOString(),
             updated_at: o.opportunity.updatedAt.toISOString(),
             creator: {
-              id: o.creator.id.value,
+              id: o.creator.id,
               name: o.creator.name,
-              avatar_url: o.creator.avatarUrl
+              avatar_url: o.creator.avatar_url,
+              professional_title: o.creator.professional_title
             }
           })),
           total: opportunities.length
@@ -100,7 +101,12 @@ export const createOpportunitiesRoutes = (): Router => {
           created_by: o.opportunity.createdBy,
           created_at: o.opportunity.createdAt.toISOString(),
           updated_at: o.opportunity.updatedAt.toISOString(),
-          creator: o.creator
+          creator: {
+            id: o.creator.id,
+            name: o.creator.name,
+            avatar_url: o.creator.avatar_url,
+            professional_title: o.creator.professional_title
+          }
         })),
         total: opportunities.length
       })
@@ -138,7 +144,12 @@ export const createOpportunitiesRoutes = (): Router => {
           created_by: o.opportunity.createdBy,
           created_at: o.opportunity.createdAt.toISOString(),
           updated_at: o.opportunity.updatedAt.toISOString(),
-          creator: o.creator
+          creator: {
+            id: o.creator.id,
+            name: o.creator.name,
+            avatar_url: o.creator.avatar_url,
+            professional_title: o.creator.professional_title
+          }
         })),
         total: opportunities.length
       })
@@ -176,7 +187,12 @@ export const createOpportunitiesRoutes = (): Router => {
           created_by: result.opportunity.createdBy,
           created_at: result.opportunity.createdAt.toISOString(),
           updated_at: result.opportunity.updatedAt.toISOString(),
-          creator: result.creator
+          creator: {
+            id: result.creator.id,
+            name: result.creator.name,
+            avatar_url: result.creator.avatar_url,
+            professional_title: result.creator.professional_title
+          }
         }
       })
     } catch (error) {
