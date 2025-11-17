@@ -80,7 +80,8 @@ export const createOpportunityRequestSchema = z.object({
   // Ciudad obligatoria
   city_id: z.number().positive('Debes seleccionar una ciudad'),
 
-  // location ya no se usa en creación (deprecado)
+  // Campos opcionales
+  location: z.string().max(100).nullable().optional(),
   remote: z.boolean().default(false),
   duration: z.string().max(100).nullable().optional(),
   compensation: z.string().max(200).nullable().optional()

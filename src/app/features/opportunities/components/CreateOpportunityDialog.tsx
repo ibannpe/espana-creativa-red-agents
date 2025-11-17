@@ -163,18 +163,21 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
     try {
       if (isEditMode && opportunity) {
         // For update, include status
+        console.log('🔄 Actualizando oportunidad:', { id: opportunity.id, data })
         await updateOpportunity({ id: opportunity.id, data })
         form.reset()
         onOpenChange(false)
       } else {
         // For creation, remove status field (backend sets it to 'abierta' by default)
         const { status, ...createData } = data
+        console.log('✨ Creando nueva oportunidad:', createData)
         await createOpportunity(createData)
+        console.log('✅ Oportunidad creada exitosamente')
         form.reset()
         onOpenChange(false)
       }
     } catch (error) {
-      console.error('Error al guardar oportunidad:', error)
+      console.error('❌ Error al guardar oportunidad:', error)
       // El error ya se muestra en el UI a través de React Query
     }
   }

@@ -9,7 +9,7 @@ import type { City } from '@/app/features/cities/data/schemas/city.schema'
  * Fetch allowed cities for current user from API
  */
 const fetchAllowedCities = async (): Promise<City[]> => {
-  const response = await axiosInstance.get<{ cities: City[] }>('/api/opportunities/allowed-cities')
+  const response = await axiosInstance.get<{ cities: City[] }>('/opportunities/allowed-cities')
   return response.data.cities
 }
 

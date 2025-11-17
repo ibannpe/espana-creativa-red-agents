@@ -17,7 +17,7 @@ import {
 import { Loader2, AlertCircle, Plus, ChevronLeft } from 'lucide-react'
 import { useCityBySlugQuery } from '@/app/features/cities/hooks/queries/useCityBySlugQuery'
 import { useOpportunitiesByCityQuery } from '../hooks/queries/useOpportunitiesByCityQuery'
-import { useCityPermissions } from '@/app/features/cities/hooks/useCityPermissions'
+import { useTerritorialPermissions } from '../hooks/useTerritorialPermissions'
 import { CityHeader } from '@/app/features/cities/components/CityHeader'
 import { OpportunityCard } from '../components/OpportunityCard'
 import { CreateOpportunityDialog } from '../components/CreateOpportunityDialog'
@@ -53,10 +53,9 @@ export function CityOpportunitiesPage() {
     enabled: !!citySlug,
   })
 
-  // Check permissions (only when we have city data)
-  const { canManageCity, isLoading: isLoadingPermissions } = useCityPermissions(
-    city?.id
-  )
+  // Check permissions using territorial roles (only when we have city data)
+  const { canCreateInCity, isLoading: isLoadingPermissions } = useTerritorialPermissions()
+  const canManageCity = city?.id ? canCreateInCity(city.id) : false
 
   // Fetch opportunities filtered by city
   const filters = typeFilter !== 'all' ? { type: typeFilter } : undefined

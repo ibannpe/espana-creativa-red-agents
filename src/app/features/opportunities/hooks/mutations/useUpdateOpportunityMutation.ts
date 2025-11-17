@@ -36,7 +36,7 @@ export const useUpdateOpportunityMutation = () => {
   })
 
   return {
-    action: mutation.mutate,
+    action: mutation.mutateAsync,  // Usar mutateAsync para poder await
     isLoading: mutation.isPending,
     error: mutation.error,
     isSuccess: mutation.isSuccess,

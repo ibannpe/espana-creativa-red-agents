@@ -333,7 +333,7 @@ export const createOpportunitiesRoutes = (): Router => {
 
       const updateOpportunityUseCase = Container.getUpdateOpportunityUseCase()
 
-      const opportunity = await updateOpportunityUseCase.execute({
+      const result = await updateOpportunityUseCase.execute({
         opportunityId,
         userId,
         updates: {
@@ -349,21 +349,30 @@ export const createOpportunitiesRoutes = (): Router => {
         }
       })
 
+      if (result.error) {
+        return res.status(400).json({ error: result.error })
+      }
+
+      if (!result.opportunity) {
+        return res.status(500).json({ error: 'Failed to update opportunity' })
+      }
+
       return res.status(200).json({
         opportunity: {
-          id: opportunity.id,
-          title: opportunity.title,
-          description: opportunity.description,
-          type: opportunity.type,
-          status: opportunity.status,
-          skills_required: opportunity.skillsRequired,
-          location: opportunity.location || null,
-          remote: opportunity.remote,
-          duration: opportunity.duration || null,
-          compensation: opportunity.compensation || null,
-          created_by: opportunity.createdBy,
-          created_at: opportunity.createdAt.toISOString(),
-          updated_at: opportunity.updatedAt.toISOString()
+          id: result.opportunity.id,
+          title: result.opportunity.title,
+          description: result.opportunity.description,
+          type: result.opportunity.type,
+          status: result.opportunity.status,
+          skills_required: result.opportunity.skillsRequired,
+          location: result.opportunity.location || null,
+          remote: result.opportunity.remote,
+          duration: result.opportunity.duration || null,
+          compensation: result.opportunity.compensation || null,
+          city_id: result.opportunity.cityId,
+          created_by: result.opportunity.createdBy,
+          created_at: result.opportunity.createdAt.toISOString(),
+          updated_at: result.opportunity.updatedAt.toISOString()
         }
       })
     } catch (error: any) {
@@ -392,10 +401,14 @@ export const createOpportunitiesRoutes = (): Router => {
 
       const deleteOpportunityUseCase = Container.getDeleteOpportunityUseCase()
 
-      await deleteOpportunityUseCase.execute({
+      const result = await deleteOpportunityUseCase.execute({
         opportunityId,
         userId
       })
+
+      if (result.error) {
+        return res.status(400).json({ error: result.error })
+      }
 
       return res.status(204).send()
     } catch (error: any) {
