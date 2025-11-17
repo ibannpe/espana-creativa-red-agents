@@ -1,6 +1,7 @@
 // ABOUTME: City card component with background image and gradient overlay
 // ABOUTME: Displays city name, description, and opportunity count with hover effects
 
+import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { MapPin, Briefcase } from 'lucide-react'
@@ -13,7 +14,21 @@ interface CityCardProps {
   className?: string
 }
 
+// Gradientes de respaldo únicos para cada ciudad
+const cityGradients: Record<string, string> = {
+  'cordoba': 'linear-gradient(135deg, #d4a574 0%, #8b6f47 100%)',
+  'tenerife': 'linear-gradient(135deg, #87ceeb 0%, #4682b4 100%)',
+  'quinto': 'linear-gradient(135deg, #c4b5a0 0%, #967259 100%)',
+  'denia': 'linear-gradient(135deg, #40e0d0 0%, #1ca598 100%)',
+  'ribeira-sacra': 'linear-gradient(135deg, #3a7d44 0%, #1b5e20 100%)',
+  'mondonedo': 'linear-gradient(135deg, #b39ddb 0%, #7e57c2 100%)',
+}
+
 export function CityCard({ city, className }: CityCardProps) {
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
+  const fallbackGradient = cityGradients[city.slug] || 'linear-gradient(135deg, #9ca3af 0%, #4b5563 100%)'
+
   return (
     <Link to={`/opportunities/${city.slug}`}>
       <Card
@@ -33,16 +48,32 @@ export function CityCard({ city, className }: CityCardProps) {
           }
         }}
       >
-        {/* Background Image */}
+        {/* Gradient Background - Always visible */}
         <div
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+          className="absolute inset-0 transition-transform duration-300 group-hover:scale-110"
           style={{
-            backgroundImage: `url(${city.image_url})`,
+            background: fallbackGradient,
           }}
           aria-hidden="true"
         />
 
-        {/* Gradient Overlay */}
+        {/* Image Layer - Shows when loaded successfully */}
+        {!imageError && (
+          <img
+            src={city.image_url}
+            alt={`${city.name} landscape`}
+            className="absolute inset-0 w-full h-full object-cover transition-all duration-300 group-hover:scale-110"
+            onLoad={() => setImageLoaded(true)}
+            onError={() => {
+              console.log(`Error loading image for ${city.name}:`, city.image_url)
+              setImageError(true)
+            }}
+            loading="eager"
+            aria-hidden="true"
+          />
+        )}
+
+        {/* Dark Overlay for text readability */}
         <div
           className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20"
           aria-hidden="true"

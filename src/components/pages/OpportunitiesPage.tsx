@@ -141,9 +141,9 @@ export function OpportunitiesPage() {
                 <Briefcase className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-foreground">Oportunidades</h1>
+                <h1 className="text-3xl font-bold text-foreground">Oportunidades Red</h1>
                 <p className="text-muted-foreground">
-                  Encuentra colaboraciones, proyectos y oportunidades de negocio
+                  Explora las oportunidades disponibles en la red de ciudades y territorios creativos de España
                 </p>
               </div>
             </div>

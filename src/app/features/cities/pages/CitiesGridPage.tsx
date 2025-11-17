@@ -18,9 +18,9 @@ export function CitiesGridPage() {
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Oportunidades por Ciudad</h1>
+          <h1 className="text-3xl font-bold mb-2">Oportunidades Red</h1>
           <p className="text-muted-foreground">
-            Explora las oportunidades disponibles en cada ciudad
+            Explora las oportunidades disponibles en la red de ciudades y territorios creativos de España
           </p>
         </div>
 

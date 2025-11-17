@@ -1,14 +1,22 @@
 // ABOUTME: City service for API communication with Axios and Zod validation
-// ABOUTME: Handles fetching cities and checking city manager permissions
+// ABOUTME: Handles fetching cities, CRUD operations, and checking city manager permissions
 
 import { axiosInstance } from '@/lib/axios'
 import {
   type GetCitiesResponse,
   type GetCityResponse,
   type GetIsCityManagerResponse,
+  type CreateCityRequest,
+  type CreateCityResponse,
+  type UpdateCityRequest,
+  type UpdateCityResponse,
+  type DeleteCityResponse,
   getCitiesResponseSchema,
   getCityResponseSchema,
-  getIsCityManagerResponseSchema
+  getIsCityManagerResponseSchema,
+  createCityResponseSchema,
+  updateCityResponseSchema,
+  deleteCityResponseSchema
 } from '../schemas/city.schema'
 
 export const cityService = {
@@ -42,5 +50,29 @@ export const cityService = {
   async canManageCity(cityId: number): Promise<boolean> {
     const response = await axiosInstance.get(`/cities/${cityId}/can-manage`)
     return response.data.canManage
+  },
+
+  /**
+   * Create a new city (admin only)
+   */
+  async createCity(data: CreateCityRequest): Promise<CreateCityResponse> {
+    const response = await axiosInstance.post('/cities', data)
+    return createCityResponseSchema.parse(response.data)
+  },
+
+  /**
+   * Update an existing city (admin only)
+   */
+  async updateCity(cityId: number, data: UpdateCityRequest): Promise<UpdateCityResponse> {
+    const response = await axiosInstance.put(`/cities/${cityId}`, data)
+    return updateCityResponseSchema.parse(response.data)
+  },
+
+  /**
+   * Delete a city (admin only)
+   */
+  async deleteCity(cityId: number): Promise<DeleteCityResponse> {
+    const response = await axiosInstance.delete(`/cities/${cityId}`)
+    return deleteCityResponseSchema.parse(response.data)
   }
 }

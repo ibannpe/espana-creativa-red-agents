@@ -104,6 +104,9 @@ import { GetCitiesUseCase } from '../../application/use-cases/cities/GetCitiesUs
 import { GetCityBySlugUseCase } from '../../application/use-cases/cities/GetCityBySlugUseCase'
 import { CheckUserIsCityManagerUseCase } from '../../application/use-cases/cities/CheckUserIsCityManagerUseCase'
 import { AssignCityManagerUseCase } from '../../application/use-cases/cities/AssignCityManagerUseCase'
+import { CreateCityUseCase } from '../../application/use-cases/cities/CreateCityUseCase'
+import { UpdateCityUseCase } from '../../application/use-cases/cities/UpdateCityUseCase'
+import { DeleteCityUseCase } from '../../application/use-cases/cities/DeleteCityUseCase'
 import { GetOpportunitiesByCityUseCase } from '../../application/use-cases/opportunities/GetOpportunitiesByCityUseCase'
 
 // Load environment variables (silent to avoid EPIPE errors)
@@ -190,6 +193,9 @@ export class Container {
   private static getCityBySlugUseCase: GetCityBySlugUseCase
   private static checkUserIsCityManagerUseCase: CheckUserIsCityManagerUseCase
   private static assignCityManagerUseCase: AssignCityManagerUseCase
+  private static createCityUseCase: CreateCityUseCase
+  private static updateCityUseCase: UpdateCityUseCase
+  private static deleteCityUseCase: DeleteCityUseCase
   private static getOpportunitiesByCityUseCase: GetOpportunitiesByCityUseCase
 
   // Initialize all dependencies
@@ -433,6 +439,21 @@ export class Container {
       this.userRepository
     )
 
+    this.createCityUseCase = new CreateCityUseCase(
+      this.cityRepository,
+      this.userRepository
+    )
+
+    this.updateCityUseCase = new UpdateCityUseCase(
+      this.cityRepository,
+      this.userRepository
+    )
+
+    this.deleteCityUseCase = new DeleteCityUseCase(
+      this.cityRepository,
+      this.userRepository
+    )
+
     this.getOpportunitiesByCityUseCase = new GetOpportunitiesByCityUseCase(
       this.opportunityRepository,
       this.cityRepository
@@ -669,6 +690,18 @@ export class Container {
 
   static getAssignCityManagerUseCase(): AssignCityManagerUseCase {
     return this.assignCityManagerUseCase
+  }
+
+  static getCreateCityUseCase(): CreateCityUseCase {
+    return this.createCityUseCase
+  }
+
+  static getUpdateCityUseCase(): UpdateCityUseCase {
+    return this.updateCityUseCase
+  }
+
+  static getDeleteCityUseCase(): DeleteCityUseCase {
+    return this.deleteCityUseCase
   }
 
   static getGetOpportunitiesByCityUseCase(): GetOpportunitiesByCityUseCase {

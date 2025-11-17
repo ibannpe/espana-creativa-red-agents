@@ -49,7 +49,7 @@ export function Navigation() {
   const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: Home },
     { href: '/network', label: 'Mi Red', icon: Users },
-    { href: '/opportunities', label: 'Oportunidades', icon: Briefcase },
+    { href: '/opportunities', label: 'Oportunidades Red', icon: Briefcase },
     { href: '/messages', label: 'Mensajes', icon: MessageSquare },
     { href: '/proyectos', label: 'Proyectos', icon: Calendar },
   ]

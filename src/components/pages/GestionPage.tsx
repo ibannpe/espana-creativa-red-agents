@@ -4,7 +4,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useUserRoles } from '@/app/features/auth/hooks/useUserRoles'
 import { useEffect } from 'react'
-import { Shield, Users, FileText, Settings, BarChart3, AlertCircle, ArrowLeft } from 'lucide-react'
+import { Shield, Users, FileText, Settings, BarChart3, AlertCircle, ArrowLeft, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export function GestionPage() {
@@ -100,6 +100,25 @@ export function GestionPage() {
             className="text-primary hover:underline text-sm font-medium"
           >
             Ver solicitudes →
+          </button>
+        </div>
+
+        {/* Territorios */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-3 bg-emerald-100 rounded-lg">
+              <MapPin className="h-6 w-6 text-emerald-600" />
+            </div>
+            <h2 className="text-xl font-semibold">Territorios</h2>
+          </div>
+          <p className="text-muted-foreground text-sm mb-4">
+            Gestiona ciudades y territorios de la red
+          </p>
+          <button
+            onClick={() => navigate('/gestion/territorios')}
+            className="text-primary hover:underline text-sm font-medium"
+          >
+            Gestionar territorios →
           </button>
         </div>
 

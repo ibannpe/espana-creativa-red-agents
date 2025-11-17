@@ -25,6 +25,7 @@ import { GestionPage } from '@/components/pages/GestionPage'
 import { AdminUsersPage } from '@/app/features/admin-management/users/pages/AdminUsersPage'
 import { AdminStatisticsPage } from '@/app/features/admin-management/statistics/pages/AdminStatisticsPage'
 import { AdminConfigPage } from '@/app/features/admin-management/config/pages/AdminConfigPage'
+import { AdminTerritoriesPage } from '@/app/features/admin-management/territories/pages/AdminTerritoriesPage'
 import PrivacyPage from '@/components/pages/PrivacyPage'
 import { Toaster } from "@/components/ui/toaster"
 import { ErrorBoundary } from '@/components/ErrorBoundary'
@@ -195,6 +196,14 @@ function App() {
           element={
             <ProtectedRoute>
               <AdminUsersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/gestion/territorios"
+          element={
+            <ProtectedRoute>
+              <AdminTerritoriesPage />
             </ProtectedRoute>
           }
         />
