@@ -71,17 +71,25 @@ export function GestionPage() {
             <div className="p-3 bg-blue-100 rounded-lg">
               <Users className="h-6 w-6 text-blue-600" />
             </div>
-            <h2 className="text-xl font-semibold">Usuarios</h2>
+            <h2 className="text-xl font-semibold">Usuarios y Roles</h2>
           </div>
           <p className="text-muted-foreground text-sm mb-4">
-            Administra usuarios, roles y permisos del sistema
+            Administra usuarios, roles territoriales y permisos del sistema
           </p>
-          <button
-            onClick={() => navigate('/gestion/usuarios')}
-            className="text-primary hover:underline text-sm font-medium"
-          >
-            Ver usuarios →
-          </button>
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={() => navigate('/gestion/usuarios')}
+              className="text-primary hover:underline text-sm font-medium text-left"
+            >
+              Ver usuarios →
+            </button>
+            <button
+              onClick={() => navigate('/gestion/roles')}
+              className="text-primary hover:underline text-sm font-medium text-left"
+            >
+              Gestionar roles →
+            </button>
+          </div>
         </div>
 
         {/* Aprobaciones */}

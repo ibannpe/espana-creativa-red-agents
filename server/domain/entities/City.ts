@@ -91,6 +91,10 @@ export class City {
     return this._name
   }
 
+  getName(): string {
+    return this._name
+  }
+
   get slug(): CitySlug {
     return this._slug
   }

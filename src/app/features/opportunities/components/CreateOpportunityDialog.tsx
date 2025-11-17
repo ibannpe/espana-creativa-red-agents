@@ -36,8 +36,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { useCreateOpportunityMutation } from '../hooks/mutations/useCreateOpportunityMutation'
 import { useUpdateOpportunityMutation } from '../hooks/mutations/useUpdateOpportunityMutation'
 import { createOpportunityRequestSchema, updateOpportunityRequestSchema, type CreateOpportunityRequest, type OpportunityWithCreator, type OpportunityStatus } from '../data/schemas/opportunity.schema'
-import { useMyCitiesQuery } from '@/app/features/cities/hooks/queries/useMyCitiesQuery'
-import { useUserRoles } from '@/app/features/auth/hooks/useUserRoles'
+import { useTerritorialPermissions } from '../hooks/useTerritorialPermissions'
 import { z } from 'zod'
 
 // Extended schema for edit mode that includes all fields including status
@@ -74,14 +73,13 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
   const [skillInput, setSkillInput] = useState('')
   const { action: createOpportunity, isLoading: isCreating } = useCreateOpportunityMutation()
   const { action: updateOpportunity, isLoading: isUpdating } = useUpdateOpportunityMutation()
-  const { data: managedCities, isLoading: isLoadingCities, isCityManager } = useMyCitiesQuery()
-  const { isAdmin } = useUserRoles()
+  const { allowedCities, canCreateInAnyCity, isLoading: isLoadingCities } = useTerritorialPermissions()
 
   const isEditMode = !!opportunity
   const isLoading = isCreating || isUpdating
 
-  // Show city selector only for city managers (including admins)
-  const canManageCities = isAdmin || isCityManager
+  // Show city selector only if user can create in at least one city
+  const canManageCities = canCreateInAnyCity
 
   const form = useForm<OpportunityFormData>({
     resolver: zodResolver(isEditMode ? editOpportunityFormSchema : createOpportunityRequestSchema),
@@ -89,7 +87,7 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
       title: '',
       description: '',
       type: 'proyecto',
-      city_id: managedCities.length > 0 ? managedCities[0].id : undefined,
+      city_id: allowedCities.length > 0 ? allowedCities[0].id : undefined,
       skills_required: [],
       location: null,
       remote: false,
@@ -119,7 +117,7 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
       })
     } else {
       // Get default city only once when creating new opportunity
-      const defaultCityId = managedCities.length > 0 ? managedCities[0].id : undefined
+      const defaultCityId = allowedCities.length > 0 ? allowedCities[0].id : undefined
 
       form.reset({
         title: '',
@@ -135,7 +133,7 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, opportunity?.id, managedCities.length])
+  }, [open, opportunity?.id, allowedCities.length])
 
   const skills = form.watch('skills_required')
 
@@ -161,30 +159,23 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
     }
   }
 
-  const onSubmit = (data: OpportunityFormData) => {
-    if (isEditMode && opportunity) {
-      // For update, include status
-      updateOpportunity({ id: opportunity.id, data }, {
-        onSuccess: () => {
-          form.reset()
-          onOpenChange(false)
-        },
-        onError: (error) => {
-          console.error('Error al actualizar oportunidad:', error)
-        }
-      })
-    } else {
-      // For creation, remove status field (backend sets it to 'abierta' by default)
-      const { status, ...createData } = data
-      createOpportunity(createData, {
-        onSuccess: () => {
-          form.reset()
-          onOpenChange(false)
-        },
-        onError: (error) => {
-          console.error('Error al crear oportunidad:', error)
-        }
-      })
+  const onSubmit = async (data: OpportunityFormData) => {
+    try {
+      if (isEditMode && opportunity) {
+        // For update, include status
+        await updateOpportunity({ id: opportunity.id, data })
+        form.reset()
+        onOpenChange(false)
+      } else {
+        // For creation, remove status field (backend sets it to 'abierta' by default)
+        const { status, ...createData } = data
+        await createOpportunity(createData)
+        form.reset()
+        onOpenChange(false)
+      }
+    } catch (error) {
+      console.error('Error al guardar oportunidad:', error)
+      // El error ya se muestra en el UI a través de React Query
     }
   }
 
@@ -268,7 +259,7 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
                     <Select
                       onValueChange={(value) => field.onChange(parseInt(value))}
                       value={field.value?.toString()}
-                      disabled={isLoadingCities || managedCities.length === 0}
+                      disabled={isLoadingCities || allowedCities.length === 0}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -276,7 +267,7 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {managedCities.map((city) => (
+                        {allowedCities.map((city) => (
                           <SelectItem key={city.id} value={city.id.toString()}>
                             {city.name}
                           </SelectItem>
@@ -284,8 +275,8 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
                       </SelectContent>
                     </Select>
                     <FormDescription>
-                      {managedCities.length === 0
-                        ? 'No tienes ciudades asignadas'
+                      {allowedCities.length === 0
+                        ? 'No tienes permisos para crear oportunidades en ninguna ciudad'
                         : 'Selecciona la ciudad donde se publicará la oportunidad'}
                     </FormDescription>
                     <FormMessage />

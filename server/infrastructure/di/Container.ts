@@ -54,6 +54,7 @@ import { GetOpportunityUseCase } from '../../application/use-cases/opportunities
 import { GetMyOpportunitiesUseCase } from '../../application/use-cases/opportunities/GetMyOpportunitiesUseCase'
 import { UpdateOpportunityUseCase } from '../../application/use-cases/opportunities/UpdateOpportunityUseCase'
 import { DeleteOpportunityUseCase } from '../../application/use-cases/opportunities/DeleteOpportunityUseCase'
+import { GetAllowedCitiesForUserUseCase } from '../../application/use-cases/opportunities/GetAllowedCitiesForUserUseCase'
 
 // Use Cases - Opportunity Interests
 import { ExpressInterestUseCase } from '../../application/use-cases/opportunity-interests/ExpressInterestUseCase'
@@ -99,6 +100,14 @@ import { SupabaseCityManagerRepository } from '../adapters/repositories/Supabase
 import { CityRepository } from '../../application/ports/CityRepository'
 import { CityManagerRepository } from '../../application/ports/CityManagerRepository'
 
+// Repositories - Roles
+import { SupabaseRoleRepository } from '../adapters/repositories/SupabaseRoleRepository'
+import { RoleRepository } from '../../application/ports/RoleRepository'
+import { SupabaseUserRoleRepository } from '../adapters/repositories/SupabaseUserRoleRepository'
+import { UserRoleRepository } from '../../application/ports/UserRoleRepository'
+import { SupabaseRoleAuditLogRepository } from '../adapters/repositories/SupabaseRoleAuditLogRepository'
+import { RoleAuditLogRepository } from '../../application/ports/RoleAuditLogRepository'
+
 // Use Cases - Cities
 import { GetCitiesUseCase } from '../../application/use-cases/cities/GetCitiesUseCase'
 import { GetCityBySlugUseCase } from '../../application/use-cases/cities/GetCityBySlugUseCase'
@@ -108,6 +117,11 @@ import { CreateCityUseCase } from '../../application/use-cases/cities/CreateCity
 import { UpdateCityUseCase } from '../../application/use-cases/cities/UpdateCityUseCase'
 import { DeleteCityUseCase } from '../../application/use-cases/cities/DeleteCityUseCase'
 import { GetOpportunitiesByCityUseCase } from '../../application/use-cases/opportunities/GetOpportunitiesByCityUseCase'
+
+// Use Cases - User Roles
+import { AssignRoleToUserUseCase } from '../../application/use-cases/user-roles/AssignRoleToUserUseCase'
+import { RemoveRoleFromUserUseCase } from '../../application/use-cases/user-roles/RemoveRoleFromUserUseCase'
+import { GetRoleAuditLogUseCase } from '../../application/use-cases/user-roles/GetRoleAuditLogUseCase'
 
 // Load environment variables (silent to avoid EPIPE errors)
 dotenv.config({ silent: true })
@@ -124,6 +138,9 @@ export class Container {
   private static pendingSignupRepository: IPendingSignupRepository
   private static cityRepository: CityRepository
   private static cityManagerRepository: CityManagerRepository
+  private static roleRepository: RoleRepository
+  private static userRoleRepository: UserRoleRepository
+  private static roleAuditLogRepository: RoleAuditLogRepository
   private static authService: IAuthService
   private static emailService: IEmailService
   private static rateLimitService: IRateLimitService
@@ -155,6 +172,7 @@ export class Container {
   private static getMyOpportunitiesUseCase: GetMyOpportunitiesUseCase
   private static updateOpportunityUseCase: UpdateOpportunityUseCase
   private static deleteOpportunityUseCase: DeleteOpportunityUseCase
+  private static getAllowedCitiesForUserUseCase: GetAllowedCitiesForUserUseCase
 
   // Use Cases - Opportunity Interests
   private static expressInterestUseCase: ExpressInterestUseCase
@@ -198,6 +216,11 @@ export class Container {
   private static deleteCityUseCase: DeleteCityUseCase
   private static getOpportunitiesByCityUseCase: GetOpportunitiesByCityUseCase
 
+  // Use Cases - User Roles
+  private static assignRoleToUserUseCase: AssignRoleToUserUseCase
+  private static removeRoleFromUserUseCase: RemoveRoleFromUserUseCase
+  private static getRoleAuditLogUseCase: GetRoleAuditLogUseCase
+
   // Initialize all dependencies
   static initialize() {
     // Create Supabase client
@@ -234,6 +257,9 @@ export class Container {
     this.pendingSignupRepository = new SupabasePendingSignupRepository(supabase)
     this.cityRepository = new SupabaseCityRepository(supabase)
     this.cityManagerRepository = new SupabaseCityManagerRepository(supabase)
+    this.roleRepository = new SupabaseRoleRepository(supabase)
+    this.userRoleRepository = new SupabaseUserRoleRepository(supabase)
+    this.roleAuditLogRepository = new SupabaseRoleAuditLogRepository(supabase)
 
     // Initialize services
     this.authService = new SupabaseAuthService(supabase)
@@ -308,7 +334,8 @@ export class Container {
       this.opportunityRepository,
       this.cityRepository,
       this.cityManagerRepository,
-      this.userRepository
+      this.userRepository,
+      this.roleRepository
     )
 
     this.getOpportunitiesUseCase = new GetOpportunitiesUseCase(
@@ -325,14 +352,24 @@ export class Container {
 
     this.updateOpportunityUseCase = new UpdateOpportunityUseCase(
       this.opportunityRepository,
+      this.cityRepository,
       this.cityManagerRepository,
-      this.userRepository
+      this.userRepository,
+      this.roleRepository
     )
 
     this.deleteOpportunityUseCase = new DeleteOpportunityUseCase(
       this.opportunityRepository,
+      this.cityRepository,
       this.cityManagerRepository,
-      this.userRepository
+      this.userRepository,
+      this.roleRepository
+    )
+
+    this.getAllowedCitiesForUserUseCase = new GetAllowedCitiesForUserUseCase(
+      this.userRepository,
+      this.cityRepository,
+      this.roleRepository
     )
 
     // Initialize Opportunity Interests use cases
@@ -459,6 +496,24 @@ export class Container {
       this.cityRepository
     )
 
+    // Initialize User Roles use cases
+    this.assignRoleToUserUseCase = new AssignRoleToUserUseCase(
+      this.userRepository,
+      this.roleRepository,
+      this.userRoleRepository
+    )
+
+    this.removeRoleFromUserUseCase = new RemoveRoleFromUserUseCase(
+      this.userRepository,
+      this.roleRepository,
+      this.userRoleRepository
+    )
+
+    this.getRoleAuditLogUseCase = new GetRoleAuditLogUseCase(
+      this.userRepository,
+      this.roleAuditLogRepository
+    )
+
     // Initialize Signup Approval use cases
     this.submitSignupRequestUseCase = new SubmitSignupRequestUseCase(
       this.pendingSignupRepository,
@@ -488,6 +543,10 @@ export class Container {
   // Getters for repositories
   static getUserRepository(): IUserRepository {
     return this.userRepository
+  }
+
+  static getCityRepository(): CityRepository {
+    return this.cityRepository
   }
 
   // Getters for services
@@ -577,6 +636,10 @@ export class Container {
 
   static getDeleteOpportunityUseCase(): DeleteOpportunityUseCase {
     return this.deleteOpportunityUseCase
+  }
+
+  static getGetAllowedCitiesForUserUseCase(): GetAllowedCitiesForUserUseCase {
+    return this.getAllowedCitiesForUserUseCase
   }
 
   // Getters for use cases - Messages
@@ -706,5 +769,18 @@ export class Container {
 
   static getGetOpportunitiesByCityUseCase(): GetOpportunitiesByCityUseCase {
     return this.getOpportunitiesByCityUseCase
+  }
+
+  // Getters for use cases - User Roles
+  static getAssignRoleToUserUseCase(): AssignRoleToUserUseCase {
+    return this.assignRoleToUserUseCase
+  }
+
+  static getRemoveRoleFromUserUseCase(): RemoveRoleFromUserUseCase {
+    return this.removeRoleFromUserUseCase
+  }
+
+  static getGetRoleAuditLogUseCase(): GetRoleAuditLogUseCase {
+    return this.getRoleAuditLogUseCase
   }
 }

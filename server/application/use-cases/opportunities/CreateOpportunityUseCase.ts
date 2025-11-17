@@ -1,5 +1,5 @@
-// ABOUTME: Use case for creating a new opportunity (UPDATED for city-based system)
-// ABOUTME: Validates that user is city manager before allowing creation
+// ABOUTME: Use case for creating a new opportunity (UPDATED for role-based permissions)
+// ABOUTME: Validates that user has the territorial role before allowing creation
 
 import { v4 as uuidv4 } from 'uuid'
 import { Opportunity, OpportunityType } from '../../../domain/entities/Opportunity'
@@ -7,6 +7,7 @@ import { OpportunityRepository } from '../../ports/OpportunityRepository'
 import { CityRepository } from '../../ports/CityRepository'
 import { CityManagerRepository } from '../../ports/CityManagerRepository'
 import { IUserRepository } from '../../ports/repositories/IUserRepository'
+import { RoleRepository } from '../../ports/RoleRepository'
 import { UserId } from '../../../domain/value-objects/UserId'
 
 export interface CreateOpportunityDTO {
@@ -31,14 +32,15 @@ export interface CreateOpportunityResponse {
  * CreateOpportunityUseCase
  *
  * Creates a new opportunity with validation.
- * ONLY city managers (or admins) can create opportunities for their cities.
+ * ONLY users with the city's territorial role (or admins) can create opportunities.
  */
 export class CreateOpportunityUseCase {
   constructor(
     private opportunityRepository: OpportunityRepository,
     private cityRepository: CityRepository,
     private cityManagerRepository: CityManagerRepository,
-    private userRepository: IUserRepository
+    private userRepository: IUserRepository,
+    private roleRepository: RoleRepository
   ) {}
 
   async execute(dto: CreateOpportunityDTO): Promise<CreateOpportunityResponse> {
@@ -76,17 +78,19 @@ export class CreateOpportunityUseCase {
       }
     }
 
-    // 4. CRITICAL: Check permission - user must be manager of this city OR admin
+    // 4. CRITICAL: Check permission - user must have the city's role OR be admin
     const isAdmin = user.isAdmin()
-    const isManagerOfCity = await this.cityManagerRepository.isManagerOfCity(
-      userId,
-      dto.cityId
-    )
 
-    if (!isAdmin && !isManagerOfCity) {
+    // Get the role that corresponds to this city (role name = city name)
+    const cityRole = await this.roleRepository.findByName(city.getName())
+
+    // Check if user has the territorial role
+    const hasTerritorialRole = cityRole ? user.hasRole(cityRole.id) : false
+
+    if (!isAdmin && !hasTerritorialRole) {
       return {
         opportunity: null,
-        error: 'You do not have permission to create opportunities for this city'
+        error: 'You do not have permission to create opportunities for this city. Only admins and users with the territorial role can create opportunities.'
       }
     }
 

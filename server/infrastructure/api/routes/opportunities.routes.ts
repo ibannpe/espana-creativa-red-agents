@@ -10,6 +10,39 @@ export const createOpportunitiesRoutes = (): Router => {
 
   // All routes require authentication (applied in server/index.ts)
 
+  // GET /api/opportunities/allowed-cities - Get cities where user can create opportunities
+  router.get('/allowed-cities', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user?.id
+
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthorized' })
+      }
+
+      const getAllowedCitiesForUserUseCase = Container.getGetAllowedCitiesForUserUseCase()
+
+      const result = await getAllowedCitiesForUserUseCase.execute({ userId })
+
+      if (result.error) {
+        return res.status(400).json({ error: result.error })
+      }
+
+      return res.status(200).json({
+        cities: result.cities.map(city => ({
+          id: city.id,
+          name: city.name,
+          slug: city.slug.getValue(),
+          image_url: city.imageUrl,
+          description: city.description,
+          active: city.active,
+          display_order: city.displayOrder
+        }))
+      })
+    } catch (error: any) {
+      next(error)
+    }
+  })
+
   // GET /api/opportunities - Get all opportunities with optional filters
   router.get('/', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {

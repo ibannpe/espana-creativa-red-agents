@@ -48,8 +48,56 @@ router.get('/', async (req, res) => {
 })
 
 /**
+ * GET /api/cities/my-managed
+ * Get cities managed by current user
+ * Returns manager status and list of managed cities with details
+ * IMPORTANT: This route must be BEFORE /:slug to avoid conflict
+ */
+router.get('/my-managed', authMiddleware, async (req: AuthenticatedRequest, res) => {
+  try {
+    const userId = req.user.id
+
+    const checkUserIsCityManagerUseCase = Container.getCheckUserIsCityManagerUseCase()
+    const result = await checkUserIsCityManagerUseCase.execute({ userId })
+
+    // If not a manager, return empty result
+    if (!result.isManager || result.managedCityIds.length === 0) {
+      return res.json({
+        isCityManager: false,
+        managedCities: []
+      })
+    }
+
+    // Get city details for all managed cities
+    const cityRepository = Container.getCityRepository()
+    const managedCities = await Promise.all(
+      result.managedCityIds.map(async (cityId) => {
+        const city = await cityRepository.findById(cityId)
+        return city ? {
+          id: city.id,
+          name: city.name,
+          slug: city.slug.value
+        } : null
+      })
+    )
+
+    // Filter out any null values
+    const validCities = managedCities.filter(city => city !== null)
+
+    res.json({
+      isCityManager: true,
+      managedCities: validCities
+    })
+  } catch (error) {
+    console.error('Error checking city manager status:', error)
+    res.status(500).json({ error: 'Failed to check manager status' })
+  }
+})
+
+/**
  * GET /api/cities/:slug
  * Get city by slug
+ * IMPORTANT: This route must be AFTER /my-managed to avoid conflict
  */
 router.get('/:slug', async (req, res) => {
   try {
@@ -83,30 +131,6 @@ router.get('/:slug', async (req, res) => {
   } catch (error) {
     console.error('Error fetching city:', error)
     res.status(500).json({ error: 'Failed to fetch city' })
-  }
-})
-
-/**
- * GET /api/cities/managed/list
- * Get cities managed by current user
- */
-router.get('/managed/list', async (req, res) => {
-  try {
-    const userId = req.user?.id  // From auth middleware
-    if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' })
-    }
-
-    const checkUserIsCityManagerUseCase = Container.getCheckUserIsCityManagerUseCase()
-    const result = await checkUserIsCityManagerUseCase.execute({ userId })
-
-    res.json({
-      isManager: result.isManager,
-      managedCityIds: result.managedCityIds
-    })
-  } catch (error) {
-    console.error('Error checking city manager status:', error)
-    res.status(500).json({ error: 'Failed to check manager status' })
   }
 })
 

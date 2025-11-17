@@ -1,10 +1,12 @@
-// ABOUTME: Use case for updating an opportunity (UPDATED for city-based permissions)
-// ABOUTME: Validates that user is creator, city manager, or admin
+// ABOUTME: Use case for updating an opportunity (UPDATED for role-based permissions)
+// ABOUTME: Validates that user is creator, has territorial role, or is admin
 
 import { Opportunity, OpportunityType, OpportunityStatus } from '../../../domain/entities/Opportunity'
 import { OpportunityRepository } from '../../ports/OpportunityRepository'
+import { CityRepository } from '../../ports/CityRepository'
 import { CityManagerRepository } from '../../ports/CityManagerRepository'
 import { IUserRepository } from '../../ports/repositories/IUserRepository'
+import { RoleRepository } from '../../ports/RoleRepository'
 import { UserId } from '../../../domain/value-objects/UserId'
 
 export interface UpdateOpportunityDTO {
@@ -33,13 +35,15 @@ export interface UpdateOpportunityResponse {
  * UpdateOpportunityUseCase
  *
  * Updates an existing opportunity.
- * Permission: creator + city managers of that city + admins
+ * Permission: creator + users with territorial role + admins
  */
 export class UpdateOpportunityUseCase {
   constructor(
     private opportunityRepository: OpportunityRepository,
+    private cityRepository: CityRepository,
     private cityManagerRepository: CityManagerRepository,
-    private userRepository: IUserRepository
+    private userRepository: IUserRepository,
+    private roleRepository: RoleRepository
   ) {}
 
   async execute(dto: UpdateOpportunityDTO): Promise<UpdateOpportunityResponse> {
@@ -73,12 +77,21 @@ export class UpdateOpportunityUseCase {
     // 4. CRITICAL: Check permission
     const isCreator = opportunity.isCreator(dto.userId)
     const isAdmin = user.isAdmin()
-    const isManagerOfCity = await this.cityManagerRepository.isManagerOfCity(
-      userId,
-      opportunity.cityId
-    )
 
-    if (!isCreator && !isAdmin && !isManagerOfCity) {
+    // Get the city to find its role
+    const city = await this.cityRepository.findById(opportunity.cityId)
+    if (!city) {
+      return {
+        opportunity: null,
+        error: 'City not found for this opportunity'
+      }
+    }
+
+    // Get the role that corresponds to this city
+    const cityRole = await this.roleRepository.findByName(city.getName())
+    const hasTerritorialRole = cityRole ? user.hasRole(cityRole.id) : false
+
+    if (!isCreator && !isAdmin && !hasTerritorialRole) {
       return {
         opportunity: null,
         error: 'You do not have permission to edit this opportunity'
