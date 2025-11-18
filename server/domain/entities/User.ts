@@ -13,6 +13,8 @@ export interface UserProps {
   bio: string | null
   location: string | null
   linkedinUrl: string | null
+  twitterUrl: string | null
+  instagramUrl: string | null
   websiteUrl: string | null
   skills: string[]
   interests: string[]
@@ -55,6 +57,14 @@ export class User {
 
   getLinkedinUrl(): string | null {
     return this.props.linkedinUrl
+  }
+
+  getTwitterUrl(): string | null {
+    return this.props.twitterUrl
+  }
+
+  getInstagramUrl(): string | null {
+    return this.props.instagramUrl
   }
 
   getWebsiteUrl(): string | null {
@@ -111,8 +121,10 @@ export class User {
       points += 20
     }
 
-    // 5. Enlaces sociales (linkedin_url o website_url) - 20%
+    // 5. Enlaces sociales (linkedin_url, twitter_url, instagram_url o website_url) - 20%
     if ((this.props.linkedinUrl && this.props.linkedinUrl.trim().length > 0) ||
+        (this.props.twitterUrl && this.props.twitterUrl.trim().length > 0) ||
+        (this.props.instagramUrl && this.props.instagramUrl.trim().length > 0) ||
         (this.props.websiteUrl && this.props.websiteUrl.trim().length > 0)) {
       points += 20
     }
@@ -133,6 +145,8 @@ export class User {
     bio: string | null
     location: string | null
     linkedinUrl: string | null
+    twitterUrl: string | null
+    instagramUrl: string | null
     websiteUrl: string | null
     skills: string[]
     interests: string[]
@@ -170,6 +184,8 @@ export class User {
     bio: string | null
     location: string | null
     linkedinUrl: string | null
+    twitterUrl: string | null
+    instagramUrl: string | null
     websiteUrl: string | null
     skills: string[]
     interests: string[]
@@ -185,6 +201,8 @@ export class User {
       bio: this.props.bio,
       location: this.props.location,
       linkedinUrl: this.props.linkedinUrl,
+      twitterUrl: this.props.twitterUrl,
+      instagramUrl: this.props.instagramUrl,
       websiteUrl: this.props.websiteUrl,
       skills: [...this.props.skills],
       interests: [...this.props.interests],

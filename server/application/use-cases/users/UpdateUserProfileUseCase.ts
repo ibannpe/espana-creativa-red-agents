@@ -12,6 +12,8 @@ export interface UpdateUserProfileRequest {
   bio?: string | null
   location?: string | null
   linkedinUrl?: string | null
+  twitterUrl?: string | null
+  instagramUrl?: string | null
   websiteUrl?: string | null
   skills?: string[]
   interests?: string[]
@@ -62,6 +64,20 @@ export class UpdateUserProfileUseCase {
       }
     }
 
+    if (request.twitterUrl && !this.isValidUrl(request.twitterUrl)) {
+      return {
+        user: null,
+        error: 'Invalid Twitter URL'
+      }
+    }
+
+    if (request.instagramUrl && !this.isValidUrl(request.instagramUrl)) {
+      return {
+        user: null,
+        error: 'Invalid Instagram URL'
+      }
+    }
+
     if (request.websiteUrl && !this.isValidUrl(request.websiteUrl)) {
       return {
         user: null,
@@ -76,6 +92,8 @@ export class UpdateUserProfileUseCase {
       bio: request.bio,
       location: request.location,
       linkedinUrl: request.linkedinUrl,
+      twitterUrl: request.twitterUrl,
+      instagramUrl: request.instagramUrl,
       websiteUrl: request.websiteUrl,
       skills: request.skills,
       interests: request.interests

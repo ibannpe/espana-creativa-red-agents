@@ -84,8 +84,8 @@ export function ProfilePage() {
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span>Enlaces sociales</span>
-                      <span className={user.linkedin_url || user.website_url ? 'text-green-600' : 'text-yellow-600'}>
-                        {user.linkedin_url || user.website_url ? '✓' : '○'}
+                      <span className={user.linkedin_url || user.twitter_url || user.instagram_url || user.website_url ? 'text-green-600' : 'text-yellow-600'}>
+                        {user.linkedin_url || user.twitter_url || user.instagram_url || user.website_url ? '✓' : '○'}
                       </span>
                     </div>
                   </div>

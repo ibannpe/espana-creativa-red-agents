@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Loader2, Plus, X, Camera } from 'lucide-react'
+import { Loader2, Plus, X, Camera, Linkedin, Twitter, Instagram } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
@@ -24,6 +24,8 @@ const profileFormSchema = z.object({
   bio: z.string().max(500, 'La biografía es demasiado larga').optional().nullable(),
   location: z.string().max(100, 'La ubicación es demasiado larga').optional().nullable(),
   linkedin_url: z.string().url('URL inválida').or(z.literal('')).optional().nullable(),
+  twitter_url: z.string().url('URL inválida').or(z.literal('')).optional().nullable(),
+  instagram_url: z.string().url('URL inválida').or(z.literal('')).optional().nullable(),
   website_url: z.string().url('URL inválida').or(z.literal('')).optional().nullable(),
 })
 
@@ -54,6 +56,8 @@ export function ProfileForm({ user }: ProfileFormProps) {
       bio: user.bio || '',
       location: user.location || '',
       linkedin_url: user.linkedin_url || '',
+      twitter_url: user.twitter_url || '',
+      instagram_url: user.instagram_url || '',
       website_url: user.website_url || '',
     }
   })
@@ -90,6 +94,8 @@ export function ProfileForm({ user }: ProfileFormProps) {
         bio: data.bio || null,
         location: data.location || null,
         linkedin_url: data.linkedin_url || null,
+        twitter_url: data.twitter_url || null,
+        instagram_url: data.instagram_url || null,
         website_url: data.website_url || null,
         skills,
         interests,
@@ -207,18 +213,60 @@ export function ProfileForm({ user }: ProfileFormProps) {
         )}
       </div>
 
-      {/* LinkedIn URL field */}
-      <div className="space-y-2">
-        <Label htmlFor="linkedin_url">LinkedIn</Label>
-        <Input
-          id="linkedin_url"
-          {...register('linkedin_url')}
-          placeholder="https://linkedin.com/in/tu-perfil"
-          type="url"
-        />
-        {errors.linkedin_url && (
-          <p className="text-sm text-destructive">{errors.linkedin_url.message}</p>
-        )}
+      {/* Social Media Section */}
+      <div className="space-y-4">
+        <Label className="text-base font-semibold">Redes Sociales</Label>
+
+        {/* LinkedIn */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Linkedin className="h-4 w-4 text-[#0077B5]" />
+            <Label htmlFor="linkedin_url" className="text-sm font-normal">LinkedIn</Label>
+          </div>
+          <Input
+            id="linkedin_url"
+            {...register('linkedin_url')}
+            placeholder="https://linkedin.com/in/tu-perfil"
+            type="url"
+          />
+          {errors.linkedin_url && (
+            <p className="text-sm text-destructive">{errors.linkedin_url.message}</p>
+          )}
+        </div>
+
+        {/* Twitter/X */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Twitter className="h-4 w-4 text-[#1DA1F2]" />
+            <Label htmlFor="twitter_url" className="text-sm font-normal">X (Twitter)</Label>
+          </div>
+          <Input
+            id="twitter_url"
+            {...register('twitter_url')}
+            placeholder="https://x.com/tu-usuario"
+            type="url"
+          />
+          {errors.twitter_url && (
+            <p className="text-sm text-destructive">{errors.twitter_url.message}</p>
+          )}
+        </div>
+
+        {/* Instagram */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Instagram className="h-4 w-4 text-[#E4405F]" />
+            <Label htmlFor="instagram_url" className="text-sm font-normal">Instagram</Label>
+          </div>
+          <Input
+            id="instagram_url"
+            {...register('instagram_url')}
+            placeholder="https://instagram.com/tu-usuario"
+            type="url"
+          />
+          {errors.instagram_url && (
+            <p className="text-sm text-destructive">{errors.instagram_url.message}</p>
+          )}
+        </div>
       </div>
 
       {/* Website URL field */}

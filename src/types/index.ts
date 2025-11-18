@@ -6,6 +6,8 @@ export type User = {
   bio: string | null
   location: string | null
   linkedin_url: string | null
+  twitter_url: string | null
+  instagram_url: string | null
   website_url: string | null
   skills: string[] | null
   interests: string[] | null
