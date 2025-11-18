@@ -34,6 +34,10 @@ export const opportunitySchema = z.object({
   // City relation (REQUIRED)
   city_id: z.number().positive('La oportunidad debe estar asignada a una ciudad'),
 
+  // Contact fields (REQUIRED)
+  contact_email: z.string().email('Debe ser un email válido'),
+  contact_phone: z.string().min(1, 'El teléfono es obligatorio'),
+
   // DEPRECATED - Mantener para retrocompatibilidad
   location: z.string().nullish().optional(),
 
@@ -80,6 +84,10 @@ export const createOpportunityRequestSchema = z.object({
   // Ciudad obligatoria
   city_id: z.number().positive('Debes seleccionar una ciudad'),
 
+  // Contacto obligatorio
+  contact_email: z.string().email('Debe ser un email válido'),
+  contact_phone: z.string().min(9, 'El teléfono debe tener al menos 9 caracteres').max(50, 'El teléfono no puede superar 50 caracteres'),
+
   // Campos opcionales
   location: z.string().max(100).nullable().optional(),
   remote: z.boolean().default(false),
@@ -94,6 +102,8 @@ export const updateOpportunityRequestSchema = z.object({
   type: opportunityTypeSchema.optional(),
   status: opportunityStatusSchema.optional(),
   skills_required: z.array(z.string()).min(1).optional(),
+  contact_email: z.string().email('Debe ser un email válido').optional(),
+  contact_phone: z.string().min(9).max(50).optional(),
   location: z.string().max(100).nullable().optional(),
   remote: z.boolean().optional(),
   duration: z.string().max(100).nullable().optional(),

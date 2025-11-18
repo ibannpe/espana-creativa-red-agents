@@ -58,13 +58,17 @@ CREATE TABLE opportunities (
     remote BOOLEAN DEFAULT false,
     duration VARCHAR(100),
     compensation VARCHAR(255),
+    contact_email VARCHAR(255) NOT NULL,
+    contact_phone VARCHAR(50) NOT NULL,
     project_id INTEGER REFERENCES projects(id) ON DELETE SET NULL,
     status VARCHAR(50) DEFAULT 'abierta',
     created_by UUID REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     CONSTRAINT valid_opportunity_type CHECK (type IN ('proyecto', 'colaboracion', 'empleo', 'mentoria', 'evento', 'otro')),
-    CONSTRAINT valid_opportunity_status CHECK (status IN ('abierta', 'en_progreso', 'cerrada', 'cancelada'))
+    CONSTRAINT valid_opportunity_status CHECK (status IN ('abierta', 'en_progreso', 'cerrada', 'cancelada')),
+    CONSTRAINT valid_contact_email CHECK (contact_email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
+    CONSTRAINT valid_contact_phone CHECK (LENGTH(TRIM(contact_phone)) > 0)
 );
 
 -- Messages table (private chat)
@@ -127,6 +131,7 @@ CREATE INDEX idx_opportunities_type ON opportunities(type);
 CREATE INDEX idx_opportunities_remote ON opportunities(remote);
 CREATE INDEX idx_opportunities_skills ON opportunities USING GIN(skills_required);
 CREATE INDEX idx_opportunities_type_status ON opportunities(type, status);
+CREATE INDEX idx_opportunities_contact_email ON opportunities(contact_email);
 CREATE INDEX idx_projects_status ON projects(status);
 
 -- Create full-text search indexes

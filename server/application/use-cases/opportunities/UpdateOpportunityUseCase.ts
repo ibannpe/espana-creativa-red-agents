@@ -18,6 +18,8 @@ export interface UpdateOpportunityDTO {
     type?: OpportunityType
     status?: OpportunityStatus
     skillsRequired?: string[]
+    contactEmail?: string
+    contactPhone?: string
     location?: string
     remote?: boolean
     duration?: string

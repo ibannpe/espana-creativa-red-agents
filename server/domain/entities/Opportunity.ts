@@ -22,6 +22,8 @@ export interface OpportunityProps {
   type: OpportunityType
   status: OpportunityStatus
   skillsRequired: string[]
+  contactEmail: string
+  contactPhone: string
   location?: string
   remote: boolean
   duration?: string
@@ -46,6 +48,8 @@ export class Opportunity {
     private _type: OpportunityType,
     private _status: OpportunityStatus,
     private _skillsRequired: string[],
+    private _contactEmail: string,
+    private _contactPhone: string,
     private _location: string | undefined,
     private _remote: boolean,
     private _duration: string | undefined,
@@ -69,6 +73,8 @@ export class Opportunity {
       props.type,
       props.status,
       props.skillsRequired,
+      props.contactEmail,
+      props.contactPhone,
       props.location,
       props.remote,
       props.duration,
@@ -89,6 +95,8 @@ export class Opportunity {
     description: string,
     type: OpportunityType,
     skillsRequired: string[],
+    contactEmail: string,
+    contactPhone: string,
     cityId: number,
     createdBy: string,
     options?: {
@@ -106,6 +114,8 @@ export class Opportunity {
       type,
       'abierta', // New opportunities start as 'abierta'
       skillsRequired,
+      contactEmail,
+      contactPhone,
       options?.location,
       options?.remote ?? false,
       options?.duration,
@@ -136,6 +146,14 @@ export class Opportunity {
 
   get skillsRequired(): string[] {
     return [...this._skillsRequired]
+  }
+
+  get contactEmail(): string {
+    return this._contactEmail
+  }
+
+  get contactPhone(): string {
+    return this._contactPhone
   }
 
   get location(): string | undefined {
@@ -171,6 +189,8 @@ export class Opportunity {
     type?: OpportunityType
     status?: OpportunityStatus
     skillsRequired?: string[]
+    contactEmail?: string
+    contactPhone?: string
     location?: string
     remote?: boolean
     duration?: string
@@ -190,6 +210,12 @@ export class Opportunity {
     }
     if (updates.skillsRequired !== undefined) {
       this._skillsRequired = updates.skillsRequired
+    }
+    if (updates.contactEmail !== undefined) {
+      this._contactEmail = updates.contactEmail
+    }
+    if (updates.contactPhone !== undefined) {
+      this._contactPhone = updates.contactPhone
     }
     if (updates.location !== undefined) {
       this._location = updates.location
@@ -322,6 +348,23 @@ export class Opportunity {
       throw new Error('At least one skill is required')
     }
 
+    // Contact email validation
+    if (!this._contactEmail || this._contactEmail.trim() === '') {
+      throw new Error('Contact email cannot be empty')
+    }
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
+    if (!emailRegex.test(this._contactEmail)) {
+      throw new Error('Contact email must be a valid email address')
+    }
+
+    // Contact phone validation
+    if (!this._contactPhone || this._contactPhone.trim() === '') {
+      throw new Error('Contact phone cannot be empty')
+    }
+    if (this._contactPhone.length < 9) {
+      throw new Error('Contact phone must be at least 9 characters')
+    }
+
     // Type validation
     const validTypes: OpportunityType[] = [
       'proyecto',
@@ -373,6 +416,8 @@ export class Opportunity {
       type: this._type,
       status: this._status,
       skillsRequired: this._skillsRequired,
+      contactEmail: this._contactEmail,
+      contactPhone: this._contactPhone,
       location: this._location,
       remote: this._remote,
       duration: this._duration,

@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { MapPin, Briefcase, Clock, DollarSign, Trash2, Edit, Navigation } from 'lucide-react'
+import { MapPin, Briefcase, Clock, DollarSign, Trash2, Edit, Navigation, Mail, Phone } from 'lucide-react'
 import { useDeleteOpportunityMutation } from '../hooks/mutations/useDeleteOpportunityMutation'
 import type { OpportunityWithCreator, OpportunityWithCity } from '../data/schemas/opportunity.schema'
 
@@ -122,6 +122,27 @@ export function OpportunityCard({
             </div>
           </div>
         )}
+
+        {/* Contact Information */}
+        <div className="border-t pt-3 space-y-2">
+          <p className="text-xs font-medium text-muted-foreground mb-2">Información de contacto:</p>
+          <div className="flex flex-col gap-2 text-sm">
+            <a
+              href={`mailto:${opportunity.contact_email}`}
+              className="flex items-center gap-2 text-primary hover:underline"
+            >
+              <Mail className="h-4 w-4" />
+              <span>{opportunity.contact_email}</span>
+            </a>
+            <a
+              href={`tel:${opportunity.contact_phone}`}
+              className="flex items-center gap-2 text-primary hover:underline"
+            >
+              <Phone className="h-4 w-4" />
+              <span>{opportunity.contact_phone}</span>
+            </a>
+          </div>
+        </div>
 
         {/* Details */}
         <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">

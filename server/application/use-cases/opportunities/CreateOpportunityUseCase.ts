@@ -15,6 +15,8 @@ export interface CreateOpportunityDTO {
   description: string
   type: OpportunityType
   skillsRequired: string[]
+  contactEmail: string
+  contactPhone: string
   cityId: number
   location?: string
   remote?: boolean
@@ -101,6 +103,8 @@ export class CreateOpportunityUseCase {
       dto.description,
       dto.type,
       dto.skillsRequired,
+      dto.contactEmail,
+      dto.contactPhone,
       dto.cityId,
       dto.createdBy,
       {

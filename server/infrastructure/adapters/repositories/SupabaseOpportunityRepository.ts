@@ -16,6 +16,8 @@ interface OpportunityRow {
   type: OpportunityType
   status: OpportunityStatus
   skills_required: string[]
+  contact_email: string
+  contact_phone: string
   location: string | null
   remote: boolean
   duration: string | null
@@ -272,6 +274,8 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
       type: row.type,
       status: row.status,
       skillsRequired: row.skills_required,
+      contactEmail: row.contact_email,
+      contactPhone: row.contact_phone,
       location: row.location || undefined,
       remote: row.remote,
       duration: row.duration || undefined,
@@ -297,6 +301,8 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
       type: opportunity.type,
       status: opportunity.status,
       skills_required: opportunity.skillsRequired,
+      contact_email: opportunity.contactEmail,
+      contact_phone: opportunity.contactPhone,
       location: opportunity.location || null,
       remote: opportunity.remote,
       duration: opportunity.duration || null,

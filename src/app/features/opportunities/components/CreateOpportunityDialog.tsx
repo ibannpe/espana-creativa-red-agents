@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { X, Loader2, MapPin, Calendar, DollarSign, Briefcase } from 'lucide-react'
+import { X, Loader2, MapPin, Calendar, DollarSign, Briefcase, Mail, Phone } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -89,6 +89,8 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
       type: 'proyecto',
       city_id: allowedCities.length > 0 ? allowedCities[0].id : undefined,
       skills_required: [],
+      contact_email: '',
+      contact_phone: '',
       location: null,
       remote: false,
       duration: null,
@@ -109,6 +111,8 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
         type: opportunity.type,
         city_id: opportunity.city_id,
         skills_required: opportunity.skills_required,
+        contact_email: opportunity.contact_email,
+        contact_phone: opportunity.contact_phone,
         location: opportunity.location || null,
         remote: opportunity.remote,
         duration: opportunity.duration || null,
@@ -125,6 +129,8 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
         type: 'proyecto',
         city_id: defaultCityId,
         skills_required: [],
+        contact_email: '',
+        contact_phone: '',
         location: null,
         remote: false,
         duration: null,
@@ -389,6 +395,56 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
                   </FormControl>
                   <FormDescription>
                     Agrega al menos una habilidad requerida
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Email de contacto */}
+            <FormField
+              control={form.control}
+              name="contact_email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    <Mail className="inline h-4 w-4 mr-1" />
+                    Email de contacto *
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="contacto@ejemplo.com"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Email donde te pueden contactar para esta oportunidad
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Teléfono de contacto */}
+            <FormField
+              control={form.control}
+              name="contact_phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    <Phone className="inline h-4 w-4 mr-1" />
+                    Teléfono de contacto *
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="tel"
+                      placeholder="+34 600 000 000"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Teléfono donde te pueden contactar para esta oportunidad
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

@@ -80,6 +80,8 @@ export const createOpportunitiesRoutes = (): Router => {
             type: o.opportunity.type,
             status: o.opportunity.status,
             skills_required: o.opportunity.skillsRequired,
+            contact_email: o.opportunity.contactEmail,
+            contact_phone: o.opportunity.contactPhone,
             location: o.opportunity.location,
             remote: o.opportunity.remote,
             duration: o.opportunity.duration,
@@ -126,6 +128,8 @@ export const createOpportunitiesRoutes = (): Router => {
           type: o.opportunity.type,
           status: o.opportunity.status,
           skills_required: o.opportunity.skillsRequired,
+          contact_email: o.opportunity.contactEmail,
+          contact_phone: o.opportunity.contactPhone,
           location: o.opportunity.location,
           remote: o.opportunity.remote,
           duration: o.opportunity.duration,
@@ -169,6 +173,8 @@ export const createOpportunitiesRoutes = (): Router => {
           type: o.opportunity.type,
           status: o.opportunity.status,
           skills_required: o.opportunity.skillsRequired,
+          contact_email: o.opportunity.contactEmail,
+          contact_phone: o.opportunity.contactPhone,
           location: o.opportunity.location,
           remote: o.opportunity.remote,
           duration: o.opportunity.duration,
@@ -212,6 +218,8 @@ export const createOpportunitiesRoutes = (): Router => {
           type: result.opportunity.type,
           status: result.opportunity.status,
           skills_required: result.opportunity.skillsRequired,
+          contact_email: result.opportunity.contactEmail,
+          contact_phone: result.opportunity.contactPhone,
           location: result.opportunity.location,
           remote: result.opportunity.remote,
           duration: result.opportunity.duration,
@@ -247,6 +255,8 @@ export const createOpportunitiesRoutes = (): Router => {
         description,
         type,
         skills_required,
+        contact_email,
+        contact_phone,
         city_id,
         location,
         remote,
@@ -254,9 +264,9 @@ export const createOpportunitiesRoutes = (): Router => {
         compensation
       } = req.body
 
-      if (!title || !description || !type || !skills_required || !city_id) {
+      if (!title || !description || !type || !skills_required || !contact_email || !contact_phone || !city_id) {
         return res.status(400).json({
-          error: 'Missing required fields: title, description, type, skills_required, city_id'
+          error: 'Missing required fields: title, description, type, skills_required, contact_email, contact_phone, city_id'
         })
       }
 
@@ -267,6 +277,8 @@ export const createOpportunitiesRoutes = (): Router => {
         description,
         type,
         skillsRequired: skills_required,
+        contactEmail: contact_email,
+        contactPhone: contact_phone,
         cityId: parseInt(city_id),
         location,
         remote: remote || false,
@@ -291,6 +303,8 @@ export const createOpportunitiesRoutes = (): Router => {
           type: result.opportunity.type,
           status: result.opportunity.status,
           skills_required: result.opportunity.skillsRequired,
+          contact_email: result.opportunity.contactEmail,
+          contact_phone: result.opportunity.contactPhone,
           location: result.opportunity.location || null,
           remote: result.opportunity.remote,
           duration: result.opportunity.duration || null,
@@ -325,6 +339,8 @@ export const createOpportunitiesRoutes = (): Router => {
         type,
         status,
         skills_required,
+        contact_email,
+        contact_phone,
         location,
         remote,
         duration,
@@ -342,6 +358,8 @@ export const createOpportunitiesRoutes = (): Router => {
           type,
           status,
           skillsRequired: skills_required,
+          contactEmail: contact_email,
+          contactPhone: contact_phone,
           location,
           remote,
           duration,
@@ -365,6 +383,8 @@ export const createOpportunitiesRoutes = (): Router => {
           type: result.opportunity.type,
           status: result.opportunity.status,
           skills_required: result.opportunity.skillsRequired,
+          contact_email: result.opportunity.contactEmail,
+          contact_phone: result.opportunity.contactPhone,
           location: result.opportunity.location || null,
           remote: result.opportunity.remote,
           duration: result.opportunity.duration || null,
