@@ -17,17 +17,20 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 220 8.9% 16.1%;
 
-    /* España Creativa brand colors - Paleta de la imagen animación-3 */
+    /* España Creativa brand colors - Paleta del logo (paleta.png) */
     --primary: 0 78% 54%; /* Rojo vibrante principal */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 217 91% 60%; /* Azul medio de la imagen */
     --secondary-foreground: 0 0% 100%;
 
+    --tertiary: 84 81% 44%; /* Verde lima del logo */
+    --tertiary-foreground: 0 0% 100%;
+
     --muted: 210 20% 96%;
     --muted-foreground: 220 8.9% 46.1%;
 
-    --accent: 217 91% 60%; /* Azul como acento */
+    --accent: 84 81% 44%; /* Verde lima como acento */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 78% 54%;
@@ -42,11 +45,14 @@ All colors MUST be HSL.
     /* Custom España Creativa gradients */
     --gradient-brand: linear-gradient(135deg, hsl(0 78% 54%), hsl(0 78% 62%));
     --gradient-accent: linear-gradient(135deg, hsl(217 91% 60%), hsl(217 91% 68%));
+    --gradient-tertiary: linear-gradient(135deg, hsl(84 81% 44%), hsl(84 81% 52%));
+    --gradient-multicolor: linear-gradient(135deg, hsl(0 78% 54%), hsl(84 81% 44%), hsl(217 91% 60%));
     --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 20% 98%));
 
     /* Shadows with brand color */
     --shadow-brand: 0 4px 14px -2px hsl(0 78% 54% / 0.15);
     --shadow-accent: 0 4px 14px -2px hsl(217 91% 60% / 0.15);
+    --shadow-tertiary: 0 4px 14px -2px hsl(84 81% 44% / 0.15);
     --shadow-elegant: 0 10px 30px -10px hsl(220 8.9% 16.1% / 0.08);
 
     --sidebar-background: 0 0% 98%;
@@ -82,10 +88,13 @@ All colors MUST be HSL.
     --secondary: 217 91% 60%;
     --secondary-foreground: 0 0% 100%;
 
+    --tertiary: 84 81% 44%;
+    --tertiary-foreground: 0 0% 100%;
+
     --muted: 220 8.9% 14.9%;
     --muted-foreground: 220 8.9% 65.1%;
 
-    --accent: 217 91% 60%;
+    --accent: 84 81% 44%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 78% 54%;

@@ -33,6 +33,10 @@ export default {
 					DEFAULT: 'hsl(var(--secondary))',
 					foreground: 'hsl(var(--secondary-foreground))'
 				},
+				tertiary: {
+					DEFAULT: 'hsl(var(--tertiary))',
+					foreground: 'hsl(var(--tertiary-foreground))'
+				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
 					foreground: 'hsl(var(--destructive-foreground))'
@@ -71,7 +75,16 @@ export default {
 			},
 			boxShadow: {
 				'brand': 'var(--shadow-brand)',
+				'accent': 'var(--shadow-accent)',
+				'tertiary': 'var(--shadow-tertiary)',
 				'elegant': 'var(--shadow-elegant)'
+			},
+			backgroundImage: {
+				'gradient-brand': 'var(--gradient-brand)',
+				'gradient-accent': 'var(--gradient-accent)',
+				'gradient-tertiary': 'var(--gradient-tertiary)',
+				'gradient-multicolor': 'var(--gradient-multicolor)',
+				'gradient-subtle': 'var(--gradient-subtle)'
 			},
 			keyframes: {
 				'accordion-down': {
