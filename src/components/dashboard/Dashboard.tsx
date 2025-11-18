@@ -54,8 +54,8 @@ const Dashboard = () => {
                 decoding="async"
               />
               <div>
-                <h1 className="text-xl font-bold text-foreground">España Creativa</h1>
-                <p className="text-sm text-muted-foreground">Red de emprendedores</p>
+                <h1 className="text-xl font-bold text-foreground">ESPAÑA CREATIVA: Red de Destinos del Talento</h1>
+                <p className="text-sm text-muted-foreground">Red de Ciudades y Territorios Creativos de España</p>
               </div>
             </div>
             
