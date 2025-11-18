@@ -12,6 +12,7 @@ import { useMyProjectsQuery } from '@/app/features/projects/hooks/queries/useMyP
 import { ProjectCard } from '@/app/features/projects/components/ProjectCard'
 import { CreateProjectDialog } from '@/app/features/projects/components/CreateProjectDialog'
 import { ProjectDetailsDialog } from '@/app/features/projects/components/ProjectDetailsDialog'
+import { useUserRoles } from '@/app/features/auth/hooks/useUserRoles'
 import type { ProjectStatus, ProjectWithCreator } from '@/app/features/projects/data/schemas/project.schema'
 import type { EnrollmentStatus } from '@/app/features/projects/data/schemas/enrollment.schema'
 
@@ -42,6 +43,9 @@ export function ProjectsPage() {
   const [selectedTab, setSelectedTab] = useState<ProjectStatus | 'all' | 'my-projects'>('upcoming')
   const [selectedProject, setSelectedProject] = useState<ProjectWithCreator | null>(null)
   const [detailsOpen, setDetailsOpen] = useState(false)
+
+  // Check if user is admin
+  const { isAdmin } = useUserRoles()
 
   // Fetch all projects with optional status filter
   const filters = selectedTab === 'all' || selectedTab === 'my-projects' ? {} : { status: selectedTab as ProjectStatus }
@@ -93,7 +97,7 @@ export function ProjectsPage() {
                 </p>
               </div>
             </div>
-            <CreateProjectDialog />
+            {isAdmin && <CreateProjectDialog />}
           </div>
 
           {/* Tabs */}
