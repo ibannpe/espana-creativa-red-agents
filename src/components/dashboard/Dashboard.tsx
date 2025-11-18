@@ -199,11 +199,11 @@ const Dashboard = () => {
               <Briefcase className="h-12 w-12 text-primary mx-auto mb-4" />
               <h3 className="font-semibold mb-2">Oportunidades</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Colabora en proyectos
+                Oportunidades Red
               </p>
-              <Button 
-                size="sm" 
-                variant="outline" 
+              <Button
+                size="sm"
+                variant="outline"
                 className="w-full"
                 onClick={() => {
                   // logger.userAction('navigate-to-opportunities', { userId: user?.id });
@@ -220,7 +220,7 @@ const Dashboard = () => {
               <Calendar className="h-12 w-12 text-primary mx-auto mb-4" />
               <h3 className="font-semibold mb-2">Proyectos</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Próximas iniciativas
+                Proyectos España Creativa
               </p>
               <Button
                 size="sm"
