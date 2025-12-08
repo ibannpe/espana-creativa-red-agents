@@ -45,14 +45,6 @@ export const cityService = {
   },
 
   /**
-   * Check if current user can manage a specific city
-   */
-  async canManageCity(cityId: number): Promise<boolean> {
-    const response = await axiosInstance.get(`/cities/${cityId}/can-manage`)
-    return response.data.canManage
-  },
-
-  /**
    * Create a new city (admin only)
    */
   async createCity(data: CreateCityRequest): Promise<CreateCityResponse> {

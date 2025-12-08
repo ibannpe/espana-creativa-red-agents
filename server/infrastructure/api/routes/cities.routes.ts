@@ -95,48 +95,9 @@ router.get('/my-managed', authMiddleware, async (req: AuthenticatedRequest, res)
 })
 
 /**
- * GET /api/cities/:slug
- * Get city by slug
- * IMPORTANT: This route must be AFTER /my-managed to avoid conflict
- */
-router.get('/:slug', async (req, res) => {
-  try {
-    const getCityBySlugUseCase = Container.getGetCityBySlugUseCase()
-    const result = await getCityBySlugUseCase.execute({
-      slug: req.params.slug
-    })
-
-    if (result.error) {
-      return res.status(404).json({ error: result.error })
-    }
-
-    // Transform backend format to match frontend schema
-    const response = {
-      city: {
-        id: result.city.id,
-        name: result.city.name,
-        slug: result.city.slug.value,
-        image_url: result.city.imageUrl,
-        description: result.city.description,
-        active: result.city.active,
-        display_order: result.city.displayOrder,
-        created_at: result.city.createdAt.toISOString(),
-        updated_at: result.city.updatedAt.toISOString(),
-        opportunities_count: 0, // TODO: implement when we have total count
-        active_opportunities_count: result.activeOpportunitiesCount || 0
-      }
-    }
-
-    res.json(response)
-  } catch (error) {
-    console.error('Error fetching city:', error)
-    res.status(500).json({ error: 'Failed to fetch city' })
-  }
-})
-
-/**
  * POST /api/cities/:cityId/managers
  * Assign a user as city manager (admin only)
+ * IMPORTANT: This route must be BEFORE /:slug to avoid conflict with numeric IDs
  */
 router.post('/:cityId/managers', async (req, res) => {
   try {
@@ -246,6 +207,8 @@ router.put('/:cityId', authMiddleware, async (req, res) => {
     })
 
     if (!result.success || !result.city) {
+      console.error('[UPDATE CITY ERROR]', result.error)
+      console.error('[UPDATE CITY REQUEST]', { cityId, name, image_url, description, active, display_order })
       return res.status(400).json({ error: result.error || 'Failed to update city' })
     }
 
@@ -274,6 +237,7 @@ router.put('/:cityId', authMiddleware, async (req, res) => {
 /**
  * DELETE /api/cities/:cityId
  * Delete a city (admin only)
+ * IMPORTANT: This route must be BEFORE /:slug to avoid conflict with numeric IDs
  */
 router.delete('/:cityId', authMiddleware, async (req, res) => {
   try {
@@ -298,6 +262,47 @@ router.delete('/:cityId', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('Error deleting city:', error)
     res.status(500).json({ error: 'Failed to delete city' })
+  }
+})
+
+/**
+ * GET /api/cities/:slug
+ * Get city by slug
+ * IMPORTANT: This route must be LAST to avoid conflicts with specific routes
+ * It will match any string that doesn't match previous routes
+ */
+router.get('/:slug', async (req, res) => {
+  try {
+    const getCityBySlugUseCase = Container.getGetCityBySlugUseCase()
+    const result = await getCityBySlugUseCase.execute({
+      slug: req.params.slug
+    })
+
+    if (result.error) {
+      return res.status(404).json({ error: result.error })
+    }
+
+    // Transform backend format to match frontend schema
+    const response = {
+      city: {
+        id: result.city.id,
+        name: result.city.name,
+        slug: result.city.slug.value,
+        image_url: result.city.imageUrl,
+        description: result.city.description,
+        active: result.city.active,
+        display_order: result.city.displayOrder,
+        created_at: result.city.createdAt.toISOString(),
+        updated_at: result.city.updatedAt.toISOString(),
+        opportunities_count: 0, // TODO: implement when we have total count
+        active_opportunities_count: result.activeOpportunitiesCount || 0
+      }
+    }
+
+    res.json(response)
+  } catch (error) {
+    console.error('Error fetching city:', error)
+    res.status(500).json({ error: 'Failed to fetch city' })
   }
 })
 

@@ -241,47 +241,4 @@ describe('City Service', () => {
       await expect(cityService.getIsCityManager()).rejects.toThrow()
     })
   })
-
-  describe('canManageCity', () => {
-    it('should call GET /cities/:id/can-manage and return true', async () => {
-      const mockResponse = {
-        data: {
-          canManage: true
-        }
-      }
-
-      mockedAxios.get.mockResolvedValue(mockResponse)
-
-      const result = await cityService.canManageCity(1)
-
-      expect(mockedAxios.get).toHaveBeenCalledWith('/cities/1/can-manage')
-      expect(result).toBe(true)
-    })
-
-    it('should return false when user cannot manage city', async () => {
-      const mockResponse = {
-        data: {
-          canManage: false
-        }
-      }
-
-      mockedAxios.get.mockResolvedValue(mockResponse)
-
-      const result = await cityService.canManageCity(1)
-
-      expect(result).toBe(false)
-    })
-
-    it('should handle unauthorized error', async () => {
-      mockedAxios.get.mockRejectedValue(new Error('Unauthorized'))
-
-      await expect(cityService.canManageCity(1)).rejects.toThrow('Unauthorized')
-    })
-
-    it('should handle city not found error', async () => {
-      mockedAxios.get.mockRejectedValue(new Error('City not found'))
-
-      await expect(cityService.canManageCity(999)).rejects.toThrow('City not found')
-    })
-  })
 })
