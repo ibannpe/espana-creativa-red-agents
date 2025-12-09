@@ -141,9 +141,12 @@ export class SupabaseCityRepository implements CityRepository {
   async update(city: City): Promise<City> {
     const row = this.toRow(city)
 
+    // Remove fields that should not be updated (id, created_at, updated_at is handled by trigger)
+    const { id, created_at, updated_at, ...updateData } = row
+
     const { data, error } = await this.supabase
       .from('cities')
-      .update(row)
+      .update(updateData)
       .eq('id', city.id)
       .select()
       .single()
