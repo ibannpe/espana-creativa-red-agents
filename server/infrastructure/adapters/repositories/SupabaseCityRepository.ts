@@ -125,9 +125,12 @@ export class SupabaseCityRepository implements CityRepository {
   async create(city: City): Promise<City> {
     const row = this.toRow(city)
 
+    // Remove id, created_at, updated_at for INSERT (DB will auto-generate these)
+    const { id, created_at, updated_at, ...insertData } = row
+
     const { data, error } = await this.supabase
       .from('cities')
-      .insert(row)
+      .insert(insertData)
       .select()
       .single()
 

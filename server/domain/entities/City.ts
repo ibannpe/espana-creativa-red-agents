@@ -184,9 +184,9 @@ export class City {
    * Validate city business rules
    */
   private validate(): void {
-    // ID validation
-    if (!this.id || this.id <= 0) {
-      throw new Error('City ID must be a positive number')
+    // ID validation (allow 0 for new cities before DB assignment)
+    if (this.id < 0) {
+      throw new Error('City ID cannot be negative')
     }
 
     // Name validation
