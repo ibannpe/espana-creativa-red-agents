@@ -119,6 +119,10 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    font-size: 18px; /* Tamaño base aumentado de 16px a 18px (+12.5%) */
+  }
+
   body {
     @apply bg-background text-foreground;
   }
