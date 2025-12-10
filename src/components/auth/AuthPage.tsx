@@ -2,7 +2,7 @@
 // ABOUTME: Uses new useAuthContext hook from feature-based architecture with React Query and admin-approval workflow
 
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext';
 import { RequestAccessForm } from '@/app/features/signup-approval/components/RequestAccessForm';
 import { ForgotPasswordModal } from '@/app/features/auth/components/ForgotPasswordModal';
@@ -11,10 +11,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Mail, Lock } from 'lucide-react';
+import { Loader2, Mail, Lock, CheckCircle2 } from 'lucide-react';
 
 const AuthPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const passwordChanged = searchParams.get('passwordChanged') === 'true';
+
   const {
     signIn,
     isSigningIn,
@@ -76,8 +79,22 @@ const AuthPage = () => {
               Conecta con emprendedores de confianza
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent className="space-y-4">
+            {/* Password Changed Success Message */}
+            {passwordChanged && (
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3">
+                <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-green-900 mb-1">
+                    ¡Contraseña cambiada exitosamente!
+                  </p>
+                  <p className="text-xs text-green-700">
+                    Por seguridad, tu sesión anterior ha sido cerrada. Por favor, inicia sesión con tu nueva contraseña.
+                  </p>
+                </div>
+              </div>
+            )}
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>

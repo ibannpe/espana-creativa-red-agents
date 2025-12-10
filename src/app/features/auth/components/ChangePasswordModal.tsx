@@ -2,6 +2,7 @@
 // ABOUTME: Uses useChangePasswordMutation hook and provides form validation feedback
 
 import { useState, useEffect } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Lock, Eye, EyeOff } from 'lucide-react'
 import { useChangePasswordMutation } from '../hooks/mutations/useChangePasswordMutation'
 import { changePasswordRequestSchema } from '../data/schemas/auth.schema'
+import { supabase } from '@/lib/supabase'
 import { z } from 'zod'
 
 interface ChangePasswordModalProps {
@@ -17,6 +19,7 @@ interface ChangePasswordModalProps {
 }
 
 export function ChangePasswordModal({ open, onOpenChange }: ChangePasswordModalProps) {
+  const queryClient = useQueryClient()
   const { action: changePassword, isLoading, error, isSuccess } = useChangePasswordMutation()
   const [formData, setFormData] = useState({
     currentPassword: '',
@@ -39,14 +42,6 @@ export function ChangePasswordModal({ open, onOpenChange }: ChangePasswordModalP
     }
   }, [open])
 
-  // Close modal on success
-  useEffect(() => {
-    if (isSuccess) {
-      setTimeout(() => {
-        onOpenChange(false)
-      }, 1500)
-    }
-  }, [isSuccess, onOpenChange])
 
   const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({ ...prev, [field]: e.target.value }))
@@ -60,7 +55,7 @@ export function ChangePasswordModal({ open, onOpenChange }: ChangePasswordModalP
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setValidationErrors({})
 
@@ -68,8 +63,33 @@ export function ChangePasswordModal({ open, onOpenChange }: ChangePasswordModalP
       // Validate form data
       const validatedData = changePasswordRequestSchema.parse(formData)
 
-      // Call mutation
-      changePassword(validatedData)
+      // Call mutation and handle success manually
+      changePassword(validatedData, {
+        onSuccess: async () => {
+          console.log('🔐 Password changed successfully, signing out...')
+
+          try {
+            // Sign out from Supabase
+            await supabase.auth.signOut()
+            console.log('✅ Supabase signOut completed')
+
+            // Clear all React Query cache
+            queryClient.clear()
+            console.log('✅ Query cache cleared')
+
+            // Force a full page reload to ensure all state is cleared
+            console.log('🔄 Redirecting to login...')
+            window.location.href = '/auth?passwordChanged=true'
+          } catch (error) {
+            console.error('❌ Error during signOut:', error)
+            // Still redirect even if there's an error
+            window.location.href = '/auth?passwordChanged=true'
+          }
+        },
+        onError: (error) => {
+          console.error('❌ Error changing password:', error)
+        }
+      })
     } catch (err) {
       if (err instanceof z.ZodError) {
         const errors: Record<string, string> = {}
@@ -191,7 +211,8 @@ export function ChangePasswordModal({ open, onOpenChange }: ChangePasswordModalP
           {/* Success Message */}
           {isSuccess && (
             <div className="text-sm text-green-600 bg-green-50 border border-green-200 rounded-xl p-4">
-              ¡Contraseña cambiada exitosamente!
+              <p className="font-medium mb-1">¡Contraseña cambiada exitosamente!</p>
+              <p className="text-xs">Redirigiendo al inicio de sesión...</p>
             </div>
           )}
 

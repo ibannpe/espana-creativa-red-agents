@@ -63,7 +63,7 @@ export class ResendEmailService implements IEmailService {
             <p><strong>Próximos pasos:</strong></p>
             <ol>
               <li>Completa tu perfil para que otros miembros puedan conocerte mejor</li>
-              <li>Explora la red y encuentra a otros emprendedores y mentores</li>
+              <li>Explora la red y encuentra a otros emprendedores</li>
               <li>Participa en oportunidades que se alineen con tus intereses</li>
             </ol>
             <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
