@@ -85,31 +85,50 @@ export class SignUpUseCase {
     // 7. Wait for database trigger to complete user profile creation
     // The handle_new_user() trigger creates the user profile automatically
     // We need to wait a moment and then verify it was created
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    // 8. Verify user was created by trigger and fetch it
+    // Try multiple times with exponential backoff to handle timing issues
     let user: User | null = null
-    try {
-      user = await this.userRepository.findById(userId)
+    const maxRetries = 5
+    const retryDelays = [500, 1000, 1500, 2000, 2500] // milliseconds
 
-      if (!user) {
-        console.error('[SignUpUseCase] User profile was not created by trigger')
-        // Rollback auth user if profile creation failed
-        await this.authService.deleteUser(userId)
-        return {
-          user: null,
-          error: 'Failed to create user profile'
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        // Wait before attempting (skip on first attempt)
+        if (attempt > 0) {
+          await new Promise(resolve => setTimeout(resolve, retryDelays[attempt - 1]))
+        } else {
+          await new Promise(resolve => setTimeout(resolve, 1000))
+        }
+
+        // Try to find user with roles
+        user = await this.userRepository.findById(userId)
+
+        if (user) {
+          console.log(`[SignUpUseCase] User profile created successfully (attempt ${attempt + 1}/${maxRetries})`)
+          break
+        }
+
+        console.log(`[SignUpUseCase] User not found, retrying... (attempt ${attempt + 1}/${maxRetries})`)
+      } catch (error) {
+        console.error(`[SignUpUseCase] Error fetching user (attempt ${attempt + 1}/${maxRetries}):`, error)
+
+        // Only fail on last attempt
+        if (attempt === maxRetries - 1) {
+          await this.authService.deleteUser(userId)
+          return {
+            user: null,
+            error: 'Failed to verify user profile creation'
+          }
         }
       }
+    }
 
-      console.log('[SignUpUseCase] User profile created successfully by trigger')
-    } catch (error) {
-      console.error('[SignUpUseCase] Error fetching user after creation:', error)
-      // Rollback auth user if we can't verify profile creation
+    // Final check: if user still not found after all retries, rollback
+    if (!user) {
+      console.error('[SignUpUseCase] User profile was not created by trigger after all retries')
       await this.authService.deleteUser(userId)
       return {
         user: null,
-        error: 'Failed to verify user profile creation'
+        error: 'Failed to create user profile'
       }
     }
 

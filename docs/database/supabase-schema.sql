@@ -197,18 +197,49 @@ CREATE POLICY "Users can manage own interests" ON interests FOR ALL USING (auth.
 
 -- Functions for automatic user creation and profile completion calculation
 CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+SECURITY DEFINER
+SET search_path = public
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    user_name TEXT;
+    emprendedor_role_id INTEGER;
 BEGIN
-    INSERT INTO users (id, email, name)
-    VALUES (NEW.id, NEW.email, NEW.raw_user_meta_data->>'name');
-    
-    -- Assign default role (emprendedor)
-    INSERT INTO user_roles (user_id, role_id)
-    SELECT NEW.id, id FROM roles WHERE name = 'emprendedor';
-    
+    -- Safely extract name from metadata
+    user_name := COALESCE(NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1));
+
+    -- Get emprendedor role id
+    SELECT id INTO emprendedor_role_id FROM public.roles WHERE name = 'emprendedor';
+
+    IF emprendedor_role_id IS NULL THEN
+        RAISE EXCEPTION 'Rol emprendedor no encontrado';
+    END IF;
+
+    -- Insert user profile
+    INSERT INTO public.users (id, email, name)
+    VALUES (NEW.id, NEW.email, user_name)
+    ON CONFLICT (id) DO UPDATE SET
+        email = EXCLUDED.email,
+        name = EXCLUDED.name;
+
+    -- Insert user role (emprendedor by default)
+    INSERT INTO public.user_roles (user_id, role_id)
+    VALUES (NEW.id, emprendedor_role_id)
+    ON CONFLICT (user_id, role_id) DO NOTHING;
+
+    -- Log success
+    RAISE LOG 'User profile created successfully for user %', NEW.id;
+
     RETURN NEW;
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Log the actual error
+        RAISE WARNING 'Error creating user profile for %: % (SQLSTATE: %)', NEW.id, SQLERRM, SQLSTATE;
+        -- Re-raise the exception to prevent user creation
+        RAISE;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 CREATE OR REPLACE FUNCTION calculate_profile_completion()
 RETURNS TRIGGER AS $$

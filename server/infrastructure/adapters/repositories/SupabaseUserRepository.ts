@@ -15,7 +15,7 @@ export class SupabaseUserRepository implements IUserRepository {
       .from('users')
       .select(`
         *,
-        user_roles!inner(
+        user_roles(
           role_id
         )
       `)
@@ -34,7 +34,7 @@ export class SupabaseUserRepository implements IUserRepository {
       .from('users')
       .select(`
         *,
-        user_roles!inner(
+        user_roles(
           role_id
         )
       `)
