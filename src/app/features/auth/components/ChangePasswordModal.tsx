@@ -69,6 +69,9 @@ export function ChangePasswordModal({ open, onOpenChange }: ChangePasswordModalP
           console.log('🔐 Password changed successfully, signing out...')
 
           try {
+            // Close modal immediately to prevent user interaction
+            onOpenChange(false)
+
             // Sign out from Supabase
             await supabase.auth.signOut()
             console.log('✅ Supabase signOut completed')
@@ -77,13 +80,13 @@ export function ChangePasswordModal({ open, onOpenChange }: ChangePasswordModalP
             queryClient.clear()
             console.log('✅ Query cache cleared')
 
-            // Force a full page reload to ensure all state is cleared
+            // Use replace instead of href to prevent back navigation
             console.log('🔄 Redirecting to login...')
-            window.location.href = '/auth?passwordChanged=true'
+            window.location.replace('/auth?passwordChanged=true')
           } catch (error) {
             console.error('❌ Error during signOut:', error)
             // Still redirect even if there's an error
-            window.location.href = '/auth?passwordChanged=true'
+            window.location.replace('/auth?passwordChanged=true')
           }
         },
         onError: (error) => {
@@ -104,8 +107,8 @@ export function ChangePasswordModal({ open, onOpenChange }: ChangePasswordModalP
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open={open} onOpenChange={isSuccess ? undefined : onOpenChange}>
+      <DialogContent className="sm:max-w-md" onEscapeKeyDown={(e) => isSuccess && e.preventDefault()}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Lock className="h-5 w-5 text-primary" />
@@ -222,7 +225,7 @@ export function ChangePasswordModal({ open, onOpenChange }: ChangePasswordModalP
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              disabled={isLoading}
+              disabled={isLoading || isSuccess}
               className="flex-1"
             >
               Cancelar

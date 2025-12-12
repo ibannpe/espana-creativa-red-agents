@@ -197,4 +197,48 @@ describe('Auth Service', () => {
       await expect(authService.getCurrentUser()).rejects.toThrow('Not authenticated')
     })
   })
+
+  describe('changePassword', () => {
+    it('should call POST /auth/change-password with current and new passwords', async () => {
+      const changePasswordData = {
+        currentPassword: 'oldPassword123',
+        newPassword: 'newPassword456'
+      }
+
+      const mockResponse = {
+        data: {
+          message: 'Contraseña cambiada exitosamente'
+        }
+      }
+
+      mockedAxios.post.mockResolvedValue(mockResponse)
+
+      const result = await authService.changePassword(changePasswordData)
+
+      expect(mockedAxios.post).toHaveBeenCalledWith('/auth/change-password', changePasswordData)
+      expect(result.message).toBe('Contraseña cambiada exitosamente')
+    })
+
+    it('should handle incorrect current password error', async () => {
+      const changePasswordData = {
+        currentPassword: 'wrongPassword',
+        newPassword: 'newPassword456'
+      }
+
+      mockedAxios.post.mockRejectedValue(new Error('Contraseña actual incorrecta'))
+
+      await expect(authService.changePassword(changePasswordData)).rejects.toThrow('Contraseña actual incorrecta')
+    })
+
+    it('should handle weak new password error', async () => {
+      const changePasswordData = {
+        currentPassword: 'oldPassword123',
+        newPassword: 'weak'
+      }
+
+      mockedAxios.post.mockRejectedValue(new Error('La nueva contraseña debe tener al menos 8 caracteres'))
+
+      await expect(authService.changePassword(changePasswordData)).rejects.toThrow('La nueva contraseña debe tener al menos 8 caracteres')
+    })
+  })
 })

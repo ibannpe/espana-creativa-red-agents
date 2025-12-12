@@ -61,4 +61,23 @@ export interface IAuthService {
    * Check if email already exists in auth.users
    */
   checkEmailExists(email: string): Promise<boolean>
+
+  /**
+   * Change user password
+   * @param email User's email address
+   * @param currentPassword Current password for verification
+   * @param newPassword New password to set
+   * @param token JWT token for authentication
+   */
+  changePassword(email: string, currentPassword: string, newPassword: string, token: string): Promise<{ error: Error | null }>
+
+  /**
+   * Send password reset email
+   */
+  sendPasswordResetEmail(email: string): Promise<{ error: Error | null }>
+
+  /**
+   * Reset password with new password (used after reset email)
+   */
+  resetPassword(newPassword: string): Promise<{ error: Error | null }>
 }

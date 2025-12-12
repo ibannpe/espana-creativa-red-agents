@@ -137,36 +137,52 @@ export class SupabaseAuthService implements IAuthService {
     }
   }
 
-  async changePassword(currentPassword: string, newPassword: string): Promise<{ error: Error | null }> {
+  async changePassword(email: string, currentPassword: string, newPassword: string, token: string): Promise<{ error: Error | null }> {
     try {
-      // Get current user
-      const { data: userData, error: userError } = await this.supabase.auth.getUser()
+      // IMPORTANTE: Verificamos la contraseña actual usando un cliente temporal
+      // para evitar invalidar la sesión principal del usuario
+      const { createClient } = await import('@supabase/supabase-js')
+      const tempClient = createClient(
+        process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL!,
+        process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY!
+      )
 
-      if (userError || !userData.user) {
-        return { error: new Error('Usuario no autenticado') }
-      }
-
-      // Verify current password by attempting to sign in
-      const { error: signInError } = await this.supabase.auth.signInWithPassword({
-        email: userData.user.email!,
+      // Verify current password with temporary client (no session pollution)
+      const { data: verifyData, error: signInError } = await tempClient.auth.signInWithPassword({
+        email,
         password: currentPassword
       })
 
-      if (signInError) {
+      // Immediately sign out from temporary client to clean up
+      await tempClient.auth.signOut()
+
+      if (signInError || !verifyData.user) {
         return { error: new Error('Contraseña actual incorrecta') }
       }
 
-      // Update to new password
-      const { error: updateError } = await this.supabase.auth.updateUser({
-        password: newPassword
-      })
+      // Use admin client with service role key to update the password
+      // This approach doesn't require establishing a session and works reliably
+      const adminClient = createClient(
+        process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      )
+
+      // Update password using admin privileges
+      // NOTA: Este updateUserById invalida TODOS los tokens de sesión existentes,
+      // por lo que el cliente debe hacer logout inmediatamente después de recibir la respuesta
+      const { error: updateError } = await adminClient.auth.admin.updateUserById(
+        verifyData.user.id,
+        { password: newPassword }
+      )
 
       if (updateError) {
+        console.error('[SupabaseAuthService] Error updating password:', updateError)
         return { error: updateError }
       }
 
       return { error: null }
     } catch (error) {
+      console.error('[SupabaseAuthService] Exception in changePassword:', error)
       return { error: error as Error }
     }
   }

@@ -3,6 +3,7 @@
 
 import { Router, Request, Response, NextFunction } from 'express'
 import { Container } from '../../di/Container'
+import { authMiddleware, AuthenticatedRequest } from '../middleware/auth.middleware'
 
 export const createAuthRoutes = (): Router => {
   const router = Router()
@@ -315,7 +316,7 @@ export const createAuthRoutes = (): Router => {
   })
 
   // POST /api/auth/change-password - Change user password
-  router.post('/change-password', async (req: Request, res: Response, next: NextFunction) => {
+  router.post('/change-password', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { currentPassword, newPassword } = req.body
 
@@ -331,8 +332,11 @@ export const createAuthRoutes = (): Router => {
         })
       }
 
+      // Get authenticated user and token from middleware
+      const { user, token } = req as AuthenticatedRequest
+
       const authService = Container.getAuthService()
-      const result = await authService.changePassword(currentPassword, newPassword)
+      const result = await authService.changePassword(user.email, currentPassword, newPassword, token)
 
       if (result.error) {
         return res.status(400).json({
