@@ -31,8 +31,9 @@ const Dashboard = () => {
   const [projectDetailsOpen, setProjectDetailsOpen] = useState(false);
   // const logger = useLogger('Dashboard');
 
-  // Fetch recent opportunities (limit to 3)
+  // Fetch recent opportunities (limit to 3, only open opportunities)
   const { data: opportunitiesData, isLoading: opportunitiesLoading } = useOpportunitiesQuery({
+    status: 'abierta',
     limit: 3
   });
 
@@ -266,8 +267,13 @@ const Dashboard = () => {
                         onClick={() => navigate(`/opportunity/${opportunity.id}`)}
                       >
                         <div className="flex items-start justify-between mb-2">
-                          <h4 className="text-sm font-semibold">{opportunity.title}</h4>
-                          <Badge variant="secondary" className="text-xs">
+                          <div className="flex-1">
+                            <h4 className="text-sm font-semibold mb-1">{opportunity.title}</h4>
+                            <Badge variant="default" className="text-xs bg-primary/10 text-primary hover:bg-primary/20">
+                              📍 {opportunity.city.name}
+                            </Badge>
+                          </div>
+                          <Badge variant="secondary" className="text-xs ml-2">
                             {opportunity.type}
                           </Badge>
                         </div>

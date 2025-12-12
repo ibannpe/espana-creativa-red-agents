@@ -63,7 +63,8 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
       .from('opportunities')
       .select(`
         *,
-        creator:users!opportunities_created_by_fkey(id, name, avatar_url)
+        creator:users!opportunities_created_by_fkey(id, name, avatar_url),
+        city:cities!opportunities_city_id_fkey(id, name, slug)
       `)
       .eq('id', id)
       .single()
@@ -79,6 +80,11 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
         name: data.creator.name,
         avatar_url: data.creator.avatar_url,
         professional_title: null
+      },
+      city: {
+        id: data.city.id,
+        name: data.city.name,
+        slug: data.city.slug
       }
     }
   }
@@ -88,7 +94,8 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
       .from('opportunities')
       .select(`
         *,
-        creator:users!opportunities_created_by_fkey(id, name, avatar_url)
+        creator:users!opportunities_created_by_fkey(id, name, avatar_url),
+        city:cities!opportunities_city_id_fkey(id, name, slug)
       `)
 
     // Apply filters
@@ -145,6 +152,11 @@ export class SupabaseOpportunityRepository implements OpportunityRepository {
         name: row.creator.name,
         avatar_url: row.creator.avatar_url,
         professional_title: null
+      },
+      city: {
+        id: row.city.id,
+        name: row.city.name,
+        slug: row.city.slug
       }
     }))
   }

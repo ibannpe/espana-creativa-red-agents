@@ -55,6 +55,11 @@ export const opportunityWithCreatorSchema = opportunitySchema.extend({
     name: z.string(),
     avatar_url: z.string().nullable().optional(),
     professional_title: z.string().nullable().optional()
+  }),
+  city: z.object({
+    id: z.number(),
+    name: z.string(),
+    slug: z.string()
   })
 })
 

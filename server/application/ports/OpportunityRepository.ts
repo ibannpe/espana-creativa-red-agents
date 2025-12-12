@@ -11,6 +11,11 @@ export interface OpportunityWithCreator {
     avatar_url: string | null
     professional_title: string | null
   }
+  city: {
+    id: number
+    name: string
+    slug: string
+  }
 }
 
 export interface FilterOpportunitiesParams {

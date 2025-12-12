@@ -95,6 +95,11 @@ export const createOpportunitiesRoutes = (): Router => {
               name: o.creator.name,
               avatar_url: o.creator.avatar_url,
               professional_title: o.creator.professional_title
+            },
+            city: {
+              id: o.city.id,
+              name: o.city.name,
+              slug: o.city.slug
             }
           })),
           total: opportunities.length
@@ -143,6 +148,11 @@ export const createOpportunitiesRoutes = (): Router => {
             name: o.creator.name,
             avatar_url: o.creator.avatar_url,
             professional_title: o.creator.professional_title
+          },
+          city: {
+            id: o.city.id,
+            name: o.city.name,
+            slug: o.city.slug
           }
         })),
         total: opportunities.length
@@ -188,6 +198,11 @@ export const createOpportunitiesRoutes = (): Router => {
             name: o.creator.name,
             avatar_url: o.creator.avatar_url,
             professional_title: o.creator.professional_title
+          },
+          city: {
+            id: o.city.id,
+            name: o.city.name,
+            slug: o.city.slug
           }
         })),
         total: opportunities.length
@@ -233,6 +248,11 @@ export const createOpportunitiesRoutes = (): Router => {
             name: result.creator.name,
             avatar_url: result.creator.avatar_url,
             professional_title: result.creator.professional_title
+          },
+          city: {
+            id: result.city.id,
+            name: result.city.name,
+            slug: result.city.slug
           }
         }
       })

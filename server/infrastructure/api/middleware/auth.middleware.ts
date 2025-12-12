@@ -36,10 +36,16 @@ export const authMiddleware = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    console.log(`[AUTH DEBUG] ${req.method} ${req.path}`, {
+      hasAuthHeader: !!req.headers.authorization,
+      authHeaderPrefix: req.headers.authorization?.substring(0, 20)
+    })
+
     // Extract token from Authorization header
     const authHeader = req.headers.authorization
 
     if (!authHeader) {
+      console.log('[AUTH DEBUG] No auth header')
       res.status(401).json({ error: 'No authorization header provided' })
       return
     }
@@ -47,6 +53,7 @@ export const authMiddleware = async (
     const token = authHeader.replace('Bearer ', '')
 
     if (!token || token === authHeader) {
+      console.log('[AUTH DEBUG] Invalid auth format')
       res.status(401).json({ error: 'Invalid authorization format. Use: Bearer <token>' })
       return
     }
