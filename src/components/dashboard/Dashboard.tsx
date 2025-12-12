@@ -158,7 +158,7 @@ const Dashboard = () => {
               <Network className="h-12 w-12 text-primary mx-auto mb-4" />
               <h3 className="font-semibold mb-2">Mi Red</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Descubre emprendedores y mentores
+                Descubre emprendedores
               </p>
               <Button
                 size="sm"
