@@ -42,7 +42,7 @@ export class OpportunityInterestRepository implements IOpportunityInterestReposi
     return data ? this.mapToEntity(data) : null
   }
 
-  async findByOpportunityAndUser(opportunityId: number, userId: string): Promise<OpportunityInterest | null> {
+  async findByOpportunityAndUser(opportunityId: string, userId: string): Promise<OpportunityInterest | null> {
     const { data, error } = await this.supabase
       .from('opportunity_interests')
       .select('*')
@@ -58,7 +58,7 @@ export class OpportunityInterestRepository implements IOpportunityInterestReposi
     return data ? this.mapToEntity(data) : null
   }
 
-  async findByOpportunity(opportunityId: number): Promise<OpportunityInterest[]> {
+  async findByOpportunity(opportunityId: string): Promise<OpportunityInterest[]> {
     const { data, error } = await this.supabase
       .from('opportunity_interests')
       .select('*')
@@ -115,7 +115,7 @@ export class OpportunityInterestRepository implements IOpportunityInterestReposi
     }
   }
 
-  async hasUserExpressedInterest(opportunityId: number, userId: string): Promise<boolean> {
+  async hasUserExpressedInterest(opportunityId: string, userId: string): Promise<boolean> {
     const { data, error } = await this.supabase
       .from('opportunity_interests')
       .select('id')

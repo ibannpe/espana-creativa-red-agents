@@ -57,4 +57,14 @@ export interface IEmailService {
    * Send rejection email to user
    */
   sendSignupRejectedEmail(email: Email): Promise<EmailResult>
+
+  /**
+   * Send notification to opportunity creator when someone expresses interest
+   */
+  sendOpportunityInterestEmail(
+    creatorEmail: Email,
+    creatorName: string,
+    interestedUserName: string,
+    opportunityTitle: string
+  ): Promise<EmailResult>
 }

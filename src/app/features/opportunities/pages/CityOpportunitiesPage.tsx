@@ -271,6 +271,7 @@ export function CityOpportunitiesPage() {
           open={isCreateDialogOpen}
           onOpenChange={handleCloseDialog}
           opportunity={editingOpportunity}
+          cityId={city.id}
         />
       </div>
     </div>

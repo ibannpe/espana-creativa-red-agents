@@ -17,12 +17,12 @@ export interface IOpportunityInterestRepository {
   /**
    * Find interest by opportunity and user
    */
-  findByOpportunityAndUser(opportunityId: number, userId: string): Promise<OpportunityInterest | null>
+  findByOpportunityAndUser(opportunityId: string, userId: string): Promise<OpportunityInterest | null>
 
   /**
    * Get all interests for an opportunity
    */
-  findByOpportunity(opportunityId: number): Promise<OpportunityInterest[]>
+  findByOpportunity(opportunityId: string): Promise<OpportunityInterest[]>
 
   /**
    * Get all interests by a user
@@ -42,5 +42,5 @@ export interface IOpportunityInterestRepository {
   /**
    * Check if user has already expressed interest
    */
-  hasUserExpressedInterest(opportunityId: number, userId: string): Promise<boolean>
+  hasUserExpressedInterest(opportunityId: string, userId: string): Promise<boolean>
 }

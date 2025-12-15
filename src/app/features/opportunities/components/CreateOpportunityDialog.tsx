@@ -51,6 +51,7 @@ interface CreateOpportunityDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   opportunity?: OpportunityWithCreator | null
+  cityId?: number // City ID from the current page context
 }
 
 const opportunityTypes = [
@@ -69,7 +70,7 @@ const opportunityStatuses = [
   { value: 'cancelada', label: 'Cancelada' },
 ]
 
-export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: CreateOpportunityDialogProps) {
+export function CreateOpportunityDialog({ open, onOpenChange, opportunity, cityId }: CreateOpportunityDialogProps) {
   const [skillInput, setSkillInput] = useState('')
   const { action: createOpportunity, isLoading: isCreating } = useCreateOpportunityMutation()
   const { action: updateOpportunity, isLoading: isUpdating } = useUpdateOpportunityMutation()
@@ -80,6 +81,9 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
 
   // Show city selector only if user can create in at least one city
   const canManageCities = canCreateInAnyCity
+
+  // Get city name from cityId for display
+  const currentCity = cityId ? allowedCities.find(c => c.id === cityId) : null
 
   const form = useForm<OpportunityFormData>({
     resolver: zodResolver(isEditMode ? editOpportunityFormSchema : createOpportunityRequestSchema),
@@ -101,7 +105,7 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
 
   // Update form values when opportunity prop changes or when dialog opens
   useEffect(() => {
-    // Only reset when dialog is open
+    // Only reset when dialog opens (not when it's already open)
     if (!open) return
 
     if (opportunity) {
@@ -120,8 +124,9 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
         status: opportunity.status,
       })
     } else {
-      // Get default city only once when creating new opportunity
-      const defaultCityId = allowedCities.length > 0 ? allowedCities[0].id : undefined
+      // For new opportunities: use cityId from page context (if available)
+      // Otherwise fall back to first allowed city
+      const defaultCityId = cityId || (allowedCities.length > 0 ? allowedCities[0].id : undefined)
 
       form.reset({
         title: '',
@@ -138,8 +143,10 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
         status: 'abierta',
       })
     }
+    // Only re-run when dialog opens/closes, when editing a different opportunity, or when cityId changes
+    // DO NOT include allowedCities.length to avoid resetting while user is editing
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, opportunity?.id, allowedCities.length])
+  }, [open, opportunity?.id, cityId])
 
   const skills = form.watch('skills_required')
 
@@ -168,9 +175,11 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
   const onSubmit = async (data: OpportunityFormData) => {
     try {
       if (isEditMode && opportunity) {
-        // For update, include status
-        console.log('🔄 Actualizando oportunidad:', { id: opportunity.id, data })
-        await updateOpportunity({ id: opportunity.id, data })
+        // For update: remove deprecated location field to avoid conflicts
+        // city_id is not updatable per business rule
+        const { location, ...updateData } = data
+        console.log('🔄 Actualizando oportunidad:', { id: opportunity.id, data: updateData })
+        await updateOpportunity({ id: opportunity.id, data: updateData })
         form.reset()
         onOpenChange(false)
       } else {
@@ -203,6 +212,12 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
               ? 'Actualiza los detalles de tu oportunidad'
               : 'Completa los detalles de la oportunidad que quieres compartir con la comunidad'}
           </DialogDescription>
+          {!isEditMode && currentCity && (
+            <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4" />
+              <span>Esta oportunidad se publicará en <strong>{currentCity.name}</strong></span>
+            </div>
+          )}
         </DialogHeader>
 
         <Form {...form}>
@@ -254,8 +269,9 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
               )}
             />
 
-            {/* Ciudad - Solo visible para gestores de ciudad */}
-            {canManageCities && (
+            {/* Ciudad - Solo visible en modo edición (para ver qué ciudad es) */}
+            {/* En modo creación, la ciudad viene del contexto (URL) y no se muestra */}
+            {canManageCities && isEditMode && (
               <FormField
                 control={form.control}
                 name="city_id"
@@ -263,12 +279,12 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
                   <FormItem>
                     <FormLabel>
                       <MapPin className="inline h-4 w-4 mr-1" />
-                      Ciudad *
+                      Ciudad
                     </FormLabel>
                     <Select
                       onValueChange={(value) => field.onChange(parseInt(value))}
                       value={field.value?.toString()}
-                      disabled={isLoadingCities || allowedCities.length === 0}
+                      disabled={true}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -284,9 +300,7 @@ export function CreateOpportunityDialog({ open, onOpenChange, opportunity }: Cre
                       </SelectContent>
                     </Select>
                     <FormDescription>
-                      {allowedCities.length === 0
-                        ? 'No tienes permisos para crear oportunidades en ninguna ciudad'
-                        : 'Selecciona la ciudad donde se publicará la oportunidad'}
+                      La ciudad no se puede cambiar una vez creada la oportunidad
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

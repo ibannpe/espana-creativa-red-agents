@@ -262,4 +262,51 @@ export class ResendEmailService implements IEmailService {
       html
     })
   }
+
+  async sendOpportunityInterestEmail(
+    creatorEmail: Email,
+    creatorName: string,
+    interestedUserName: string,
+    opportunityTitle: string
+  ): Promise<EmailResult> {
+    console.log('📧 [ResendEmailService] sendOpportunityInterestEmail called')
+    console.log('📧 [ResendEmailService] To:', creatorEmail.getValue())
+    console.log('📧 [ResendEmailService] Creator name:', creatorName)
+    console.log('📧 [ResendEmailService] Interested user:', interestedUserName)
+    console.log('📧 [ResendEmailService] Opportunity:', opportunityTitle)
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head><meta charset="utf-8"></head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #dc2626;">¡Alguien está interesado en tu oportunidad!</h1>
+            <p>Hola ${creatorName},</p>
+            <p><strong>${interestedUserName}</strong> ha expresado interés en tu oportunidad:</p>
+            <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin: 0; font-size: 18px; font-weight: bold; color: #1f2937;">${opportunityTitle}</p>
+            </div>
+            <p>Puedes contactar con esta persona directamente desde la plataforma para discutir más detalles.</p>
+            <div style="margin: 30px 0; text-align: center;">
+              <a href="${process.env.APP_URL || 'http://localhost:8080'}/opportunities" style="display: inline-block; padding: 15px 30px; background-color: #dc2626; color: white; text-decoration: none; border-radius: 6px; font-size: 16px;">Ver mis oportunidades</a>
+            </div>
+            <p>¡Gracias por usar España Creativa Red!</p>
+            <p style="margin-top: 30px;">
+              <strong>El equipo de España Creativa</strong>
+            </p>
+          </div>
+        </body>
+      </html>
+    `
+
+    const result = await this.sendEmail({
+      to: creatorEmail,
+      subject: `¡${interestedUserName} está interesado en tu oportunidad!`,
+      html
+    })
+
+    console.log('📧 [ResendEmailService] Result:', result)
+    return result
+  }
 }

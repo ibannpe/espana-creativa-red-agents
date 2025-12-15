@@ -23,6 +23,7 @@ import {
 import { useOpportunityQuery } from '@/app/features/opportunities/hooks/queries/useOpportunityQuery'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 import { CreateOpportunityDialog } from '@/app/features/opportunities/components/CreateOpportunityDialog'
+import { useExpressInterestMutation } from '@/app/features/opportunities/hooks/mutations/useExpressInterestMutation'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { useState } from 'react'
@@ -58,10 +59,10 @@ export function OpportunityDetailPage() {
   const { user } = useAuthContext()
   const { toast } = useToast()
   const [isInterested, setIsInterested] = useState(false)
-  const [isExpressingInterest, setIsExpressingInterest] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
   const { data: opportunity, isLoading, error } = useOpportunityQuery(opportunityId)
+  const expressInterest = useExpressInterestMutation()
 
   const handleBack = () => {
     navigate('/opportunities')
@@ -74,28 +75,24 @@ export function OpportunityDetailPage() {
   }
 
   const handleExpressInterest = async () => {
-    if (!opportunity) return
-
-    setIsExpressingInterest(true)
+    if (!opportunity || !opportunityId) return
 
     try {
-      // Simular una acción de expresar interés
-      // TODO: Implementar endpoint API para registrar interés
-      await new Promise(resolve => setTimeout(resolve, 500))
+      await expressInterest.action({
+        opportunityId: opportunityId
+      })
 
       setIsInterested(true)
       toast({
         title: '¡Interés registrado!',
         description: `Hemos notificado a ${opportunity.creator.name} sobre tu interés. Pronto te contactará.`
       })
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: 'No se pudo registrar tu interés. Inténtalo de nuevo.',
+        description: error?.message || 'No se pudo registrar tu interés. Inténtalo de nuevo.',
         variant: 'destructive'
       })
-    } finally {
-      setIsExpressingInterest(false)
     }
   }
 
@@ -279,12 +276,12 @@ export function OpportunityDetailPage() {
               <div className="flex gap-3 pt-4">
                 <Button
                   onClick={handleExpressInterest}
-                  disabled={isExpressingInterest || isInterested}
+                  disabled={expressInterest.isLoading || isInterested}
                   className="flex-1"
                   size="lg"
                 >
                   <Heart className={`h-5 w-5 mr-2 ${isInterested ? 'fill-current' : ''}`} />
-                  {isExpressingInterest
+                  {expressInterest.isLoading
                     ? 'Enviando...'
                     : isInterested
                       ? '¡Te interesa!'

@@ -375,7 +375,9 @@ export class Container {
     // Initialize Opportunity Interests use cases
     this.expressInterestUseCase = new ExpressInterestUseCase(
       this.opportunityInterestRepository,
-      this.opportunityRepository
+      this.opportunityRepository,
+      this.userRepository,
+      this.emailService
     )
 
     this.getOpportunityInterestsUseCase = new GetOpportunityInterestsUseCase(

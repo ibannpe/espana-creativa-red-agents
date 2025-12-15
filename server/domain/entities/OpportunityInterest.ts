@@ -5,7 +5,7 @@ export type OpportunityInterestStatus = 'pending' | 'accepted' | 'rejected' | 'w
 
 export interface OpportunityInterest {
   id: string
-  opportunityId: number
+  opportunityId: string
   userId: string
   message?: string
   status: OpportunityInterestStatus
@@ -14,7 +14,7 @@ export interface OpportunityInterest {
 }
 
 export interface CreateOpportunityInterestData {
-  opportunityId: number
+  opportunityId: string
   userId: string
   message?: string
 }

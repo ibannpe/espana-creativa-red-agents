@@ -10,7 +10,7 @@ const router = Router()
 
 // Validation schemas
 const expressInterestSchema = z.object({
-  opportunityId: z.number().int().positive(),
+  opportunityId: z.string().uuid(),
   message: z.string().optional()
 })
 
