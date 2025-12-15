@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, Users, MapPin, Pencil, Trash2 } from 'lucide-react'
-import { useEnrollInProjectMutation } from '../hooks/mutations/useEnrollInProjectMutation'
 import { useCancelEnrollmentMutation } from '../hooks/mutations/useCancelEnrollmentMutation'
 import { useDeleteProjectMutation } from '../hooks/mutations/useDeleteProjectMutation'
 import { useMyProjectsQuery } from '../hooks/queries/useMyProjectsQuery'
@@ -63,7 +62,6 @@ const statusColors = {
 
 export function ProjectCard({ program, onViewDetails }: ProjectCardProps) {
   const { user } = useAuthContext()
-  const { enroll, isLoading: isEnrolling } = useEnrollInProjectMutation()
   const { cancel, isLoading: isCancelling } = useCancelEnrollmentMutation()
   const { action: deleteProject, isLoading: isDeleting } = useDeleteProjectMutation()
   const { data: myProjectsData } = useMyProjectsQuery({ enabled: !!user })
@@ -93,10 +91,6 @@ export function ProjectCard({ program, onViewDetails }: ProjectCardProps) {
   const isEnrolled = !!userEnrollment
   const enrollmentId = userEnrollment?.id
 
-  const handleEnroll = () => {
-    enroll(String(program.id))
-  }
-
   const handleCancel = () => {
     if (enrollmentId) {
       cancel(String(enrollmentId))
@@ -115,7 +109,6 @@ export function ProjectCard({ program, onViewDetails }: ProjectCardProps) {
   }
 
   const isFull = program.max_participants && program.participants >= program.max_participants
-  const canEnroll = program.status === 'upcoming' && !isFull && !isEnrolled
   const canCancel = isEnrolled && program.status === 'upcoming'
   const isCreator = user && program.created_by === user.id
 
@@ -226,15 +219,6 @@ export function ProjectCard({ program, onViewDetails }: ProjectCardProps) {
             >
               Ver detalles
             </Button>
-            {canEnroll && user && (
-              <Button
-                size="sm"
-                onClick={handleEnroll}
-                disabled={isEnrolling}
-              >
-                {isEnrolling ? 'Inscribiendo...' : 'Inscribirse'}
-              </Button>
-            )}
             {canCancel && (
               <Button
                 size="sm"

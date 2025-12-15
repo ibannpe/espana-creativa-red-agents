@@ -5,75 +5,73 @@ import { useState } from 'react'
 import { Navigation } from '@/components/layout/Navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Calendar, Clock, MapPin, BookOpen } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { useProjectsQuery } from '@/app/features/projects/hooks/queries/useProjectsQuery'
-import { useMyProjectsQuery } from '@/app/features/projects/hooks/queries/useMyProjectsQuery'
 import { ProjectCard } from '@/app/features/projects/components/ProjectCard'
 import { CreateProjectDialog } from '@/app/features/projects/components/CreateProjectDialog'
 import { ProjectDetailsDialog } from '@/app/features/projects/components/ProjectDetailsDialog'
 import { useUserRoles } from '@/app/features/auth/hooks/useUserRoles'
-import type { ProjectStatus, ProjectWithCreator } from '@/app/features/projects/data/schemas/project.schema'
-import type { EnrollmentStatus } from '@/app/features/projects/data/schemas/enrollment.schema'
+import type { ProjectWithCreator } from '@/app/features/projects/data/schemas/project.schema'
 
-const enrollmentStatusLabels: Record<EnrollmentStatus, string> = {
-  enrolled: 'Inscrito',
-  completed: 'Completado',
-  dropped: 'Abandonado',
-  rejected: 'Rechazado'
-}
-
-const enrollmentStatusColors: Record<EnrollmentStatus, string> = {
-  enrolled: 'bg-green-500',
-  completed: 'bg-blue-500',
-  dropped: 'bg-gray-500',
-  rejected: 'bg-red-500'
-}
-
-const typeLabels: Record<string, string> = {
-  aceleracion: 'Aceleración',
-  workshop: 'Workshop',
-  bootcamp: 'Bootcamp',
-  mentoria: 'Mentoría',
-  curso: 'Curso',
-  otro: 'Otro'
-}
+type DateFilter = 'upcoming' | 'active' | 'past' | 'all'
 
 export function ProjectsPage() {
-  const [selectedTab, setSelectedTab] = useState<ProjectStatus | 'all' | 'my-projects'>('upcoming')
+  const [selectedTab, setSelectedTab] = useState<DateFilter>('upcoming')
   const [selectedProject, setSelectedProject] = useState<ProjectWithCreator | null>(null)
   const [detailsOpen, setDetailsOpen] = useState(false)
 
   // Check if user is admin
   const { isAdmin } = useUserRoles()
 
-  // Fetch all projects with optional status filter
-  const filters = selectedTab === 'all' || selectedTab === 'my-projects' ? {} : { status: selectedTab as ProjectStatus }
-  const { data, isLoading, isError } = useProjectsQuery(filters)
+  // Fetch all projects (no status filter, we'll filter by date client-side)
+  const { data, isLoading, isError } = useProjectsQuery({})
 
-  // Fetch user's enrolled projects
-  const { data: myProgramsData, isLoading: isLoadingMy, isError: isErrorMy } = useMyProjectsQuery()
+  // Filter projects by date
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
 
-  const programs = selectedTab === 'my-projects'
-    ? (myProgramsData?.enrollments || []).map(e => e.project)
-    : (data?.projects || [])
-  const total = selectedTab === 'my-projects'
-    ? (myProgramsData?.enrollments || []).length
-    : (data?.total || 0)
+  const allPrograms = data?.projects || []
 
-  const enrollments = myProgramsData?.enrollments || []
-  const isLoadingData = selectedTab === 'my-projects' ? isLoadingMy : isLoading
-  const isErrorData = selectedTab === 'my-projects' ? isErrorMy : isError
+  const programs = allPrograms.filter(program => {
+    const startDate = new Date(program.start_date)
+    const endDate = new Date(program.end_date)
+    startDate.setHours(0, 0, 0, 0)
+    endDate.setHours(0, 0, 0, 0)
+
+    switch (selectedTab) {
+      case 'upcoming':
+        return startDate > today
+      case 'active':
+        return startDate <= today && endDate >= today
+      case 'past':
+        return endDate < today
+      case 'all':
+      default:
+        return true
+    }
+  })
+
+  const total = programs.length
+  const isLoadingData = isLoading
+  const isErrorData = isError
 
   const handleViewDetails = (program: ProjectWithCreator) => {
     setSelectedProject(program)
     setDetailsOpen(true)
   }
 
-  // Calculate stats (you could also get these from separate API calls)
+  // Calculate stats based on date filtering
+  const activeProjects = allPrograms.filter(p => {
+    const startDate = new Date(p.start_date)
+    const endDate = new Date(p.end_date)
+    startDate.setHours(0, 0, 0, 0)
+    endDate.setHours(0, 0, 0, 0)
+    return startDate <= today && endDate >= today
+  })
+
   const stats = {
-    active: programs.filter(p => p.status === 'active').length,
-    participants: programs.reduce((sum, p) => sum + p.participants, 0),
+    active: activeProjects.length,
+    participants: allPrograms.reduce((sum, p) => sum + p.participants, 0),
     completionRate: 85, // This could come from backend
     averageRating: 4.8 // This could come from backend
   }
@@ -117,18 +115,11 @@ export function ProjectsPage() {
               En curso
             </Button>
             <Button
-              variant={selectedTab === 'completed' ? 'default' : 'ghost'}
+              variant={selectedTab === 'past' ? 'default' : 'ghost'}
               size="sm"
-              onClick={() => setSelectedTab('completed')}
+              onClick={() => setSelectedTab('past')}
             >
-              Completados
-            </Button>
-            <Button
-              variant={selectedTab === 'my-projects' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setSelectedTab('my-projects')}
-            >
-              Mis Proyectos
+              Pasados
             </Button>
             <Button
               variant={selectedTab === 'all' ? 'default' : 'ghost'}
