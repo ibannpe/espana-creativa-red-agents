@@ -30,7 +30,7 @@ export const useAdminUsersQuery = () => {
   return useQuery<UsersResponse>({
     queryKey: ['admin', 'users'],
     queryFn: async () => {
-      const response = await axiosInstance.get<UsersResponse>('/api/admin/users')
+      const response = await axiosInstance.get<UsersResponse>('/admin/users')
       return response.data
     },
     staleTime: 30 * 1000, // 30 seconds

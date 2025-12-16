@@ -34,6 +34,18 @@ CREATE TABLE user_roles (
     PRIMARY KEY (user_id, role_id)
 );
 
+-- Role audit log (tracks all role changes)
+CREATE TABLE role_audit_log (
+    id SERIAL PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role_id INTEGER NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+    action VARCHAR(20) NOT NULL CHECK (action IN ('assigned', 'removed')),
+    performed_by UUID REFERENCES users(id) ON DELETE SET NULL,
+    reason TEXT,
+    metadata JSONB DEFAULT '{}'::jsonb,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Projects table
 CREATE TABLE projects (
     id SERIAL PRIMARY KEY,
@@ -138,9 +150,17 @@ CREATE INDEX idx_projects_status ON projects(status);
 CREATE INDEX idx_users_search ON users USING GIN(to_tsvector('spanish', COALESCE(name, '') || ' ' || COALESCE(bio, '')));
 CREATE INDEX idx_opportunities_search ON opportunities USING GIN(to_tsvector('spanish', title || ' ' || description));
 
+-- Role audit log indexes
+CREATE INDEX idx_role_audit_log_user_id ON role_audit_log(user_id);
+CREATE INDEX idx_role_audit_log_role_id ON role_audit_log(role_id);
+CREATE INDEX idx_role_audit_log_performed_by ON role_audit_log(performed_by);
+CREATE INDEX idx_role_audit_log_action ON role_audit_log(action);
+CREATE INDEX idx_role_audit_log_created_at ON role_audit_log(created_at DESC);
+
 -- Row Level Security (RLS) policies
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_roles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE role_audit_log ENABLE ROW LEVEL SECURITY;
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE opportunities ENABLE ROW LEVEL SECURITY;
 ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
@@ -153,14 +173,62 @@ CREATE POLICY "Users can update own profile" ON users FOR UPDATE USING (auth.uid
 CREATE POLICY "Users can insert own profile" ON users FOR INSERT WITH CHECK (auth.uid() = id);
 
 -- User roles policies
-CREATE POLICY "Anyone can view user roles" ON user_roles FOR SELECT USING (auth.uid() IS NOT NULL);
-CREATE POLICY "Only admins can manage user roles" ON user_roles FOR ALL USING (
+CREATE POLICY "Anyone can view user roles"
+ON user_roles
+FOR SELECT
+USING (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Admins can assign roles"
+ON user_roles
+FOR INSERT
+WITH CHECK (
     EXISTS (
         SELECT 1 FROM user_roles ur
         JOIN roles r ON ur.role_id = r.id
         WHERE ur.user_id = auth.uid() AND r.name = 'admin'
     )
 );
+
+CREATE POLICY "Admins can remove roles"
+ON user_roles
+FOR DELETE
+USING (
+    EXISTS (
+        SELECT 1 FROM user_roles ur
+        JOIN roles r ON ur.role_id = r.id
+        WHERE ur.user_id = auth.uid() AND r.name = 'admin'
+    )
+);
+
+CREATE POLICY "Service role full access"
+ON user_roles
+FOR ALL
+USING (
+    (current_setting('request.jwt.claims'::text, true)::json ->> 'role') = 'service_role'
+);
+
+-- Role audit log policies
+CREATE POLICY "Only admins can view audit logs" ON role_audit_log
+    FOR SELECT
+    USING (
+        EXISTS (
+            SELECT 1 FROM user_roles ur
+            JOIN roles r ON ur.role_id = r.id
+            WHERE ur.user_id = auth.uid() AND r.name = 'admin'
+        )
+    );
+
+CREATE POLICY "System can insert audit logs" ON role_audit_log
+    FOR INSERT
+    WITH CHECK (true);
+
+CREATE POLICY "Audit logs are immutable" ON role_audit_log
+    FOR UPDATE
+    USING (false);
+
+CREATE POLICY "Audit logs cannot be deleted" ON role_audit_log
+    FOR DELETE
+    USING (false);
 
 -- Projects policies
 CREATE POLICY "Anyone can view projects" ON projects FOR SELECT USING (auth.uid() IS NOT NULL);
@@ -311,3 +379,51 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER connections_updated_at_trigger
     BEFORE UPDATE ON connections
     FOR EACH ROW EXECUTE FUNCTION update_connections_updated_at();
+
+-- Role audit log trigger function
+CREATE OR REPLACE FUNCTION log_user_role_change()
+RETURNS TRIGGER AS $$
+DECLARE
+    current_user_id UUID;
+BEGIN
+    -- Get the current authenticated user ID
+    current_user_id := auth.uid();
+
+    IF (TG_OP = 'INSERT') THEN
+        -- Log role assignment
+        INSERT INTO role_audit_log (user_id, role_id, action, performed_by, metadata)
+        VALUES (
+            NEW.user_id,
+            NEW.role_id,
+            'assigned',
+            current_user_id,
+            jsonb_build_object(
+                'operation', 'INSERT',
+                'timestamp', NOW()
+            )
+        );
+        RETURN NEW;
+    ELSIF (TG_OP = 'DELETE') THEN
+        -- Log role removal
+        INSERT INTO role_audit_log (user_id, role_id, action, performed_by, metadata)
+        VALUES (
+            OLD.user_id,
+            OLD.role_id,
+            'removed',
+            current_user_id,
+            jsonb_build_object(
+                'operation', 'DELETE',
+                'timestamp', NOW()
+            )
+        );
+        RETURN OLD;
+    END IF;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER user_roles_audit_trigger
+    AFTER INSERT OR DELETE ON user_roles
+    FOR EACH ROW
+    EXECUTE FUNCTION log_user_role_change();

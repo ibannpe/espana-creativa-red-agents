@@ -49,11 +49,14 @@ export class SupabaseUserRepository implements IUserRepository {
   }
 
   async search(query: string, filters?: SearchFilters): Promise<User[]> {
+    // Use inner join only if filtering by role, otherwise use left join
+    const joinType = filters?.role ? '!inner' : ''
+
     let queryBuilder = this.supabase
       .from('users')
       .select(`
         *,
-        user_roles!inner(
+        user_roles${joinType}(
           role_id,
           roles(name)
         )
@@ -95,7 +98,7 @@ export class SupabaseUserRepository implements IUserRepository {
       .from('users')
       .select(`
         *,
-        user_roles!inner(
+        user_roles(
           role_id
         )
       `)
@@ -212,7 +215,7 @@ export class SupabaseUserRepository implements IUserRepository {
       .from('users')
       .select(`
         *,
-        user_roles!inner(
+        user_roles(
           role_id
         )
       `)

@@ -15,7 +15,7 @@ export const userRoleService = {
    * Assign a role to a user
    */
   async assignRole(data: AssignRoleRequest): Promise<{ success: boolean; message: string }> {
-    const response = await axiosInstance.post('/api/user-roles/assign', data)
+    const response = await axiosInstance.post('/user-roles/assign', data)
     return response.data
   },
 
@@ -23,7 +23,7 @@ export const userRoleService = {
    * Remove a role from a user
    */
   async removeRole(data: RemoveRoleRequest): Promise<{ success: boolean; message: string }> {
-    const response = await axiosInstance.post('/api/user-roles/remove', data)
+    const response = await axiosInstance.post('/user-roles/remove', data)
     return response.data
   },
 
@@ -31,7 +31,7 @@ export const userRoleService = {
    * Get audit log for role changes
    */
   async getAuditLog(filters?: AuditLogFilters): Promise<AuditLogResponse> {
-    const response = await axiosInstance.get('/api/user-roles/audit-log', {
+    const response = await axiosInstance.get('/user-roles/audit-log', {
       params: filters
     })
     return response.data
@@ -41,7 +41,7 @@ export const userRoleService = {
    * Get all available roles
    */
   async getAllRoles(): Promise<Role[]> {
-    const response = await axiosInstance.get('/api/admin/config/roles')
+    const response = await axiosInstance.get('/admin/config/roles')
     return response.data.roles
   }
 }
