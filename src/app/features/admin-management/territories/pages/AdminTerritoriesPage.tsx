@@ -4,19 +4,34 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCitiesQuery } from '@/app/features/cities/hooks/queries/useCitiesQuery'
+import { useDeleteCityMutation } from '@/app/features/cities/hooks/mutations/useDeleteCityMutation'
 import { useUserRoles } from '@/app/features/auth/hooks/useUserRoles'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { ArrowLeft, Plus, MapPin, Edit, Trash2, Loader2 } from 'lucide-react'
 import { CreateTerritoryDialog } from '../components/CreateTerritoryDialog'
 import type { CityWithStats } from '@/app/features/cities/data/schemas/city.schema'
+import { useToast } from '@/hooks/use-toast'
 
 export function AdminTerritoriesPage() {
   const navigate = useNavigate()
+  const { toast } = useToast()
   const { isAdmin, isLoading: isLoadingRoles } = useUserRoles()
   const { data: cities, isLoading, isError, error } = useCitiesQuery()
+  const { mutate: deleteCity, isPending: isDeletingCity } = useDeleteCityMutation()
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [editingTerritory, setEditingTerritory] = useState<CityWithStats | null>(null)
+  const [territoryToDelete, setTerritoryToDelete] = useState<CityWithStats | null>(null)
 
   // Redirect if not admin
   if (!isLoadingRoles && !isAdmin) {
@@ -32,6 +47,35 @@ export function AdminTerritoriesPage() {
   const handleCloseDialog = () => {
     setIsCreateDialogOpen(false)
     setEditingTerritory(null)
+  }
+
+  const handleDeleteClick = (territory: CityWithStats) => {
+    setTerritoryToDelete(territory)
+  }
+
+  const handleConfirmDelete = () => {
+    if (!territoryToDelete) return
+
+    deleteCity(territoryToDelete.id, {
+      onSuccess: () => {
+        toast({
+          title: 'Territorio eliminado',
+          description: `El territorio "${territoryToDelete.name}" ha sido eliminado correctamente.`
+        })
+        setTerritoryToDelete(null)
+      },
+      onError: (error) => {
+        toast({
+          title: 'Error al eliminar',
+          description: error instanceof Error ? error.message : 'No se pudo eliminar el territorio',
+          variant: 'destructive'
+        })
+      }
+    })
+  }
+
+  const handleCancelDelete = () => {
+    setTerritoryToDelete(null)
   }
 
   return (
@@ -131,8 +175,14 @@ export function AdminTerritoriesPage() {
                     variant="outline"
                     size="sm"
                     className="text-destructive hover:bg-destructive hover:text-white"
+                    onClick={() => handleDeleteClick(territory)}
+                    disabled={isDeletingCity}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    {isDeletingCity && territoryToDelete?.id === territory.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
               </CardContent>
@@ -147,6 +197,38 @@ export function AdminTerritoriesPage() {
         onOpenChange={handleCloseDialog}
         territory={editingTerritory}
       />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!territoryToDelete} onOpenChange={(open) => !open && handleCancelDelete()}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar territorio?</AlertDialogTitle>
+            <AlertDialogDescription>
+              ¿Estás seguro de que deseas eliminar el territorio <strong>"{territoryToDelete?.name}"</strong>?
+              Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleCancelDelete} disabled={isDeletingCity}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              disabled={isDeletingCity}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeletingCity ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Eliminando...
+                </>
+              ) : (
+                'Eliminar'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
