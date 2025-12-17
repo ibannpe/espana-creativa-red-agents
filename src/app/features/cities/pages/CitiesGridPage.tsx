@@ -1,6 +1,7 @@
 // ABOUTME: Main page displaying grid of all available cities
 // ABOUTME: Entry point for city-based opportunity browsing
 
+import { AppLayout } from '@/components/layout/AppLayout'
 import { Navigation } from '@/components/layout/Navigation'
 import { useCitiesQuery } from '../hooks/queries/useCitiesQuery'
 import { CityCard } from '../components/CityCard'
@@ -13,7 +14,7 @@ export function CitiesGridPage() {
   const { data: cities, isLoading, isError, error } = useCitiesQuery()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+    <AppLayout>
       <Navigation />
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Page Header */}
@@ -52,6 +53,6 @@ export function CitiesGridPage() {
           </div>
         )}
       </div>
-    </div>
+    </AppLayout>
   )
 }

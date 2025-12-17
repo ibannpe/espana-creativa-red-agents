@@ -2,6 +2,7 @@
 // ABOUTME: Shows connected users with their profile information and actions
 
 import { useNavigate } from 'react-router-dom'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { Navigation } from '@/components/layout/Navigation'
 import { useConnectionsQuery } from '@/app/features/network/hooks/queries/useConnectionsQuery'
 import { useDeleteConnectionMutation } from '@/app/features/network/hooks/mutations/useDeleteConnectionMutation'
@@ -159,7 +160,7 @@ export function MyNetworkPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+    <AppLayout>
       <Navigation />
 
       <div className="container mx-auto px-4 py-8">
@@ -216,6 +217,6 @@ export function MyNetworkPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </AppLayout>
   )
 }

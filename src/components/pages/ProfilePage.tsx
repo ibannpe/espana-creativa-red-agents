@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { Navigation } from '@/components/layout/Navigation'
 import { ProfileForm } from '@/components/profile/ProfileForm'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,7 +17,7 @@ export function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+    <AppLayout>
       <Navigation />
       
       <div className="container mx-auto px-4 py-8">
@@ -139,6 +140,6 @@ export function ProfilePage() {
         open={showChangePassword}
         onOpenChange={setShowChangePassword}
       />
-    </div>
+    </AppLayout>
   )
 }

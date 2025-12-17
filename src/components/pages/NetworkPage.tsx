@@ -1,3 +1,4 @@
+import { AppLayout } from '@/components/layout/AppLayout'
 import { Navigation } from '@/components/layout/Navigation'
 import { UserSearch } from '@/components/network/UserSearch'
 import { ConnectionsSection } from '@/app/features/network/components/ConnectionsSection'
@@ -8,7 +9,7 @@ import { Users, Search } from 'lucide-react'
 
 export function NetworkPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+    <AppLayout>
       <Navigation />
 
       <div className="container mx-auto px-4 py-8">
@@ -63,6 +64,6 @@ export function NetworkPage() {
           </div>
         </div>
       </div>
-    </div>
+    </AppLayout>
   )
 }

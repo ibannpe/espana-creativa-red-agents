@@ -3,6 +3,7 @@
 
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { Navigation } from '@/components/layout/Navigation'
 import { useAuthContext } from '@/app/features/auth/hooks/useAuthContext'
 import { useConnectionsQuery } from '@/app/features/network/hooks/queries/useConnectionsQuery'
@@ -269,7 +270,7 @@ export function FollowersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+    <AppLayout>
       <Navigation />
 
       <div className="container mx-auto px-4 py-8">
@@ -366,6 +367,6 @@ export function FollowersPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </AppLayout>
   )
 }

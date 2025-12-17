@@ -2,6 +2,7 @@
 // ABOUTME: Shows opportunity details with interest action and creator contact
 
 import { useParams, useNavigate } from 'react-router-dom'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { Navigation } from '@/components/layout/Navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -138,7 +139,7 @@ export function OpportunityDetailPage() {
   const isOwner = user?.id === opportunity.created_by
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+    <AppLayout>
       <Navigation />
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -321,6 +322,6 @@ export function OpportunityDetailPage() {
         onOpenChange={setIsEditDialogOpen}
         opportunity={opportunity}
       />
-    </div>
+    </AppLayout>
   )
 }

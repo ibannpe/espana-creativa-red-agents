@@ -9,16 +9,15 @@ import type { ProjectWithCreator } from '@/app/features/projects/data/schemas/pr
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { PhotoUploadModal } from '@/components/profile/PhotoUploadModal';
 import { NewMembersSection } from '@/app/features/dashboard/components/NewMembersSection';
-import { SocialMediaLinks } from '@/components/layout/SocialMediaLinks';
+import { AppLayout } from '@/components/layout/AppLayout';
+import { Navigation } from '@/components/layout/Navigation';
 import {
   MessageSquare,
   Briefcase,
   Calendar,
-  LogOut,
   Settings,
   User,
   Network
@@ -52,52 +51,8 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
-      {/* Header */}
-      <header className="border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <img
-                src="/animacion-3-transparente.gif"
-                alt="España Creativa logo animado"
-                width="40"
-                height="40"
-                className="w-10 h-10 object-contain"
-                loading="eager"
-                fetchpriority="high"
-                decoding="async"
-              />
-              <div>
-                <h1 className="text-xl font-bold text-foreground">ESPAÑA CREATIVA: Red de Destinos del Talento</h1>
-                <p className="text-sm text-muted-foreground">Red de Ciudades y Territorios Creativos de España</p>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <SocialMediaLinks />
-
-              <Avatar
-                className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-primary transition-all"
-                onClick={() => navigate('/profile')}
-              >
-                <AvatarImage src={user?.avatar_url} />
-                <AvatarFallback>
-                  {user?.name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-
-              <Button variant="ghost" size="sm" onClick={() => {
-                // logger.userAction('signout-clicked', { userId: user?.id });
-                signOut();
-              }}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Salir
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+    <AppLayout>
+      <Navigation />
 
       <div className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
@@ -455,7 +410,7 @@ const Dashboard = () => {
           onOpenChange={setProjectDetailsOpen}
         />
       </div>
-    </div>
+    </AppLayout>
   );
 };
 

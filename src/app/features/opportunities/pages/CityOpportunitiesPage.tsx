@@ -3,6 +3,7 @@
 
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { Navigation } from '@/components/layout/Navigation'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -88,21 +89,21 @@ export function CityOpportunitiesPage() {
   // Loading state
   if (isLoadingCity) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+      <AppLayout>
         <Navigation />
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-center min-h-[400px]">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         </div>
-      </div>
+      </AppLayout>
     )
   }
 
   // City not found error
   if (isErrorCity) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+      <AppLayout>
         <Navigation />
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <Button
@@ -122,14 +123,14 @@ export function CityOpportunitiesPage() {
             </AlertDescription>
           </Alert>
         </div>
-      </div>
+      </AppLayout>
     )
   }
 
   // No city data
   if (!city) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+      <AppLayout>
         <Navigation />
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <Button
@@ -145,12 +146,12 @@ export function CityOpportunitiesPage() {
             <AlertDescription>Ciudad no encontrada</AlertDescription>
           </Alert>
         </div>
-      </div>
+      </AppLayout>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+    <AppLayout>
       <Navigation />
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* City Header */}
@@ -274,6 +275,6 @@ export function CityOpportunitiesPage() {
           cityId={city.id}
         />
       </div>
-    </div>
+    </AppLayout>
   )
 }

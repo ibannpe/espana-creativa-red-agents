@@ -3,6 +3,7 @@
 
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { Navigation } from '@/components/layout/Navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -81,7 +82,7 @@ export function UserProfileViewPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+      <AppLayout>
         <Navigation />
         <div className="container mx-auto px-4 py-8">
           <Skeleton className="h-8 w-48 mb-8" />
@@ -94,13 +95,13 @@ export function UserProfileViewPage() {
             </div>
           </div>
         </div>
-      </div>
+      </AppLayout>
     )
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+      <AppLayout>
         <Navigation />
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
@@ -110,12 +111,12 @@ export function UserProfileViewPage() {
             </Button>
           </div>
         </div>
-      </div>
+      </AppLayout>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+    <AppLayout>
       <Navigation />
 
       <div className="container mx-auto px-4 py-8">
@@ -310,6 +311,6 @@ export function UserProfileViewPage() {
         avatarUrl={user.avatar_url}
         userName={user.name}
       />
-    </div>
+    </AppLayout>
   )
 }

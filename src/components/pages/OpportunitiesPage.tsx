@@ -3,6 +3,7 @@
 
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { Navigation } from '@/components/layout/Navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -129,7 +130,7 @@ export function OpportunitiesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+    <AppLayout>
       <Navigation />
 
       <div className="container mx-auto px-4 py-8">
@@ -385,6 +386,6 @@ export function OpportunitiesPage() {
         }}
         opportunity={editingOpportunity}
       />
-    </div>
+    </AppLayout>
   )
 }

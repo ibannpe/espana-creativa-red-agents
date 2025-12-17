@@ -2,6 +2,7 @@
 // ABOUTME: Displays projects in cards with real-time data from backend
 
 import { useState } from 'react'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { Navigation } from '@/components/layout/Navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -77,7 +78,7 @@ export function ProjectsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+    <AppLayout>
       <Navigation />
 
       <div className="container mx-auto px-4 py-8">
@@ -224,6 +225,6 @@ export function ProjectsPage() {
         open={detailsOpen}
         onOpenChange={setDetailsOpen}
       />
-    </div>
+    </AppLayout>
   )
 }
