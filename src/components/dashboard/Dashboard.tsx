@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { PhotoUploadModal } from '@/components/profile/PhotoUploadModal';
 import { NewMembersSection } from '@/app/features/dashboard/components/NewMembersSection';
+import { SocialMediaLinks } from '@/components/layout/SocialMediaLinks';
 import {
   MessageSquare,
   Briefcase,
@@ -72,8 +73,10 @@ const Dashboard = () => {
                 <p className="text-sm text-muted-foreground">Red de Ciudades y Territorios Creativos de España</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4">
+              <SocialMediaLinks />
+
               <Avatar
                 className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-primary transition-all"
                 onClick={() => navigate('/profile')}

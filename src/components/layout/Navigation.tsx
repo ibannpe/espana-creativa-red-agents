@@ -14,6 +14,7 @@ import { useUserRoles } from '@/app/features/auth/hooks/useUserRoles'
 import { useUnreadCountQuery } from '@/app/features/messages/hooks/queries/useUnreadCountQuery'
 import { useUnreadNotifications } from '@/app/features/messages/hooks/useUnreadNotifications'
 import { Badge } from '@/components/ui/badge'
+import { SocialMediaLinks } from '@/components/layout/SocialMediaLinks'
 import {
   Users,
   MessageSquare,
@@ -100,13 +101,15 @@ export function Navigation() {
           </div>
 
           <div className="flex items-center space-x-4">
+            <SocialMediaLinks />
+
             <div className="hidden sm:flex items-center space-x-2">
               <div className="h-2 w-2 rounded-full bg-primary"></div>
               <span className="text-sm font-medium text-gray-700">
                 {user.completed_pct}% completado
               </span>
             </div>
-            
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-gray-50">
