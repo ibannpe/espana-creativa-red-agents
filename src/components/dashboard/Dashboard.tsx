@@ -103,7 +103,7 @@ const Dashboard = () => {
             ¡Bienvenid@, {user?.name || user?.email}!
           </h2>
           <p className="text-muted-foreground">
-            Conecta con emprendedores y colabora en proyectos en la red de España Creativa
+            Conecta con emprendedores y destinos del talento de España Creativa
           </p>
         </div>
 

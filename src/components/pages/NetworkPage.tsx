@@ -21,7 +21,7 @@ export function NetworkPage() {
             <div>
               <h1 className="text-3xl font-bold text-foreground">Mi Red</h1>
               <p className="text-muted-foreground">
-                Conecta con emprendedores y mentores de España Creativa
+                Conecta con emprendedores de la Red España Creativa
               </p>
             </div>
           </div>
@@ -39,7 +39,7 @@ export function NetworkPage() {
                   Buscar Miembros
                 </CardTitle>
                 <CardDescription>
-                  Encuentra emprendedores, mentores y colaboradores por nombre, ubicación o habilidades
+                  Encuentra emprendedores y colaboradores por nombre, ubicación o habilidades
                 </CardDescription>
               </CardHeader>
               <CardContent>
