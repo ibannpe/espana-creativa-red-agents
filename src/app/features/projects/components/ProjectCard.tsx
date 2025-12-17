@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Calendar, Clock, Users, MapPin, Pencil, Trash2 } from 'lucide-react'
+import { Calendar, Clock, Users, MapPin, Pencil, Trash2, ExternalLink } from 'lucide-react'
 import { useCancelEnrollmentMutation } from '../hooks/mutations/useCancelEnrollmentMutation'
 import { useDeleteProjectMutation } from '../hooks/mutations/useDeleteProjectMutation'
 import { useMyProjectsQuery } from '../hooks/queries/useMyProjectsQuery'
@@ -196,6 +196,19 @@ export function ProjectCard({ program, onViewDetails }: ProjectCardProps) {
               </Badge>
             ))}
           </div>
+        )}
+
+        {/* More Info URL */}
+        {program.more_info_url && (
+          <a
+            href={program.more_info_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-sm text-primary hover:underline font-medium"
+          >
+            <ExternalLink className="h-4 w-4" />
+            <span>Más información</span>
+          </a>
         )}
 
         {/* Instructor and Actions */}

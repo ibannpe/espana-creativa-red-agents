@@ -32,6 +32,7 @@ export interface ProgramProps {
   skills: string[]
   price?: string
   imageUrl?: string
+  moreInfoUrl?: string
   createdBy: string
   createdAt: Date
   updatedAt: Date
@@ -61,6 +62,7 @@ export class Program {
     private _skills: string[],
     private _price: string | undefined,
     private _imageUrl: string | undefined,
+    private _moreInfoUrl: string | undefined,
     public readonly createdBy: string,
     public readonly createdAt: Date,
     private _updatedAt: Date
@@ -89,6 +91,7 @@ export class Program {
       props.skills,
       props.price,
       props.imageUrl,
+      props.moreInfoUrl,
       props.createdBy,
       props.createdAt,
       props.updatedAt
@@ -114,6 +117,7 @@ export class Program {
       maxParticipants?: number
       price?: string
       imageUrl?: string
+      moreInfoUrl?: string
       featured?: boolean
     }
   ): Program {
@@ -144,6 +148,7 @@ export class Program {
       skills,
       options?.price,
       options?.imageUrl,
+      options?.moreInfoUrl,
       createdBy,
       now,
       now
@@ -209,6 +214,10 @@ export class Program {
 
   get imageUrl(): string | undefined {
     return this._imageUrl
+  }
+
+  get moreInfoUrl(): string | undefined {
+    return this._moreInfoUrl
   }
 
   get updatedAt(): Date {

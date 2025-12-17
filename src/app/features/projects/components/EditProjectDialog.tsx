@@ -54,6 +54,7 @@ export function EditProjectDialog({ program, open, onOpenChange }: EditProjectDi
       location: program.location,
       price: program.price,
       max_participants: program.max_participants,
+      more_info_url: program.more_info_url,
       skills: program.skills,
       featured: program.featured
     }
@@ -75,6 +76,7 @@ export function EditProjectDialog({ program, open, onOpenChange }: EditProjectDi
       location: program.location,
       price: program.price,
       max_participants: program.max_participants,
+      more_info_url: program.more_info_url,
       skills: program.skills,
       featured: program.featured
     })
@@ -245,6 +247,20 @@ export function EditProjectDialog({ program, open, onOpenChange }: EditProjectDi
                 placeholder="30"
               />
             </div>
+          </div>
+
+          {/* More Info URL */}
+          <div className="space-y-2">
+            <Label htmlFor="more_info_url">Más información: URL</Label>
+            <Input
+              id="more_info_url"
+              type="url"
+              {...register('more_info_url')}
+              placeholder="https://ejemplo.com/informacion-proyecto"
+            />
+            {errors.more_info_url && (
+              <p className="text-sm text-destructive">{errors.more_info_url.message}</p>
+            )}
           </div>
 
           {/* Skills */}

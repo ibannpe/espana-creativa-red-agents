@@ -54,6 +54,7 @@ CREATE TABLE projects (
     start_date DATE,
     end_date DATE,
     status VARCHAR(50) DEFAULT 'active',
+    more_info_url TEXT,
     created_by UUID REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

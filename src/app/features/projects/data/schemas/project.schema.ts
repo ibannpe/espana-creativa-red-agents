@@ -40,6 +40,7 @@ export const projectSchema = z.object({
   skills: z.array(z.string()),
   price: z.string().nullish(),
   image_url: z.string().nullish(),
+  more_info_url: z.string().nullish(),
   created_by: z.string().uuid(),
   created_at: z.string(),
   updated_at: z.string()
@@ -73,6 +74,7 @@ export const createProjectRequestSchema = z.object({
   max_participants: z.number().positive().nullable().optional(),
   price: z.string().max(100).nullable().optional(),
   image_url: z.string().url().nullable().optional(),
+  more_info_url: z.string().url('Debe ser una URL válida').nullable().optional(),
   featured: z.boolean().optional()
 })
 
@@ -91,7 +93,8 @@ export const updateProjectRequestSchema = z.object({
   featured: z.boolean().optional(),
   skills: z.array(z.string()).min(1).optional(),
   price: z.string().max(100).nullable().optional(),
-  image_url: z.string().url().nullable().optional()
+  image_url: z.string().url().nullable().optional(),
+  more_info_url: z.string().url('Debe ser una URL válida').nullable().optional()
 })
 
 // Filter projects request

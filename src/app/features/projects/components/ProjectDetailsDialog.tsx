@@ -11,7 +11,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Calendar, Clock, Users, MapPin, DollarSign, Award } from 'lucide-react'
+import { Calendar, Clock, Users, MapPin, DollarSign, Award, ExternalLink } from 'lucide-react'
 import { useEnrollInProjectMutation } from '../hooks/mutations/useEnrollInProjectMutation'
 import { useCancelEnrollmentMutation } from '../hooks/mutations/useCancelEnrollmentMutation'
 import { useMyProjectsQuery } from '../hooks/queries/useMyProjectsQuery'
@@ -172,6 +172,21 @@ export function ProjectDetailsDialog({ program, open, onOpenChange }: ProjectDet
               </div>
             </div>
           </div>
+
+          {/* More Info URL */}
+          {program.more_info_url && (
+            <div className="p-4 bg-muted rounded-lg">
+              <a
+                href={program.more_info_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-primary hover:underline font-medium"
+              >
+                <ExternalLink className="h-5 w-5" />
+                <span>Ver más información del proyecto</span>
+              </a>
+            </div>
+          )}
 
           {/* Skills/Tags */}
           {program.skills.length > 0 && (
