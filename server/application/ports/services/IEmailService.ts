@@ -65,6 +65,8 @@ export interface IEmailService {
     creatorEmail: Email,
     creatorName: string,
     interestedUserName: string,
+    interestedUserEmail: string,
+    interestedUserPhone: string | null,
     opportunityTitle: string
   ): Promise<EmailResult>
 }

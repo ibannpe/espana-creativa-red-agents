@@ -13,7 +13,9 @@ export const opportunityInterestService = {
    * Express interest in an opportunity
    */
   async expressInterest(data: ExpressInterestRequest): Promise<ExpressInterestResponse> {
+    console.log('[DEBUG] expressInterest - Sending data:', data)
     const response = await axiosInstance.post('/opportunity-interests', data)
+    console.log('[DEBUG] expressInterest - Response:', response.data)
     return expressInterestResponseSchema.parse(response.data)
   }
 }

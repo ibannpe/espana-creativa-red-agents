@@ -28,9 +28,13 @@ export function createOpportunityInterestsRoutes(container: typeof Container) {
         return res.status(401).json({ error: 'Unauthorized' })
       }
 
+      // DEBUG: Log request body
+      serverLogger.info('opportunity-interests', `[DEBUG] Request body:`, req.body)
+
       // Validate request
       const validation = expressInterestSchema.safeParse(req.body)
       if (!validation.success) {
+        serverLogger.error('opportunity-interests', '[DEBUG] Validation failed:', validation.error.errors)
         return res.status(400).json({
           error: 'Validation error',
           details: validation.error.errors

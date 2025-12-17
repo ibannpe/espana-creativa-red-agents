@@ -89,9 +89,12 @@ export function OpportunityDetailPage() {
         description: `Hemos notificado a ${opportunity.creator.name} sobre tu interés. Pronto te contactará.`
       })
     } catch (error: any) {
+      // Extract error message from response
+      const errorMessage = error?.response?.data?.error || error?.message || 'No se pudo registrar tu interés. Inténtalo de nuevo.'
+
       toast({
         title: 'Error',
-        description: error?.message || 'No se pudo registrar tu interés. Inténtalo de nuevo.',
+        description: errorMessage,
         variant: 'destructive'
       })
     }

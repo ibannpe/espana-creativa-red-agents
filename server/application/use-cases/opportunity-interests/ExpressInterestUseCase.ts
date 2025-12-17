@@ -59,25 +59,27 @@ export class ExpressInterestUseCase {
     console.log('📧 [ExpressInterestUseCase] Preparing to send email notification')
     console.log('📧 [ExpressInterestUseCase] Creator:', {
       hasCreator: !!creator,
-      hasEmail: !!creator?.email,
-      email: creator?.email,
-      name: creator?.name
+      hasEmail: !!creator?.getEmail(),
+      email: creator?.getEmail().getValue(),
+      name: creator?.getName()
     })
     console.log('📧 [ExpressInterestUseCase] Interested user:', {
       hasUser: !!interestedUser,
-      name: interestedUser?.name
+      name: interestedUser?.getName()
     })
 
-    if (creator && creator.email && interestedUser) {
+    if (creator && creator.getEmail() && interestedUser) {
       try {
         console.log('📧 [ExpressInterestUseCase] Creating Email value object...')
-        const creatorEmail = Email.create(creator.email)
+        const creatorEmail = creator.getEmail()
         console.log('📧 [ExpressInterestUseCase] Calling sendOpportunityInterestEmail...')
 
         const result = await this.emailService.sendOpportunityInterestEmail(
           creatorEmail,
-          creator.name || 'Usuario',
-          interestedUser.name || 'Un usuario',
+          creator.getName() || 'Usuario',
+          interestedUser.getName() || 'Un usuario',
+          interestedUser.getEmail().getValue(),
+          null, // Phone not available in users table
           opportunity.title
         )
 

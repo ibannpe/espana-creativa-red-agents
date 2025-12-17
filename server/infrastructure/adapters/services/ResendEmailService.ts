@@ -267,12 +267,16 @@ export class ResendEmailService implements IEmailService {
     creatorEmail: Email,
     creatorName: string,
     interestedUserName: string,
+    interestedUserEmail: string,
+    interestedUserPhone: string | null,
     opportunityTitle: string
   ): Promise<EmailResult> {
     console.log('📧 [ResendEmailService] sendOpportunityInterestEmail called')
     console.log('📧 [ResendEmailService] To:', creatorEmail.getValue())
     console.log('📧 [ResendEmailService] Creator name:', creatorName)
     console.log('📧 [ResendEmailService] Interested user:', interestedUserName)
+    console.log('📧 [ResendEmailService] Interested user email:', interestedUserEmail)
+    console.log('📧 [ResendEmailService] Interested user phone:', interestedUserPhone)
     console.log('📧 [ResendEmailService] Opportunity:', opportunityTitle)
 
     const html = `
@@ -287,7 +291,23 @@ export class ResendEmailService implements IEmailService {
             <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
               <p style="margin: 0; font-size: 18px; font-weight: bold; color: #1f2937;">${opportunityTitle}</p>
             </div>
-            <p>Puedes contactar con esta persona directamente desde la plataforma para discutir más detalles.</p>
+
+            <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #dc2626;">
+              <h3 style="margin-top: 0; color: #1f2937;">Datos de contacto:</h3>
+              <p style="margin: 10px 0;">
+                <strong>Nombre:</strong> ${interestedUserName}
+              </p>
+              <p style="margin: 10px 0;">
+                <strong>Email:</strong> <a href="mailto:${interestedUserEmail}" style="color: #dc2626;">${interestedUserEmail}</a>
+              </p>
+              ${interestedUserPhone ? `
+              <p style="margin: 10px 0;">
+                <strong>Teléfono:</strong> <a href="tel:${interestedUserPhone}" style="color: #dc2626;">${interestedUserPhone}</a>
+              </p>
+              ` : ''}
+            </div>
+
+            <p>Puedes contactar con esta persona directamente por email o teléfono, o a través de la plataforma.</p>
             <div style="margin: 30px 0; text-align: center;">
               <a href="${process.env.APP_URL || 'http://localhost:8080'}/opportunities" style="display: inline-block; padding: 15px 30px; background-color: #dc2626; color: white; text-decoration: none; border-radius: 6px; font-size: 16px;">Ver mis oportunidades</a>
             </div>

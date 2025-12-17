@@ -25,9 +25,9 @@ export function AppLayout({ children }: AppLayoutProps) {
               <img
                 src="/animacion-3-transparente.gif"
                 alt="España Creativa logo animado"
-                width="40"
-                height="40"
-                className="w-10 h-10 object-contain cursor-pointer"
+                width="80"
+                height="80"
+                className="w-20 h-20 object-contain cursor-pointer"
                 loading="eager"
                 fetchPriority="high"
                 decoding="async"
