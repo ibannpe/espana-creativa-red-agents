@@ -20,7 +20,7 @@ export function CitiesGridPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Oportunidades Red</h1>
           <p className="text-muted-foreground">
-            Explora las oportunidades disponibles en la red de ciudades y territorios creativos de España
+            Explora las oportunidades disponibles en la Red de Ciudades y Territorios Creativos de España (RECITCREA)
           </p>
         </div>
 

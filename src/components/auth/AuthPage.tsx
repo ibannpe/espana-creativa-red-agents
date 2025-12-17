@@ -69,7 +69,7 @@ const AuthPage = () => {
             <span className="text-2xl font-bold text-primary-foreground">EC</span>
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">España Creativa</h1>
-          <p className="text-muted-foreground">Red de emprendedores</p>
+          <p className="text-muted-foreground">Red de Emprendedores Creativos</p>
         </div>
 
         <Card className="shadow-elegant border-0">

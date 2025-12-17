@@ -143,7 +143,7 @@ export function OpportunitiesPage() {
               <div>
                 <h1 className="text-3xl font-bold text-foreground">Oportunidades Red</h1>
                 <p className="text-muted-foreground">
-                  Explora las oportunidades disponibles en la red de ciudades y territorios creativos de España
+                  Explora las oportunidades disponibles en la Red de Ciudades y Territorios Creativos de España (RECITCREA)
                 </p>
               </div>
             </div>
