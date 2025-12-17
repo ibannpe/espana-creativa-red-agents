@@ -242,6 +242,7 @@ export class Program {
     skills?: string[]
     price?: string
     imageUrl?: string
+    moreInfoUrl?: string
   }): void {
     if (updates.title !== undefined) {
       this._title = updates.title
@@ -284,6 +285,9 @@ export class Program {
     }
     if (updates.imageUrl !== undefined) {
       this._imageUrl = updates.imageUrl
+    }
+    if (updates.moreInfoUrl !== undefined) {
+      this._moreInfoUrl = updates.moreInfoUrl
     }
 
     this._updatedAt = new Date()
@@ -525,6 +529,7 @@ export class Program {
       skills: this._skills,
       price: this._price,
       imageUrl: this._imageUrl,
+      moreInfoUrl: this._moreInfoUrl,
       createdBy: this.createdBy,
       createdAt: this.createdAt,
       updatedAt: this._updatedAt

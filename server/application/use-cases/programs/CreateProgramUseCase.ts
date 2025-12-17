@@ -17,6 +17,7 @@ export interface CreateProgramDTO {
   maxParticipants?: number
   price?: string
   imageUrl?: string
+  moreInfoUrl?: string
   featured?: boolean
   createdBy: string
 }
@@ -51,6 +52,7 @@ export class CreateProgramUseCase {
         maxParticipants: dto.maxParticipants,
         price: dto.price,
         imageUrl: dto.imageUrl,
+        moreInfoUrl: dto.moreInfoUrl,
         featured: dto.featured
       }
     )

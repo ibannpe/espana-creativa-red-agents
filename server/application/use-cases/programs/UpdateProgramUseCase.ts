@@ -21,6 +21,7 @@ export interface UpdateProgramDTO {
   skills?: string[]
   price?: string
   imageUrl?: string
+  moreInfoUrl?: string
 }
 
 /**
@@ -59,7 +60,8 @@ export class UpdateProgramUseCase {
       featured: dto.featured,
       skills: dto.skills,
       price: dto.price,
-      imageUrl: dto.imageUrl
+      imageUrl: dto.imageUrl,
+      moreInfoUrl: dto.moreInfoUrl
     })
 
     // Persist

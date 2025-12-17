@@ -41,6 +41,7 @@ export const createProgramsRoutes = (): Router => {
           skills: p.program.skills,
           price: p.program.price,
           image_url: p.program.imageUrl,
+          more_info_url: p.program.moreInfoUrl,
           created_by: p.program.createdBy,
           created_at: p.program.createdAt.toISOString(),
           updated_at: p.program.updatedAt.toISOString(),
@@ -98,6 +99,7 @@ export const createProgramsRoutes = (): Router => {
             skills: e.program.skills,
             price: e.program.price,
             image_url: e.program.imageUrl,
+            more_info_url: e.program.moreInfoUrl,
             created_by: e.program.createdBy,
             created_at: e.program.createdAt.toISOString(),
             updated_at: e.program.updatedAt.toISOString()
@@ -139,6 +141,7 @@ export const createProgramsRoutes = (): Router => {
           skills: result.program.skills,
           price: result.program.price,
           image_url: result.program.imageUrl,
+          more_info_url: result.program.moreInfoUrl,
           created_by: result.program.createdBy,
           created_at: result.program.createdAt.toISOString(),
           updated_at: result.program.updatedAt.toISOString(),
@@ -164,6 +167,7 @@ export const createProgramsRoutes = (): Router => {
         ...req.body,
         startDate: new Date(req.body.start_date),
         endDate: new Date(req.body.end_date),
+        moreInfoUrl: req.body.more_info_url,
         createdBy: userId
       })
 
@@ -185,6 +189,7 @@ export const createProgramsRoutes = (): Router => {
           skills: program.skills,
           price: program.price,
           image_url: program.imageUrl,
+          more_info_url: program.moreInfoUrl,
           created_by: program.createdBy,
           created_at: program.createdAt.toISOString(),
           updated_at: program.updatedAt.toISOString()
@@ -218,6 +223,9 @@ export const createProgramsRoutes = (): Router => {
       if (req.body.end_date) {
         updateData.endDate = new Date(req.body.end_date)
       }
+      if (req.body.more_info_url !== undefined) {
+        updateData.moreInfoUrl = req.body.more_info_url
+      }
 
       const program = await updateProgramUseCase.execute(updateData)
 
@@ -239,6 +247,7 @@ export const createProgramsRoutes = (): Router => {
           skills: program.skills,
           price: program.price,
           image_url: program.imageUrl,
+          more_info_url: program.moreInfoUrl,
           created_by: program.createdBy,
           created_at: program.createdAt.toISOString(),
           updated_at: program.updatedAt.toISOString()

@@ -26,6 +26,7 @@ interface ProgramRow {
   skills: string[]
   price: string | null
   image_url: string | null
+  more_info_url: string | null
   created_by: string
   created_at: string
   updated_at: string
@@ -253,6 +254,7 @@ export class SupabaseProgramRepository implements ProgramRepository {
       skills: row.skills,
       price: row.price || undefined,
       imageUrl: row.image_url || undefined,
+      moreInfoUrl: row.more_info_url || undefined,
       createdBy: row.created_by,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at)
@@ -277,6 +279,7 @@ export class SupabaseProgramRepository implements ProgramRepository {
       skills: props.skills,
       price: props.price || null,
       image_url: props.imageUrl || null,
+      more_info_url: props.moreInfoUrl || null,
       created_by: props.createdBy,
       created_at: props.createdAt.toISOString(),
       updated_at: props.updatedAt.toISOString()
